@@ -1,0 +1,40 @@
+.signup-form-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+    margin-left: auto;
+    margin-right: auto;
+    margin-bottom: auto;
+    overflow: hidden;
+    width: 475px;
+    border-radius: 5px;
+    border: 1px solid #706f6f;
+    background-color: #303030;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.signup-container h2 {
+    font-size: 30px;
+}
+
+.signup-container-fields {
+    margin-top: 20px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.2s ease-in-out;
+    gap: 10px;
+    align-items: start;
+    margin-bottom: 3px;
+}
+
+.signup-container-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+}

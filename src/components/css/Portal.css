@@ -1,0 +1,122 @@
+.portal-container {
+    display: flex;
+    flex: row;
+}
+
+.sidebar-options {
+    height: calc(100vh - 76px);
+    margin: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    width: 300px;
+    border-right: 1px solid #706f6f;
+    background-color: #303030;
+    flex-shrink: 0;
+}
+
+#sidetop-item {
+    margin-top: -10px;
+}
+
+.sidebar-profile-view {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    padding-right: 10px;
+    padding-left: 10px;
+    border-bottom: 1px solid #706f6f;
+    padding-bottom: 10px;
+    transition: all 0.2s ease-in-out;
+    padding-top: 10px;
+}
+
+.sidebar-profile-view:hover {
+    filter: brightness(85%);
+}
+
+.sidebar-grouping-title {
+    margin-left: 8px;
+    margin-bottom: -5px;
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+    align-items: center;
+    text-align: left;
+}
+
+.sidebar-grouping-title h1 {
+    font-size: 22px;
+}
+
+.sidebar-profile-view-info {
+    cursor: pointer;
+    display: flex;
+    flex-direction: column;
+    padding-left: 8px;
+    justify-content: center;
+    font-size: 17px;
+}
+
+.sidebar-profile-view img {
+    border-radius: 500px;
+    background-color: #222222;
+    width: 55px;
+    height: 55px;
+}
+
+.sidebar-profile-view-grouping {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+}
+
+.sidebar-profile-view-grouping button {
+    font-weight: 200;
+}
+
+.sidebar-profile-view-grouping span {
+    margin-left: 10px;
+    margin-bottom: 5px;
+}
+
+.sidebar-profile-view-bottom {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    color: #349fc9;
+    gap: 10px;
+    font-weight: 700;
+    margin-top: auto;
+    border-top: 1px solid #706f6f;
+    padding-bottom: 10px;
+    padding-top: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
+}
+
+.sidebar-profile-view-bottom i {
+    margin-bottom: auto;
+}
+
+.sidebar-profile-view-dropdown-hidden {
+    height: 0;
+    opacity: 0;
+    margin-top: -5px;
+    overflow: hidden;
+    transform: translateY(50%);
+    transition: all 0.1s ease-in-out;
+}
+
+.sidebar-profile-view-dropdown {
+    margin-top: -5px;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.1s ease-in-out;
+    padding-left: 8px;
+    padding-right: 8px;
+    gap: 2px;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    border-bottom: 1px solid #706f6f;
+}

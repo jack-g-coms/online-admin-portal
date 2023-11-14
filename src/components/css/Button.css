@@ -1,0 +1,80 @@
+.btn {
+    cursor: pointer;
+    text-align: center;
+    font-size: 15px;
+    transition: all 0.2s ease-in-out;
+    font-weight: bold;
+    border-radius: 5px;
+    border: 1px solid #706f6f;
+}
+
+.btn-medium {
+    padding: 10px 25px;
+}
+
+.btn-outlinebottom {
+    background-color: #303030;
+    color: #fff;
+    border-radius: 0px;
+    border: none;
+    border-bottom: 1px solid #706f6f;
+}
+
+.btn-large {
+    padding: 15px 30px;
+    font-size: 18px;
+}
+
+.btn-small {
+    padding: 5px;
+    font-size: 14px;
+}
+
+.btn-confirm {
+    background-color: #34c939;
+    color: #fff;
+}
+
+.btn-cancel {
+    background-color: #c93434;
+    color: #fff;
+}
+
+.btn-primary {
+    color: #242424;
+    background-color: #fff;
+}
+
+.btn-outline {
+    background-color: transparent;
+    color: #fff;
+    border: 1px solid #fff;
+}
+
+.btn-clear {
+    background-color: transparent;
+    border: none;
+    color: #fff;
+}
+
+.raise:hover {
+    box-shadow: 0 0.5em 0.5em -0.4em #010101;
+    filter: brightness(85%);
+    transform: translateY(-0.25em);
+}
+
+.color:hover {
+    background-color: #349fc9;
+}
+
+.color-red:hover {
+    background-color: #c93434;
+}
+
+.color-yellow:hover {
+    background-color: #f0be48;
+}
+
+.pop-out:hover {
+    font-size: larger;
+}

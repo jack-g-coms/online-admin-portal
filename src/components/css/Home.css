@@ -1,0 +1,44 @@
+.welcome-container {
+    display: flex;
+    gap: 5px;
+    flex-direction: column;
+    background-color: #303030;
+    margin: auto;
+    margin-top: 20px;
+    margin-bottom: auto;
+    align-items: center;
+    border-radius: 5px;
+    border: 1px solid #706f6f;
+    text-align: center;
+    width: 400px;
+    padding-top: 12px;
+    padding-bottom: 20px;
+    padding-right: 5px;
+    padding-left: 5px;
+}
+
+.btn-container-welcome-container {
+    color: white;
+    padding-top: 15px;
+}
+
+.welcome-container img {
+    height: 160px;
+    width: 160px;
+    margin-top: 15px;
+    margin-bottom: 3px;
+    background-color: #222222;
+    border-radius: 500px;
+}
+
+.welcome-container span {
+    font-size: 20px;
+}
+
+.welcome-container p {
+    padding-left: 15px;
+    padding-right: 15px;
+    margin-top: 10px;
+    margin-bottom: 0px;
+    font-size: 20px;
+}

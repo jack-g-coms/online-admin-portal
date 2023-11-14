@@ -1,0 +1,113 @@
+.login-container {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    margin-top: 20px;
+    margin-bottom: auto;
+    margin-left: auto;
+    margin-right: auto;
+    overflow: hidden;
+    width: 475px;
+    border-radius: 5px;
+    border: 1px solid #706f6f;
+    background-color: #303030;
+    padding-top: 15px;
+    padding-bottom: 15px;
+    padding-left: 20px;
+    padding-right: 20px;
+}
+
+.login-container h2 {
+    font-size: 30px;
+}
+
+.login-fields-username {
+    margin-top: 20px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.2s ease-in-out;
+    gap: 10px;
+    align-items: start;
+    margin-bottom: 3px;
+}
+
+.login-fields-password {
+    margin-top: 10px;
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    transition: all 0.2s ease-in-out;
+    gap: 10px;
+    align-items: start;
+    margin-bottom: 3px;
+}
+
+.login-fields-password-hidden, .login-fields-username-hidden {
+    overflow: hidden;
+    height: 0;
+    opacity: 0;
+    transform: translateY(80%);
+    transition: all 0.2s ease-in-out;
+}
+
+#login-identity-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+}
+
+#password-identity-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    width: 100%;
+}
+
+#password-identity-btns {
+    gap: 5px;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+    display: flex;
+    flex-direction: row;
+}
+
+#password-identity-btns button {
+    width: 100%;
+}
+
+#password-identity-field #info {
+    background-color: #222222;
+    border-radius: 5px;
+    text-align: center;
+    font-weight: 500;
+    padding-left: 5px;
+    padding-right: 5px;
+    padding-bottom: 5px;
+    padding-top: 5px;
+    font-size: 18px;
+    color: #f0be48;
+}
+
+.login-fields-password-info {
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+    justify-content: center;
+    align-items: center;
+}
+
+.login-fields-password-info img {
+    height: 30%;
+    width: 30%;
+    margin-top: 15px;
+    margin-bottom: 3px;
+    background-color: #222222;
+    border-radius: 500px;
+}
+
+.login-fields-password-info h {
+    font-size: 20px;
+}
