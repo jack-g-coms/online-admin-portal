@@ -9,6 +9,7 @@ import AuthContext from '../js/modules/AuthContext';
 import { timeFormat } from '../../shared';
 
 import ManageUsers from '../js/portalComponents/manageUsers';
+import ManageRobloxBans from '../js/portalComponents/RobloxSystem/manageRobloxBans';
 
 function Portal() {
     const [viewProfileState, setProfileViewState] = useState('closed');
@@ -81,7 +82,7 @@ function Portal() {
                             <img style={{'marginRight': '3px', 'width': '30px', 'height': '30px'}} src='/media/images/roblox-logo-red.png'/> 
                             <h1>Roblox System</h1>
                         </div>
-                        <Button animation='pop-out color-red' style={{'width': '100%'}} onClick={(e) => {}} scheme='btn-outlinebottom'><i style={{'marginRight': '8px'}} className='fa-solid fa-gavel'/>Bans</Button>
+                        <Button animation='pop-out color-red' style={{'width': '100%'}} onClick={(e) => {setPortalComponentState('manageRobloxBans');}} scheme='btn-outlinebottom'><i style={{'marginRight': '8px'}} className='fa-solid fa-gavel'/>Bans</Button>
                         <Button animation='pop-out color-red' style={{'width': '100%'}} onClick={(e) => {}} scheme='btn-outlinebottom'><i style={{'marginRight': '8px'}} className='fa-solid fa-circle-exclamation'/>Warnings</Button>
                     </div>
 
@@ -103,8 +104,11 @@ function Portal() {
 
                 {portalComponentState == 'manageUsers' &&
                     <ManageUsers hidden={false}/>
-                    || <ManageUsers hidden={true}/>
                 } 
+
+                {portalComponentState == 'manageRobloxBans' &&
+                    <ManageRobloxBans/>
+                }
             </div>
         </>
     );

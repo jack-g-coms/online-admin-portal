@@ -59,7 +59,7 @@ module.exports.getAllUsers = async () => {
 
                     resolve(resolved_rows);
                 } else {
-                    reject();
+                    reject(err);
                 }
             }
         )

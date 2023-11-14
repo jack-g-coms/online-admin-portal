@@ -6,7 +6,16 @@ const jwt = require('jsonwebtoken');
 const ENDPOINT_PERMISSION_FLAGS = {
     '/api/users': PermissionsService.PERMISSION_FLAGS.MANAGE_USERS,
     '/api/users/update': PermissionsService.PERMISSION_FLAGS.MANAGE_USERS,
-    '/api/users/delete': PermissionsService.PERMISSION_FLAGS.DELETE_USERS
+    '/api/users/delete': PermissionsService.PERMISSION_FLAGS.DELETE_USERS,
+
+    '/api/roblox/bans': PermissionsService.PERMISSION_FLAGS.VIEW_ROBLOX_BANS,
+    '/api/roblox/bans/search': PermissionsService.PERMISSION_FLAGS.VIEW_ROBLOX_BANS,
+    '/api/roblox/bans/create': PermissionsService.PERMISSION_FLAGS.CREATE_ROBLOX_BANS,
+    '/api/roblox/bans/update': PermissionsService.PERMISSION_FLAGS.UPDATE_ROBLOX_BANS,
+    '/api/roblox/warnings': PermissionsService.PERMISSION_FLAGS.VIEW_ROBLOX_WARNINGS,
+    '/api/roblox/warnings/create': PermissionsService.PERMISSION_FLAGS.CREATE_ROBLOX_WARNINGS,
+    '/api/roblox/warnings/update': PermissionsService.PERMISSION_FLAGS.UPDATE_ROBLOX_WARNINGS,
+    '/api/roblox/warnings/search': PermissionsService.PERMISSION_FLAGS.VIEW_ROBLOX_WARNINGS
 }
 
 // FUNCTIONS
