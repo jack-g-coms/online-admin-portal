@@ -20,7 +20,7 @@ const ENDPOINT_PERMISSION_FLAGS = {
 
 // FUNCTIONS
 module.exports.privilegedSocket = async(socket, next) => {
-    const bearerToken = (socket.handshake.headers.cookie && socket.handshake.headers.cookie.substring(14));
+    const bearerToken = (socket.handshake.headers.cookie && socket.handshake.headers.cookie.substring(13));
 
     if (typeof bearerToken != "undefined") {
         if (typeof bearerToken == "undefined") {

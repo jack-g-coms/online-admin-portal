@@ -1,4 +1,5 @@
-import React, { useContext, useState } from 'react';
+import React, { useContext, useState, useEffect, useRef } from 'react';
+import { socket } from '../js/modules/Socket';
 
 import '../css/Portal.css';
 
@@ -16,6 +17,13 @@ function Portal() {
     const [portalComponentState, setPortalComponentState] = useState();
 
     const authContext = useContext(AuthContext);
+    const gateways = useRef();
+    
+    useEffect(() => {
+        socket.emit('getConnectedGateways', (res) => {
+            gateways.current = res;
+        });
+    }, []);
 
     return (
         <>
@@ -59,6 +67,11 @@ function Portal() {
                                 {localStorage.getItem('signOn') && 
                                     <div>
                                         <span style={{'color': '#349fc9'}}>Session Time: </span><span>{timeFormat(((Date.now() / 1000) - localStorage.getItem('signOn')))}</span>
+                                    </div>
+                                }
+                                {gateways.current &&
+                                    <div>
+                                        <span style={{'color': '#34c939'}}>Connected Gateways: </span><span>{gateways.current.join(', ')}</span>
                                     </div>
                                 }
                                 <div>

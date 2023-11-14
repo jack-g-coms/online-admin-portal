@@ -23,7 +23,9 @@ server.listen(5000, () => {
 });
 
 process.Server = app;
-process.IO = io;
+
+process.io = io;
+require('./SocketRouter');
 
 fs.readdir('./server/API', (err, files) => {
     const jsFile = files.filter(f => f.split('.').pop() === 'js');

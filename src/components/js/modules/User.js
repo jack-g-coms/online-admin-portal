@@ -1,9 +1,5 @@
 import { baseUrl } from "../../../shared";
-
-export const getUsers = async () => {
-    const response = await fetch(baseUrl + 'api/users', {method: 'GET', credentials: 'include'});
-    return response.json();
-};
+import { socket } from './Socket';
 
 export const login = async (identifier, password) => {
     const response = await fetch(baseUrl + 'api/users/login', {method: 'POST', headers: {'Content-Type': 'application/json'}, credentials: 'include', body: JSON.stringify({identifier, password})});
@@ -21,21 +17,41 @@ export const signup = async (email, username, password) => {
 };
 
 export const search = async (query) => {
-    const response = await fetch(baseUrl + 'api/users/search?query=' + query, {method: 'GET', credentials: 'include'});
-    return response.json();
+    return new Promise((resolve, reject) => {
+        socket.emit('searchUsers', query, (res) => {
+            resolve(res);
+        });
+    });
+};
+
+export const getUsers = async () => {
+    return new Promise((resolve, reject) => {
+        socket.emit('getAllUsers', (res) => {
+            resolve(res);
+        });
+    });
 };
 
 export const refresh = async () => {
-    const response = await fetch(baseUrl + 'api/users/me', {method: 'GET', credentials: 'include'});
-    return response.json();
+    return new Promise((resolve, reject) => {
+        socket.emit('getMe', (res) => {
+            resolve(res);
+        });
+    });
 };
 
 export const update = async (id, payload, changes) => {
-    const response = await fetch(baseUrl + 'api/users/update', {method: 'POST', headers: {'Content-Type': 'application/json'}, credentials: 'include', body: JSON.stringify({id, payload, changes})});
-    return response.json();  
+    return new Promise((resolve, reject) => {
+        socket.emit('updateUser', {id, payload, changes}, (res) => {
+            resolve(res);
+        });
+    }); 
 };
 
 export const deleteUser = async (id) => {
-    const response = await fetch(baseUrl + 'api/users/delete', {method: 'POST', headers: {'Content-Type': 'application/json'}, credentials: 'include', body: JSON.stringify({id})});
-    return response.json();  
-}
+    return new Promise((resolve, reject) => {
+        socket.emit('deleteUser', id, (res) => {
+            resolve(res);
+        });
+    });  
+};

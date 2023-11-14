@@ -1,39 +1,65 @@
-import { baseUrl } from "../../../shared";
+import { socket } from './Socket';
 
 export const getBans = async () => {
-    const response = await fetch(baseUrl + 'api/roblox/bans', {method: 'GET', credentials: 'include'});
-    return response.json();
+    return new Promise((resolve, reject) => {
+        socket.emit('getAllRobloxBans', (res) => {
+            resolve(res);
+        });
+    });
 };
 
 export const searchBan = async (rbxID) => {
-    const response = await fetch(baseUrl + 'api/roblox/bans/search?query=' + rbxID, {method: 'GET', credentials: 'include'});
-    return response.json();
+    return new Promise((resolve, reject) => {
+        socket.emit('searchRobloxBan', rbxID, (res) => {
+            resolve(res);
+        });
+    });
 };
 
 export const newBan = async (rbxID, moderator, evidence, reason, banType) => {
-    const response = await fetch(baseUrl + 'api/roblox/bans/create', {method: 'POST', credentials: 'include', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({rbxID, moderator, evidence, reason, banType})});
-    return response.json();
+    return new Promise((resolve, reject) => {
+        socket.emit('createRobloxBan', {rbxID, moderator, evidence, reason, banType}, (res) => {
+            resolve(res);
+        });
+    });
 };
 
 export const updateBan = async (rbxID, moderator, evidence, reason) => {
-    const response = await fetch(baseUrl + 'api/roblox/bans/update', {method: 'POST', credentials: 'include', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({rbxID, moderator, evidence, reason})});
+    return new Promise((resolve, reject) => {
+        socket.emit('updateRobloxBan', {rbxID, moderator, evidence, reason}, (res) => {
+            resolve(res);
+        });
+    });
 };
 
 export const getWarnings = async () => {
-    const response = await fetch(baseUrl + 'api/roblox/warnings', {method: 'GET', credentials: 'include'});
-    return response.json();
+    return new Promise((resolve, reject) => {
+        socket.emit('getAllRobloxWarnings', (res) => {
+            resolve(res);
+        });
+    });
 };
 
 export const searchWarning = async (warnID) => {
-    const response = await fetch(baseUrl + 'api/roblox/warnings/search?query=' + warnID, {method: 'GET', credentials: 'include'});
-    return response.json();
+    return new Promise((resolve, reject) => {
+        socket.emit('searchRobloxWarning', warnID, (res) => {
+            resolve(res);
+        });
+    });
 };
 
 export const newWarning = async (rbxID, moderator, evidence, reason) => {
-    const response = await fetch(baseUrl + 'api/roblox/warnings/create', {method: 'POST', credentials: 'include', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({rbxID, moderator, evidence, reason})});
-    return response.json();
+    return new Promise((resolve, reject) => {
+        socket.emit('createRobloxWarning', {rbxID, moderator, evidence, reason}, (res) => {
+            resolve(res);
+        });
+    });
 };
 
 export const updateWarning = async (warnID, moderator, evidence, reason, acknowledged) => {
-    const response = await fetch(baseUrl + 'api/roblox/warnings/update', {method: 'POST', credentials: 'include', headers: {'Content-Type': 'application/json'}, body: JSON.stringify({warnID, moderator, evidence, reason, acknowledged})});
+    return new Promise((resolve, reject) => {
+        socket.emit('updateRobloxWarning', {warnID, moderator, evidence, reason, acknowledged}, (res) => {
+            resolve(res);
+        });
+    });
 };

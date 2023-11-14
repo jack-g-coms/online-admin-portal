@@ -45,7 +45,7 @@ h2 {
 }
 
 @keyframes fadeIn {
-  0% { transform: translateY(50%); opacity: 0; }
+  0% { transform: translateY(100px); opacity: 0; }
   100% { transform: 0; opacity: 1; }
 }
 
@@ -55,6 +55,6 @@ h2 {
 }
 
 @keyframes fadeUp {
-  0% { transform: translateY(-50%); opacity: 0; }
+  0% { transform: translateY(-100px); opacity: 0; }
   100% { transform: 0; opacity: 1; }
 }
