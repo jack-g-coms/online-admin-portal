@@ -82,6 +82,7 @@
     display: flex;
     flex-direction: row;
     align-items: center;
+    transition: all 0.2s ease-in-out;
     justify-content: center;
     margin: 0;
     gap: 10px;
@@ -89,5 +90,6 @@
     font-size: 20px;
     list-style: none;
 } .manage-roblox-bans-table-bottom ul li {
+    transition: all 0.2s ease-in-out;
     cursor: pointer;
 }

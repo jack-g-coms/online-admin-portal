@@ -31,12 +31,12 @@ function ManageBansRow({ban}) {
 
                 <div className='row-grouping'>
                     <span style={{'color': '#f0be48'}}>Reason</span>
-                    <TextArea style={{'resize': 'none', 'width': '80%'}} disabled={true} children={ban.reason}/>
+                    <TextArea style={{'resize': 'none', 'width': '75%'}} disabled={true} children={ban.reason}/>
                 </div>
 
                 <div className='row-grouping'>
                     <span style={{'color': '#f0be48'}}>Evidence</span>
-                    <TextArea style={{'resize': 'none', 'width': '80%'}} disabled={true} children={ban.evidence.join(', ')}/>
+                    <TextArea style={{'resize': 'none', 'width': '75%'}} disabled={true} children={ban.evidence.join(', ')}/>
                 </div>
             </div>
         </>
