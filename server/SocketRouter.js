@@ -21,6 +21,13 @@ io.on('connection', (socket) => {
     socket.on('getConnectedGateways', (callback) => {
         callback(socket.Gateways);
     });
+
+    // Ensure that emitted events are finding a listener or fail
+    socket.onAny((eventName, ...args) => {
+        if (Object.keys(socket._events).indexOf(eventName) == -1) {
+            args[args.length - 1]({message: 'No Event Handler'});
+        };
+    });
 });
 
 fs.readdir('./server/SocketGateways', (err, files) => {

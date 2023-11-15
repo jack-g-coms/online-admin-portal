@@ -5,6 +5,28 @@ const PermissionsService = require('../Services/PermissionsService');
 const RobloxService = require('../Services/RobloxService');
 const Server = process.Server;
 
+// GET
+Server.get('/api/users/me', ProtectionService.privilegedCall, async (req, res) => {
+    return res.json({message: 'Success', data: req.User});
+});
+
+Server.get('/api/users/search', async (req, res) => {
+    const { query } = req.query;
+    if (!query) return callback({message: 'Error'});
+    
+    UsersService.searchUserAsync(query)
+        .then(user => {
+            if (user) {
+                res.json({message: 'Success', data: user});
+            } else {
+                res.json({message: 'Not Found'});
+            }
+        }).catch((err) => {
+            console.log(err);
+            res.json({message: 'Error'});
+        }); 
+});
+
 // POST
 Server.post('/api/users/login', async (req, res) => {
     const { identifier, password } = req.body;

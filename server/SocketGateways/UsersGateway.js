@@ -9,11 +9,6 @@ module.exports.gatewayInfo = {
 }
 
 module.exports.newSocket = (socket) => {
-    // ALL GENERAL PERMITTED SOCKET ENDPOINTS
-    socket.on('getMe', (callback) => {
-        callback({message: 'Success', data: socket.User});
-    });
-
     // PRIVILEGED
     if (socket.User.permissions.Flags.MANAGE_USERS) {
         socket.on('getAllUsers', (callback) => {

@@ -6,8 +6,10 @@ export const timeFormat = (seconds) => {
     return `${hours}h ${min}min`
 };
 
-export const convertToLocal = (epoch) => {
+export const convertToLocal = (epoch, detailed) => {
     var d = new Date(0);
     d.setUTCSeconds(epoch);
-    return d.toLocaleDateString();
+
+    if (!detailed) return d.toLocaleDateString();
+    return d.toLocaleDateString() + " at " + d.toLocaleTimeString();
 };

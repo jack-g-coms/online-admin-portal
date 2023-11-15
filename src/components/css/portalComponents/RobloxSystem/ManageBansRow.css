@@ -1,0 +1,28 @@
+.manage-roblox-bans-container-row {
+    display: flex;
+    width: 100%;
+    box-sizing: border-box;
+    padding: 10px 15px 10px 15px;
+    flex-direction: row;
+    gap: 10px;
+    border-bottom: 1px solid #706f6f;
+} .manage-roblox-bans-container-row:last-of-type {
+    border-bottom: none;
+}
+
+.row-grouping {
+    min-width: 25%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: left;
+    flex-direction: column;
+    gap: 5px;
+    border-right: 1px solid #706f6f;
+}
+
+.manage-roblox-bans-container-row:nth-of-type(even) {
+    background-color: #222222;
+} .manage-roblox-bans-container-row:nth-of-type(even) textarea {
+    background-color: #303030;
+}

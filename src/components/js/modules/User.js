@@ -17,11 +17,8 @@ export const signup = async (email, username, password) => {
 };
 
 export const search = async (query) => {
-    return new Promise((resolve, reject) => {
-        socket.emit('searchUsers', query, (res) => {
-            resolve(res);
-        });
-    });
+    const response = await fetch(baseUrl + 'api/users/search?query=' + query, {method: 'GET', credentials: 'include'});
+    return response.json();
 };
 
 export const getUsers = async () => {
@@ -33,11 +30,8 @@ export const getUsers = async () => {
 };
 
 export const refresh = async () => {
-    return new Promise((resolve, reject) => {
-        socket.emit('getMe', (res) => {
-            resolve(res);
-        });
-    });
+    const response = await fetch(baseUrl + 'api/users/me', {method: 'GET', credentials: 'include'});
+    return response.json();
 };
 
 export const update = async (id, payload, changes) => {

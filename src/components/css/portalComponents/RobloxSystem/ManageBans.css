@@ -49,29 +49,45 @@
     flex-direction: column;
     align-items: center;
     overflow: hidden;
-    gap: 5px;
     background-color: #303030;
-    border: 1px solid #706f6f;
+    border-left: 1px solid #706f6f;
+    border-right: 1px solid #706f6f;
     width: 100%;
     font-size: 20px;
     border-top: none;
-    border-bottom-left-radius: 5px;
-    overflow: auto;
-    border-bottom-right-radius: 5px;
-}
-
-.manage-roblox-bans-container-row {
-    display: flex;
-    width: 100%;
-    box-sizing: border-box;
-    padding: 10px 15px 10px 15px;
-    flex-direction: row;
-    border-bottom: 1px solid #706f6f;
 }
 
 .manage-roblox-bans-table-container {
     width: 100%;
-    height: 69vh;
     overflow: auto;
     overflow-x: hidden;
+    height: 61.8vh;
+}
+
+.manage-roblox-bans-table-bottom {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    justify-content: center;
+    background-color: #222222;
+    border: 1px solid #706f6f;
+    width: 100%;
+    align-items: center;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    color: #fff;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+} .manage-roblox-bans-table-bottom ul {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    gap: 10px;
+    padding: 0;
+    font-size: 20px;
+    list-style: none;
+} .manage-roblox-bans-table-bottom ul li {
+    cursor: pointer;
 }
