@@ -15,9 +15,25 @@ const getUser = async (id) => {
     });
 };
 
+const getUserByID = async (id) => {
+    return new Promise((resolve, reject) => {
+        axios.get('https://users.roblox.com/v1/users/' + id)
+            .then((response) => {
+                if (response.data.description) {
+                    resolve(response.data);
+                } else {
+                    resolve();
+                }
+            }).catch(err => {
+                resolve();
+            });
+    });
+};
+
 const getAvatarHeadshot = (rbx_id) => {
     return axios.get(`https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds=${rbx_id}&size=150x150&format=Png&isCircular=false`);
 };
 
 module.exports.getAvatarHeadshot = getAvatarHeadshot;
 module.exports.getUser = getUser;
+module.exports.getUserByID = getUserByID;

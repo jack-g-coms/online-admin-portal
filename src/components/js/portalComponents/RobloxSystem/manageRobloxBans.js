@@ -7,6 +7,7 @@ import Button from '../../Button';
 import TextBox from '../../TextBox';
 import Loader from '../../Loader';
 import ManageBansRow from './manageRobloxBansRow';
+import CreateRobloxBanPopup from '../../popups/CreateRobloxBan';
 
 import AuthContext from '../../modules/AuthContext';
 import { getBans, searchBan, newBan } from '../../modules/RobloxModerations';
@@ -15,8 +16,9 @@ function ManageRobloxBans() {
     const authContext = useContext(AuthContext);
 
     const [state, setState] = useState('loading');
-    const bans = useRef();
+    const [popupState, setPopupState] = useState('closed');
 
+    const bans = useRef();
     const [pagination, setPagination] = useState({
         data: [],
         offset: 0,
@@ -66,6 +68,10 @@ function ManageRobloxBans() {
                 {state == 'loading' &&
                     <Loader style={{'margin': 'auto'}}/>
                 }
+
+                {popupState == 'opened' && 
+                    <CreateRobloxBanPopup setState={setPopupState}/>
+                }
                 
                 {state == 'available' && bans.current &&
                     <>
@@ -76,7 +82,7 @@ function ManageRobloxBans() {
 
                             <div className='manage-roblox-bans-table'>
                                 <div style={{'alignItems': 'center', 'justifyContent': 'center'}} className='manage-roblox-bans-container-row'>
-                                    <Button animation='raise' scheme='btn-confirm'>Create Ban</Button>
+                                    <Button animation='raise' onClick={(e) => {setPopupState('opened');}} scheme='btn-confirm'>Create Ban</Button>
                                 </div>
                             </div>
                         </div>
@@ -91,8 +97,8 @@ function ManageRobloxBans() {
                             </div>
 
                             <div className='manage-roblox-bans-table manage-roblox-bans-table-container'>
-                                {pagination.currentData && pagination.currentData.map((ban, i) => {
-                                    return <ManageBansRow ban={ban}/>;
+                                {pagination.currentData && pagination.currentData.map((listedBan, i) => {
+                                    return <ManageBansRow ban={listedBan}/>;
                                 })}
                             </div>
 

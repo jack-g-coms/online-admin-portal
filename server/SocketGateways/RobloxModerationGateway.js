@@ -1,6 +1,7 @@
 // CONSTANTS
 const PermissionsService = require('../Services/PermissionsService');
 const RobloxModerationService = require('../Services/RobloxModerationService');
+const RobloxService = require('../Services/RobloxService');
 
 // GATEWAY
 module.exports.gatewayInfo = {
@@ -9,7 +10,6 @@ module.exports.gatewayInfo = {
         return user.permissions.Flags.VIEW_ROBLOX_BANS && user.permissions.Flags.VIEW_ROBLOX_WARNINGS;
     }
 }
-
 module.exports.newSocket = (socket) => {
     // ALL GENERAL PERMITTED SOCKET ENDPOINTS
     socket.on('getAllRobloxBans', (callback) => {
@@ -80,9 +80,13 @@ module.exports.newSocket = (socket) => {
         
             const outstanding_ban = await RobloxModerationService.searchBanAsync(rbxID);
             if (outstanding_ban) return callback({message: 'Ban Exists', data: outstanding_ban});
+
+            const rbxInfo = await RobloxService.getUserByID(rbxID);
+            if (!rbxInfo) return callback({message: 'No Roblox User'});
         
             RobloxModerationService.newBanAsync(rbxID, moderator, evidence, reason, banType)
                 .then(ban => {
+                    ban.username = rbxInfo.name;
                     callback({message: 'Success', data: ban});
                 }).catch((err) => {
                     console.log(err);

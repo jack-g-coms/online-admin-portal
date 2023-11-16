@@ -12,7 +12,7 @@ import { convertToLocal } from '../../../../shared';
 function ManageBansRow({ban}) {
     const [editorState, setEditorState] = useState('hidden');
     const authContext = useContext(AuthContext);
-
+    console.log(ban);
     return (
         <>
             <div className='manage-roblox-bans-container-row'>

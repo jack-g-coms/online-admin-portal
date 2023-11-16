@@ -53,7 +53,7 @@ module.exports.getAllBans = async () => {
 module.exports.searchBanAsync = async (query) => {
     return new Promise((resolve, reject) => {
         Database.get(
-            `SELECT * FROM Bans WHERE rbxID = ? ORDER BY warnedOn DESC`,
+            `SELECT * FROM Bans WHERE rbxID = ?`,
             [query],
             (err, row) => {
                 if (!err) {
@@ -79,7 +79,7 @@ module.exports.newBanAsync = async (rbxID, moderator, evidence, reason, banType)
             [rbxID, moderator, JSON.stringify(evidence || []), reason, JSON.stringify(banType), bannedOn],
             (err) => {
                 if (!err) {
-                    resolve(new Ban({rbxID, moderator, evidence, reason, banType, bannedOn}));
+                    resolve(new Ban({rbxID, moderator, evidence: JSON.stringify(evidence), reason, banType: JSON.stringify(banType), bannedOn}));
                 } else {
                     reject(err);
                 }

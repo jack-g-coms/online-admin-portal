@@ -45,7 +45,7 @@ function Portal() {
                                     <span style={{'color': '#f0be48'}}>{authContext.user.permissions.Name}</span>
                                 </div>
 
-                                {viewProfileState == 'closed' ? <i style={{'marginLeft': '15px'}} class="fa-solid fa-angle-up"></i> : <i style={{'marginLeft': '15px'}} class="fa-solid fa-angle-down"></i>}
+                                {viewProfileState == 'closed' ? <i style={{'marginLeft': 'auto', 'marginRight': '5px'}} class="fa-solid fa-angle-up"></i> : <i style={{'marginLeft': 'auto', 'marginRight': '5px'}} class="fa-solid fa-angle-down"></i>}
                             </div>
 
                             <div className={viewProfileState == 'closed' ? 'sidebar-profile-view-dropdown-hidden' : 'sidebar-profile-view-dropdown'}>
