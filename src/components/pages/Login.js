@@ -58,17 +58,17 @@ function Login() {
             <div className='login-container'>
                 <h2>Login to Rome Admin Portal</h2>
 
-                <div className={viewState == 'username' ? 'login-fields-username' : 'login-fields-username-hidden'}>
+                <form onSubmit={(e) => {e.preventDefault(); setState('loading'); moveToPassword();}} className={viewState == 'username' ? 'login-fields-username' : 'login-fields-username-hidden'}>
                     <div id='login-identity-field'>
                         <span><i style={{'marginRight': '3px'}} class='fa-solid fa-user'/> Enter Account Identifier</span>
                         <TextBox style={{'width': '100%', 'text-align': 'center'}} placeholder='Input Username or Email' setState={setIdentity}>{identity}</TextBox>
                     </div>
-                    <Button animation='raise' style={{'width': '100%'}} onClick={(e) => {setState('loading'); moveToPassword();}} scheme='btn-confirm'>{state == 'available' && <>Continue <i class='fa-solid fa-arrow-right'/></> || state == 'loading' && <i className='fa-solid fa-spinner loader'/>}</Button>
+                    <Button animation='raise' type='submit' style={{'width': '100%'}} scheme='btn-confirm'>{state == 'available' && <>Continue <i class='fa-solid fa-arrow-right'/></> || state == 'loading' && <i className='fa-solid fa-spinner loader'/>}</Button>
                     <Button animation='color pop-out' style={{'width': '100%'}} onClick={(e) => {window.location = './signup'}} scheme='btn-clear'>Need a portal account? Signup <i class='fa-solid fa-arrow-right'/></Button>
-                </div>
+                </form>
 
                 {user &&
-                    <div className={viewState == 'password' ? 'login-fields-password' : 'login-fields-password-hidden'}>
+                    <form onSubmit={(e) => {e.preventDefault(); setState('loading'); triggerLogin();}} className={viewState == 'password' ? 'login-fields-password' : 'login-fields-password-hidden'}>
                         <div className='login-fields-password-info'>
                             <h>Welcome back {user.rbxUser.username}!</h>
                             <h style={{'color': '#f0be48', 'font-weight': '800'}}>{user.permissions.Name}</h>
@@ -82,10 +82,10 @@ function Login() {
                         </div>
 
                         <div id='password-identity-btns'>
-                            <Button animation='raise' onClick={(e) => {setState('loading'); triggerLogin();}} scheme='btn-confirm'>{state == 'available' && <>Login <i class='fa-solid fa-arrow-right'/></> || state == 'loading' && <i className='fa-solid fa-spinner loader'/>}</Button>
+                            <Button animation='raise' type='submit' scheme='btn-confirm'>{state == 'available' && <>Login <i class='fa-solid fa-arrow-right'/></> || state == 'loading' && <i className='fa-solid fa-spinner loader'/>}</Button>
                             <Button animation='raise' onClick={(e) => {setViewState('username');}} scheme='btn-cancel'>Back <i class='fa-solid fa-arrow-right'/></Button>
                         </div>
-                    </div>
+                    </form>
                 }
             </div>
         </>

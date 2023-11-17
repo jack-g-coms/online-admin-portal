@@ -3,7 +3,7 @@ import '../css/Button.css';
 
 import { Link } from 'react-router-dom';
 
-function Button({children, animation, style, size, scheme, path, onClick}) {
+function Button({children, animation, style, size, scheme, path, type, onClick}) {
     return (
         <>
             {path ? 
@@ -11,7 +11,7 @@ function Button({children, animation, style, size, scheme, path, onClick}) {
                     <button style={style} type='button' onClick={onClick} className={`btn ${size || 'btn-medium'} ${scheme || 'btn-primary'} ${animation || 'none-animation'}`}>{children || 'Button'}</button>
                 </Link>
             :
-                <button style={style} type='button' onClick={onClick} className={`btn ${size || 'btn-medium'} ${scheme || 'btn-primary'} ${animation || 'none-animation'}`}>{children || 'Button'}</button>
+                <button style={style} type={type || 'button'} onClick={onClick} className={`btn ${size || 'btn-medium'} ${scheme || 'btn-primary'} ${animation || 'none-animation'}`}>{children || 'Button'}</button>
             }
         </>
     );

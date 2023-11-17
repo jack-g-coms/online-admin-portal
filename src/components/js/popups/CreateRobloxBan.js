@@ -75,7 +75,7 @@ function CreateRobloxBanPopup({setState}) {
                         <span><i style={{'marginRight': '4px'}} className='fa-solid fa-circle-exclamation'/> Please review your inputs carefully before you save</span>
                     </div>
 
-                    <div className='create-roblox-ban-popup-content'>
+                    <form onSubmit={(e) => {e.preventDefault(); if (!rbxID || !modID || !evidence || !reason || !banDuration || popupState == 'loading') return; finalize();}} className='create-roblox-ban-popup-content'>
                         <div className='create-roblox-ban-popup-grouping'>
                             <span>Roblox ID</span>
                             <TextBox setState={setRbxID} placeholder={'Input a Valid Roblox ID'}/>
@@ -102,12 +102,12 @@ function CreateRobloxBanPopup({setState}) {
                         </div>
 
                         <div className='create-roblox-ban-buttons'>
-                            <Button animation='raise' scheme='btn-cancel' onClick={(e) => {if (!rbxID || !modID || !evidence || !reason || !banDuration || popupState == 'loading') return; finalize();}}>{popupState == 'available' && <><i class="fa-solid fa-gavel"></i> Issue Ban</> || (popupState == 'loading' && <i className='fa-solid fa-spinner loader'/>)}</Button>
+                            <Button animation='raise' scheme='btn-cancel' type='submit'>{popupState == 'available' && <><i class="fa-solid fa-gavel"></i> Issue Ban</> || (popupState == 'loading' && <i className='fa-solid fa-spinner loader'/>)}</Button>
                             {popupState != 'loading' &&
                                 <Button animation='raise' scheme='btn-confirm' onClick={(e) => {setState('closed')}}><i class="fa-solid fa-ban"></i> Cancel</Button>
                             }
                         </div>
-                    </div>
+                    </form>
                 </div>
             </div>
         </>

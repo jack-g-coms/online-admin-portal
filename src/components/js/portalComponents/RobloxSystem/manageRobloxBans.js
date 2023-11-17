@@ -17,6 +17,7 @@ function ManageRobloxBans() {
 
     const [state, setState] = useState('loading');
     const [popupState, setPopupState] = useState('closed');
+    const [filter, setFilter] = useState('');
 
     const bans = useRef();
     const [pagination, setPagination] = useState({
@@ -31,7 +32,22 @@ function ManageRobloxBans() {
     const handlePageClick = event => {
         const selected = event.selected;
         const offset = selected * pagination.numberPerPage;
-        setPagination({...pagination, offset, pageNum: event.selected});
+
+        setPagination({...pagination, offset, pageNum: selected});
+    };
+
+    const applyFilter = () => {
+        const bansFilter = ban => ban.rbxID.toString().includes(filter) || ban.moderator.toString().includes(filter) || ban.banType.Type.toLowerCase() == filter.toLowerCase();
+        const results = bans.current.filter(bansFilter);
+        
+        setPagination((prevState) => ({
+            data: results,
+            pageCount: Math.ceil(results.length / pagination.numberPerPage),
+            currentData: results.slice(pagination.offset, pagination.offset + pagination.numberPerPage),
+            pageNum: 0,
+            offset: 0,
+            numberPerPage: 50
+        }));
     };
 
     useEffect(() => {
@@ -82,7 +98,9 @@ function ManageRobloxBans() {
 
                             <div className='manage-roblox-bans-table'>
                                 <div style={{'alignItems': 'center', 'justifyContent': 'center'}} className='manage-roblox-bans-container-row'>
-                                    <Button animation='raise' onClick={(e) => {setPopupState('opened');}} scheme='btn-confirm'>Create Ban</Button>
+                                    {authContext.user.permissions.Flags.CREATE_ROBLOX_BANS &&
+                                        <Button animation='raise' onClick={(e) => {setPopupState('opened');}} scheme='btn-confirm'>Create Ban</Button>
+                                    }
                                 </div>
                             </div>
                         </div>
@@ -93,7 +111,9 @@ function ManageRobloxBans() {
                             </div>
 
                             <div className='manage-roblox-bans-container-header-notice'>
-                                <span><i style={{'marginRight': '4px'}} className='fa-solid fa-circle-exclamation'/> All bans are pulled from a live API: <strong>request spamming is prohibited</strong></span>
+                                <TextBox onKeyUp={(e) => {
+                                    if (e.key == 'Enter' || e.keyCode == 13) applyFilter();
+                                }} setState={setFilter} className='filter-textbox' placeholder={'Filter Bans (enter any key or relevant information about the ban)'}/>
                             </div>
 
                             <div className='manage-roblox-bans-table manage-roblox-bans-table-container'>
@@ -113,7 +133,7 @@ function ManageRobloxBans() {
                                     pageRangeDisplayed={5}
                                     onPageChange={handlePageClick}
                                 />
-                                <span>Page {pagination.pageNum + 1} out of {pagination.pageCount}</span>
+                                <span>Page <TextBox className='pag-textbox' setState={page => {if (!isNaN(page)) {handlePageClick({selected: Number(page) - 1})}}} style={{'backgroundColor': '#303030', 'width': '50px', 'height': '20px', 'textAlign': 'center'}} children={pagination.pageNum + 1}/> out of {pagination.pageCount}</span>
                             </div>
                         </div>
                     </>

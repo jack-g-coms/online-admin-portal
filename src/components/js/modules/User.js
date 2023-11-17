@@ -44,7 +44,7 @@ export const update = async (id, payload, changes) => {
 
 export const deleteUser = async (id) => {
     return new Promise((resolve, reject) => {
-        socket.emit('deleteUser', id, (res) => {
+        socket.emit('deleteUser', {id}, (res) => {
             resolve(res);
         });
     });  

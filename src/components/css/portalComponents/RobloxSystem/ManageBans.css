@@ -61,7 +61,7 @@
     width: 100%;
     overflow: auto;
     overflow-x: hidden;
-    height: 61.8vh;
+    height: 59.5vh;
 }
 
 .manage-roblox-bans-table-bottom {
@@ -92,4 +92,11 @@
 } .manage-roblox-bans-table-bottom ul li {
     transition: all 0.2s ease-in-out;
     cursor: pointer;
+}
+
+.filter-textbox {
+    background-color: #303030;
+    width: 99%;
+    border: 1px solid #706f6f;
+    text-align: center;
 }
