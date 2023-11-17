@@ -105,7 +105,7 @@ function PortalUser({user}) {
                                         changed.current.email = {new: newState, old: user.email};
                                         editedUser.current.email = newState;
                                         setState('changedEmail');
-                                    }} children={editedUser.current.email} disabled={!canEdit}/>
+                                    }} defaultValue={editedUser.current.email} disabled={!canEdit}/>
                                 </div>
 
                                 <div className='manage-users-table-row-edit-grouping'>
@@ -114,7 +114,7 @@ function PortalUser({user}) {
                                         changed.current.username = {new: newState, old: user.rbxUser.username};
                                         editedUser.current.rbxUser.username = newState;
                                         setState('changedUsername');
-                                    }} children={editedUser.current.rbxUser.username} disabled={!canEdit}/>
+                                    }} defaultValue={editedUser.current.rbxUser.username} disabled={!canEdit}/>
                                 </div>
 
                                 <div className='manage-users-table-row-edit-grouping'>
@@ -123,7 +123,7 @@ function PortalUser({user}) {
                                         changed.current.permissions = {new: newState, old: user.permissions.Name};
                                         editedUser.current.permissions.Name = newState;
                                         setState('changedPermissions');
-                                    }} children={editedUser.current.permissions.Name} disabled={!canEdit}/>
+                                    }} defaultValue={editedUser.current.permissions.Name} disabled={!canEdit}/>
                                 </div>
 
                                 <div className='manage-users-table-row-edit-grouping'>
