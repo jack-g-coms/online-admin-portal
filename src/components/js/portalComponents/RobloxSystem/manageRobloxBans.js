@@ -37,7 +37,7 @@ function ManageRobloxBans() {
     };
 
     const applyFilter = () => {
-        const bansFilter = ban => ban.rbxID.toString().includes(filter) || ban.moderator.toString().includes(filter) || ban.banType.Type.toLowerCase() == filter.toLowerCase() || ban.reason.toLowerCase().includes(filter);
+        const bansFilter = ban => ban.rbxID.toString().includes(filter) || ban.moderator.toString().includes(filter) || ban.banType.Type.toLowerCase() == filter.toLowerCase() || ban.reason.toLowerCase().includes(filter.toLowerCase());
         const results = bans.current.filter(bansFilter);
         
         setPagination((prevState) => ({
