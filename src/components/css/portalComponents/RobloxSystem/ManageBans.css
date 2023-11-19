@@ -61,7 +61,8 @@
     width: 100%;
     overflow: auto;
     overflow-x: hidden;
-    height: 59.5vh;
+    height: fit-content;
+    max-height: 59.5vh;
 }
 
 .manage-roblox-bans-table-bottom {

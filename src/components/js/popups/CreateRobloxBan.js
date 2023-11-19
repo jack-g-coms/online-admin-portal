@@ -33,7 +33,7 @@ function CreateRobloxBanPopup({setState}) {
             } else {
                 final_banType.Type = banDuration + ' Days';
             }
-            final_banType.Time = Number(banDuration) * 86400
+            final_banType.Time = Number(banDuration) * 86400;
         } else {
             Swal.fire({title: 'Error', icon: 'error', text: 'Unable to derive length of ban. Please follow the formatting specified.', showConfirmButton: true, confirmButtonText: 'Ok'});
         }

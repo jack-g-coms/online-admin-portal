@@ -97,17 +97,39 @@ module.exports.newSocket = (socket) => {
 
     if (socket.User.permissions.Flags.UPDATE_ROBLOX_BANS) {
         socket.on('updateRobloxBan', async (body, callback) => {
-            var { rbxID, moderator, evidence, reason } = body;
+            var { rbxID, moderator, evidence, reason, banType } = body;
             if (!rbxID || (!moderator && !evidence && !reason)) return callback({message: 'Error'});
         
             const outstanding_ban = await RobloxModerationService.searchBanAsync(rbxID);
             if (!outstanding_ban) return callback({message: 'Not Found'});
+
+            var bannedOn = outstanding_ban.bannedOn;
         
             if (!moderator) moderator = outstanding_ban.moderator;
             if (!evidence) evidence = outstanding_ban.evidence;
             if (!reason) reason = outstanding_ban.reason;
+            if (!banType) banType = outstanding_ban.banType;
+            if (banType.Type != outstanding_ban.banType.Type) bannedOn = Math.round(Date.now() / 1000);
         
-            RobloxModerationService.updateBanAsync(rbxID, moderator, evidence, reason)
+            RobloxModerationService.updateBanAsync(rbxID, moderator, evidence, reason, banType, bannedOn)
+                .then(() => {
+                    callback({message: 'Success'});
+                }).catch((err) => {
+                    console.log(err);
+                    callback({message: 'Error'});
+                });
+        });
+    }
+
+    if (socket.User.permissions.Flags.DELETE_ROBLOX_BANS) {
+        socket.on('deleteRobloxBan', async (body, callback) => {
+            const { rbxID } = body;
+            if (!rbxID) return callback({message: 'Error'});
+
+            const outstanding_ban = await RobloxModerationService.searchBanAsync(rbxID);
+            if (!outstanding_ban) return callback({message: 'Not Found'});
+
+            RobloxModerationService.deleteBanAsync(rbxID)
                 .then(() => {
                     callback({message: 'Success'});
                 }).catch((err) => {
@@ -146,6 +168,24 @@ module.exports.newSocket = (socket) => {
             if (!acknowledged) acknowledged = outstanding_warning.acknowledged;
         
             RobloxModerationService.updateWarningAsync(warnID, moderator, evidence, reason, acknowledged)
+                .then(() => {
+                    callback({message: 'Success'});
+                }).catch((err) => {
+                    console.log(err);
+                    callback({message: 'Error'});
+                });
+        });
+    }
+
+    if (socket.User.permissions.Flags.DELETE_ROBLOX_WARNINGS) {
+        socket.on('deleteRobloxWarning', async (body, callback) => {
+            const { warnID } = body;
+            if (!warnID) return callback({message: 'Error'});
+
+            const outstanding_warning = await RobloxModerationService.seachWarningAsync(warnID);
+            if (!outstanding_warning) return callback({message: 'Not Found'});
+
+            RobloxModerationService.deleteWarningAsync(warnID)
                 .then(() => {
                     callback({message: 'Success'});
                 }).catch((err) => {

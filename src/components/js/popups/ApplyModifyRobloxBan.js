@@ -1,32 +1,28 @@
 import React, { useState, useRef } from "react";
-import { update } from "../../js/modules/User";
 import Swal from "sweetalert2";
 
 import '../../css/Popup.css';
 import '../../css/popups/ApplyModify.css';
 
 import Button from "../Button";
+import { updateBan } from '../modules/RobloxModerations';
 
-function ApplyModifyUserPopup({setState, editedUser, changes}) {
+function ApplyModifyRobloxBanPopup({setState, editedBan, changes}) {
     const [popupState, setPopupState] = useState('available');
 
     const applyChanges = () => {
-        update(editedUser.id, editedUser, changes)
+        updateBan(editedBan.rbxID, editedBan.moderator, editedBan.evidence, editedBan.reason, editedBan.banType)
             .then(response => {
                 setState('closed');
-                if (response.message == 'No Roblox User') {
-                    Swal.fire({title: 'Error', icon: 'error', text: `No Roblox User under the username ${editedUser.rbxUser.username} was found. Ensure that you have the correct username, and that it is spelt correctly.`, confirmButtonText: 'Ok'});
-                } else if (response.message == 'No Permission Level') {
-                    Swal.fire({title: 'Error', icon: 'error', text: `No Permission Level under the name ${editedUser.permissions.Name} was found. Ensure that you have the correct permission name, and that it is spelt correctly.`, confirmButtonText: 'Ok'});
+                if (response.message == 'Not Found') {
+                    Swal.fire({title: 'Error', icon: 'error', text: `No Roblox Ban under the ID ${editedBan.rbxID} was found. This ban could've already been deleted.`, confirmButtonText: 'Ok'});
                 } else if (response.message == 'Success') {
-                    Swal.fire({title: 'Success', text: 'Portal user has been successfully updated per your specifications.', icon: 'success', confirmButtonText: 'Ok'})
+                    Swal.fire({title: 'Success', text: 'Ban has been successfully updated per your specifications.', icon: 'success', confirmButtonText: 'Ok'})
                         .then(() => {
                             window.location.reload();
                         });
-                } else if (response.message == 'Unauthorized') {
-                    Swal.fire({title: 'Error', icon: 'error', text: `You are not authorized to update this user with your specifications.`, confirmButtonText: 'Ok'});
                 } else {
-                    Swal.fire({title: 'Error', icon: 'error', text: `There was a problem while trying to update this user.`, confirmButtonText: 'Ok'});
+                    Swal.fire({title: 'Error', icon: 'error', text: `There was a problem while trying to update this ban.`, confirmButtonText: 'Ok'});
                 }
             }).catch(console.log);
     };
@@ -46,7 +42,6 @@ function ApplyModifyUserPopup({setState, editedUser, changes}) {
                     <div className='apply-modify-user-popup-content'>
                         <div className='apply-modify-table'>
                             {Object.keys(changes).map((key, index) => {
-                                console.log(changes)
                                 const change = changes[key];
                                 return (
                                     <>
@@ -69,4 +64,4 @@ function ApplyModifyUserPopup({setState, editedUser, changes}) {
     );
 };
 
-export default ApplyModifyUserPopup;
+export default ApplyModifyRobloxBanPopup;

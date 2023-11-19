@@ -24,9 +24,17 @@ export const newBan = async (rbxID, moderator, evidence, reason, banType) => {
     });
 };
 
-export const updateBan = async (rbxID, moderator, evidence, reason) => {
+export const updateBan = async (rbxID, moderator, evidence, reason, banType) => {
     return new Promise((resolve, reject) => {
-        socket.emit('updateRobloxBan', {rbxID, moderator, evidence, reason}, (res) => {
+        socket.emit('updateRobloxBan', {rbxID, moderator, evidence, reason, banType}, (res) => {
+            resolve(res);
+        });
+    });
+};
+
+export const deleteBan = async (rbxID) => {
+    return new Promise((resolve, reject) => {
+        socket.emit('deleteRobloxBan', {rbxID}, (res) => {
             resolve(res);
         });
     });
@@ -59,6 +67,14 @@ export const newWarning = async (rbxID, moderator, evidence, reason) => {
 export const updateWarning = async (warnID, moderator, evidence, reason, acknowledged) => {
     return new Promise((resolve, reject) => {
         socket.emit('updateRobloxWarning', {warnID, moderator, evidence, reason, acknowledged}, (res) => {
+            resolve(res);
+        });
+    });
+};
+
+export const deleteWarning = async (warnID) => {
+    return new Promise((resolve, reject) => {
+        socket.emit('deleteRobloxWarning', {warnID}, (res) => {
             resolve(res);
         });
     });

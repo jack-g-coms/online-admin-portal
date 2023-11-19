@@ -5,6 +5,7 @@
     background-color: #303030;
     border: 1px solid #706f6f;
     border-radius: 5px;
+    font-size: 17px;
     animation: fadeIn 0.2s;
 } .apply-modify-user-popup-container h2 {
     background-color: #222222;
@@ -53,10 +54,13 @@
     line-height: 1.75;
     width: 100%;
     padding-left: 3px;
+    word-break: break-all;
     padding-right: 3px;
-    text-wrap: nowrap;
     border-radius: 5px;
     border: 1px solid #706f6f;
+} .apply-modify-table p {
+    box-sizing: border-box;
+    width: 100%;
 }
 
 .apply-modify-buttons {

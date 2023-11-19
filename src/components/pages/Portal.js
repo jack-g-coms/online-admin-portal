@@ -14,16 +14,24 @@ import ManageRobloxBans from '../js/portalComponents/RobloxSystem/manageRobloxBa
 
 function Portal() {
     const [viewProfileState, setProfileViewState] = useState('closed');
-    const [portalComponentState, setPortalComponentState] = useState();
 
     const authContext = useContext(AuthContext);
     const gateways = useRef();
+
+    const params = new URLSearchParams(window.location.search);
+    const [portalComponentState, setPortalComponentState] = useState(params.get('view'));
     
     useEffect(() => {
         socket.emit('getConnectedGateways', (res) => {
             gateways.current = res;
         });
     }, []);
+
+    useEffect(() => {
+        if (!portalComponentState) return;
+        const newURl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?view=' + portalComponentState;
+        window.history.pushState({path: newURl}, '', newURl);
+    }, [portalComponentState]);
 
     return (
         <>

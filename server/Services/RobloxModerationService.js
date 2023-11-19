@@ -88,11 +88,11 @@ module.exports.newBanAsync = async (rbxID, moderator, evidence, reason, banType)
     });
 };
 
-module.exports.updateBanAsync = async (rbxID, moderator, evidence, reason) => {
+module.exports.updateBanAsync = async (rbxID, moderator, evidence, reason, banType, bannedOn) => {
     return new Promise((resolve, reject) => {
         Database.run(
-            'UPDATE Bans SET moderator = ?, evidence = ?, reason = ? WHERE rbxID = ?',
-            [moderator, JSON.stringify(evidence || []), reason, rbxID],
+            'UPDATE Bans SET moderator = ?, evidence = ?, reason = ?, banType = ?, bannedOn = ? WHERE rbxID = ?',
+            [moderator, JSON.stringify(evidence || []), reason, JSON.stringify(banType || {}), bannedOn, rbxID],
             (err) => {
                 if (!err) {
                     resolve();

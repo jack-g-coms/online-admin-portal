@@ -13,3 +13,10 @@ export const convertToLocal = (epoch, detailed) => {
     if (!detailed) return d.toLocaleDateString();
     return d.toLocaleDateString() + " at " + d.toLocaleTimeString();
 };
+
+export const filterString = (string, filterArray, replaceWith)  => {
+    for (var i = 0; i < filterArray.length; i++) {
+        string = string.replace(filterArray[i], replaceWith);
+    }
+    return string;
+}; 
