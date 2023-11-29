@@ -53,7 +53,7 @@ Server.get('/api/roblox/warnings/search', ProtectionService.privilegedCall, Prot
     const { query } = req.query;
     if (!query) return res.json({message: 'Error'});
 
-    RobloxModerationService.seachWarningAsync(query)
+    RobloxModerationService.searchWarningAsync(query)
         .then(warning => {
             if (warning) {
                 res.json({message: 'Success', data: warning});
@@ -120,7 +120,7 @@ Server.post('/api/roblox/warnings/update', ProtectionService.privilegedCall, Pro
     var { warnID, moderator, evidence, reason, acknowledged } = req.body;
     if (!warnID || (!moderator && !evidence && !reason && !acknowledged)) return res.json({message: 'Error'});
 
-    const outstanding_warning = await RobloxModerationService.seachWarningAsync(warnID);
+    const outstanding_warning = await RobloxModerationService.searchWarningAsync(warnID);
     if (!outstanding_warning) return res.json({message: 'Not Found'});
 
     if (!moderator) moderator = outstanding_warning.moderator;

@@ -49,7 +49,7 @@ const User = class {
 module.exports.getAllUsers = async () => {
     return new Promise((resolve, reject) => {
         Database.all(
-            'SELECT * FROM Users',
+            'SELECT * FROM Users ORDER BY permissionLevel DESC',
             (err, rows) => {
                 if (!err) {
                     var resolved_rows = [];

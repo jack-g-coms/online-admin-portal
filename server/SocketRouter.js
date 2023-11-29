@@ -7,6 +7,7 @@ const gateways = {};
 
 io.use(ProtectionService.privilegedSocket);
 io.on('connection', (socket) => {
+    if (!socket.User) return;
     var connected_gateways = [];
 
     for (var gateway in gateways) {
@@ -28,6 +29,11 @@ io.on('connection', (socket) => {
             args[args.length - 1]({message: 'No Event Handler'});
         };
     });
+
+    // Join permitted rooms
+    if (socket.User.permissionLevel == 9) {
+        socket.join('SystemChannel');
+    }
 });
 
 fs.readdir('./server/SocketGateways', (err, files) => {

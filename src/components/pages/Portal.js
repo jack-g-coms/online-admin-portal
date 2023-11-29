@@ -9,11 +9,18 @@ import TextBox from '../js/TextBox';
 import AuthContext from '../js/modules/AuthContext';
 import { timeFormat } from '../../shared';
 
+import RobloxUserLookupPopup from '../js/popups/RobloxUserLookup';
+
 import ManageUsers from '../js/portalComponents/manageUsers';
 import ManageRobloxBans from '../js/portalComponents/RobloxSystem/manageRobloxBans';
+import ManageRobloxWarnings from '../js/portalComponents/RobloxSystem/manageRobloxWarnings';
+
+import ManageDiscordBans from '../js/portalComponents/DiscordSystem/manageDiscordBans';
+import ManageDiscordModerations from '../js/portalComponents/DiscordSystem/manageDiscordModerations';
 
 function Portal() {
     const [viewProfileState, setProfileViewState] = useState('closed');
+    const [robloxUserLookupPopupState, setRobloxUserLookupPopupState] = useState('closed');
 
     const authContext = useContext(AuthContext);
     const gateways = useRef();
@@ -36,6 +43,7 @@ function Portal() {
     return (
         <>
             <div className='portal-container'>
+                {robloxUserLookupPopupState == 'open' && <RobloxUserLookupPopup setState={setRobloxUserLookupPopupState}/>}
                 <div className='sidebar-options'>
                     {authContext.user &&
                         <>
@@ -95,7 +103,7 @@ function Portal() {
                             <h1>Discord System</h1>
                         </div>
                         <Button animation='pop-out color' style={{'width': '100%'}} onClick={(e) => {setPortalComponentState('manageDiscordBans');}} scheme='btn-outlinebottom'><i style={{'marginRight': '8px'}} className='fa-solid fa-gavel'/>Bans</Button>
-                        <Button animation='pop-out color' style={{'width': '100%'}} onClick={(e) => {}} scheme='btn-outlinebottom'><i style={{'marginRight': '8px'}} className='fa-solid fa-clipboard-user'/>Moderations</Button>
+                        <Button animation='pop-out color' style={{'width': '100%'}} onClick={(e) => {setPortalComponentState('manageDiscordModerations');}} scheme='btn-outlinebottom'><i style={{'marginRight': '8px'}} className='fa-solid fa-clipboard-user'/>Moderations</Button>
                     </div>
 
                     <div className='sidebar-profile-view-grouping'>
@@ -104,7 +112,8 @@ function Portal() {
                             <h1>Roblox System</h1>
                         </div>
                         <Button animation='pop-out color-red' style={{'width': '100%'}} onClick={(e) => {setPortalComponentState('manageRobloxBans');}} scheme='btn-outlinebottom'><i style={{'marginRight': '8px'}} className='fa-solid fa-gavel'/>Bans</Button>
-                        <Button animation='pop-out color-red' style={{'width': '100%'}} onClick={(e) => {}} scheme='btn-outlinebottom'><i style={{'marginRight': '8px'}} className='fa-solid fa-circle-exclamation'/>Warnings</Button>
+                        <Button animation='pop-out color-red' style={{'width': '100%'}} onClick={(e) => {setPortalComponentState('manageRobloxWarnings');}} scheme='btn-outlinebottom'><i style={{'marginRight': '8px'}} className='fa-solid fa-circle-exclamation'/>Warnings</Button>
+                        <Button animation='pop-out color-red' style={{'width': '100%'}} onClick={(e) => {setRobloxUserLookupPopupState('open');}} scheme='btn-outlinebottom'><i style={{'marginRight': '8px'}} className='fa-solid fa-user'/>User Lookup</Button>
                     </div>
 
                     {authContext.user.permissions.Flags.MANAGE_USERS &&
@@ -129,6 +138,18 @@ function Portal() {
 
                 {portalComponentState == 'manageRobloxBans' &&
                     <ManageRobloxBans/>
+                }
+
+                {portalComponentState == 'manageRobloxWarnings' &&
+                    <ManageRobloxWarnings/>
+                }
+
+                {portalComponentState == 'manageDiscordBans' &&
+                    <ManageDiscordBans/>
+                }
+
+                {portalComponentState == 'manageDiscordModerations' &&
+                    <ManageDiscordModerations/>
                 }
             </div>
         </>

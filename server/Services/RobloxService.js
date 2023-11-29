@@ -19,7 +19,7 @@ const getUserByID = async (id) => {
     return new Promise((resolve, reject) => {
         axios.get('https://users.roblox.com/v1/users/' + id)
             .then((response) => {
-                if (response.data.description) {
+                if (!response.data.errors) {
                     resolve(response.data);
                 } else {
                     resolve();

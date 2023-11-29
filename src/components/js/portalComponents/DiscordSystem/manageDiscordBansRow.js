@@ -8,8 +8,8 @@ import TextBox from '../../TextBox';
 import TextArea from '../../TextArea';
 
 import AuthContext from '../../modules/AuthContext';
-import ApplyModifyRobloxBanPopup from '../../popups/ApplyModifyRobloxBan';
-import { updateBan, deleteBan } from '../../modules/RobloxModerations';
+import ApplyModifyDiscordBanPopup from '../../popups/ApplyModifyDiscordBan';
+import { updateBan, deleteBan } from '../../modules/DiscordModerations';
 import { convertToLocal, filterString } from '../../../../shared';
 
 function ManageBansRow({ban}) {
@@ -24,7 +24,7 @@ function ManageBansRow({ban}) {
     const changed = useRef({});
 
     const deleteTrigger = () => {
-        deleteBan(ban.rbxID)
+        deleteBan(ban.discordID)
             .then(response => {
                 if (response.message != 'Success') {
                     Swal.fire({title: 'Error', icon: 'error', text: `There was a problem while trying to update this ban.`, confirmButtonText: 'Ok'});
@@ -39,20 +39,20 @@ function ManageBansRow({ban}) {
 
     return (
         <>
-            {applyModifyPopup == 'open' && <ApplyModifyRobloxBanPopup editedBan={editedBan.current} setState={setApplyModifyPopup} changes={changed.current}/>}
+            {applyModifyPopup == 'open' && <ApplyModifyDiscordBanPopup editedBan={editedBan.current} setState={setApplyModifyPopup} changes={changed.current}/>}
             <div onClick={(e) => {if ((e.target.classList.contains('textarea') || popupState == 'loading')) return; if (editorState == 'open') return; setEditorState('open'); editedBan.current = JSON.parse(JSON.stringify(ban));}} className='manage-roblox-bans-container-row'>
                 {editorState == 'open' &&
                     <>
                         <div className='ban-editor-container fade-in'>
                             <div style={{'alignItems': 'start', 'marginBottom': '10px'}} className='ban-editor-row-edit-info'>
-                                {authContext.user.permissions.Flags.UPDATE_ROBLOX_BANS &&
+                                {authContext.user.permissions.Flags.UPDATE_DISCORD_BANS &&
                                     <Button animation='raise' scheme='btn-confirm' onClick={(e) => {if (changed.current.moderator || changed.current.reason || changed.current.evidence || changed.current.duration) {setApplyModifyPopup('open');}}}>{state != 'loading' && <><i class="fa-solid fa-gear"></i> Save</> || <><i className='fa-solid fa-spinner loader'/> Saving...</>}</Button>
                                 }
 
                                 {state != 'loading' &&
                                     <>
                                         <Button animation='raise' scheme='btn-cancel' onClick={(e) => {setEditorState('hidden'); setState('available'); changed.current = {};}}><i class="fa-solid fa-ban"></i> Close</Button>
-                                        {authContext.user.permissions.Flags.DELETE_ROBLOX_BANS &&
+                                        {authContext.user.permissions.Flags.DELETE_DISCORD_BANS &&
                                             <Button animation='raise' scheme='btn-cancel' onClick={(e) => {deleteTrigger();}}><i class="fa-solid fa-trash"></i> Delete</Button>
                                         }
                                     </>
@@ -61,8 +61,8 @@ function ManageBansRow({ban}) {
 
                             <div style={{'gap': '15px'}} className='ban-editor-row-edit-info'>
                                 <div className='ban-editor-row-edit-grouping'>
-                                    <strong><span><i style={{'fontSize': '15px'}} class="fa-solid fa-user"/> Roblox ID</span></strong>
-                                    <TextBox defaultValue={editedBan.current.rbxID} disabled={true}/>
+                                    <strong><span><i style={{'fontSize': '15px'}} class="fa-solid fa-user"/> Discord ID</span></strong>
+                                    <TextBox defaultValue={editedBan.current.discordID} disabled={true}/>
                                 </div>
 
                                 <div className='ban-editor-row-edit-grouping'>
@@ -71,7 +71,7 @@ function ManageBansRow({ban}) {
                                         changed.current.moderator = {new: newState, old: ban.moderator};
                                         editedBan.current.moderator = newState;
                                         setState('changedModerator');
-                                    }} defaultValue={editedBan.current.moderator} disabled={!authContext.user.permissions.Flags.UPDATE_ROBLOX_BANS}/>
+                                    }} defaultValue={editedBan.current.moderator} disabled={!authContext.user.permissions.Flags.UPDATE_DISCORD_BANS}/>
                                 </div>
                             </div>
 
@@ -82,7 +82,7 @@ function ManageBansRow({ban}) {
                                         changed.current.reason = {new: newState, old: ban.reason};
                                         editedBan.current.reason = newState;
                                         setState('changedReason');
-                                    }} defaultValue={editedBan.current.reason} disabled={!authContext.user.permissions.Flags.UPDATE_ROBLOX_BANS}/>
+                                    }} defaultValue={editedBan.current.reason} disabled={!authContext.user.permissions.Flags.UPDATE_DISCORD_BANS}/>
                                 </div>
 
                                 <div className='ban-editor-row-edit-grouping'>
@@ -91,7 +91,7 @@ function ManageBansRow({ban}) {
                                         changed.current.evidence = {new: newState.split(' ').join(', '), old: ban.evidence.join(', ')};
                                         editedBan.current.evidence = newState.split(' ');
                                         setState('changedEvidence');
-                                    }} defaultValue={editedBan.current.evidence.join(' ')} disabled={!authContext.user.permissions.Flags.UPDATE_ROBLOX_BANS}/>
+                                    }} defaultValue={editedBan.current.evidence.join(' ')} disabled={!authContext.user.permissions.Flags.UPDATE_DISCORD_BANS}/>
                                 </div>
                             </div>
 
@@ -115,7 +115,7 @@ function ManageBansRow({ban}) {
                                         editedBan.current.banType = final_banType;
 
                                         setState('changedType');
-                                    }} defaultValue={ban.banType.Type} disabled={!authContext.user.permissions.Flags.UPDATE_ROBLOX_BANS}/>
+                                    }} defaultValue={ban.banType.Type} disabled={!authContext.user.permissions.Flags.UPDATE_DISCORD_BANS}/>
                                 </div>
                             </div>
 
@@ -134,10 +134,13 @@ function ManageBansRow({ban}) {
                             {ban.banType.Type != 'Permanent' && 
                                 <span><span style={{'color': '#c93434'}}><i class="fa-solid fa-stopwatch"></i> Unbanned on </span> {convertToLocal(ban.bannedOn + ban.banType.Time, true)}</span>
                             }
+                            {ban.linkedModeration &&
+                                <span><span style={{'color': '#34c939'}}><i class="fa-solid fa-file"></i> Linked Moderation </span> {ban.linkedModeration.moderationID}</span>
+                            }
                         </div>
 
                         <div className='row-grouping'>
-                            <span><span style={{'color': '#f0be48'}}>RbxID:</span> {ban.rbxID}</span>
+                            <span><span style={{'color': '#f0be48'}}>DiscordID:</span> {ban.discordID}</span>
                             <span><span style={{'color': '#f0be48'}}>ModeratorID:</span> {ban.moderator}</span>
                         </div>
 

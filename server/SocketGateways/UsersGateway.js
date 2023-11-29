@@ -6,6 +6,9 @@ const RobloxService = require('../Services/RobloxService');
 // GATEWAY
 module.exports.gatewayInfo = {
     Name: 'Users',
+    requiresAccessLevel: (user) => {
+        return user.permissions.Flags.MANAGE_USERS;
+    }
 }
 
 module.exports.newSocket = (socket) => {

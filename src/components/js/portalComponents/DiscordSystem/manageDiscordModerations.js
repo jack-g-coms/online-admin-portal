@@ -6,20 +6,20 @@ import '../../../css/portalComponents/RobloxSystem/ManageBans.css';
 import Button from '../../Button';
 import TextBox from '../../TextBox';
 import Loader from '../../Loader';
-import ManageBansRow from './manageRobloxBansRow';
-import CreateRobloxBanPopup from '../../popups/CreateRobloxBan';
+import ManageModerationsRow from './manageDiscordModerationsRow';
+import CreateRobloxWarningPopup from '../../popups/CreateRobloxWarning';
 
 import AuthContext from '../../modules/AuthContext';
-import { getBans, searchBan, newBan } from '../../modules/RobloxModerations';
+import { getModerations, searchModeration, newModeration } from '../../modules/DiscordModerations';
 
-function ManageRobloxBans() {
+function ManageDiscordModerations() {
     const authContext = useContext(AuthContext);
 
     const [state, setState] = useState('loading');
     const [popupState, setPopupState] = useState('closed');
     const [filter, setFilter] = useState('');
 
-    const bans = useRef();
+    const moderations = useRef();
     const [pagination, setPagination] = useState({
         data: [],
         offset: 0,
@@ -37,8 +37,8 @@ function ManageRobloxBans() {
     };
 
     const applyFilter = () => {
-        const bansFilter = ban => ban.rbxID.toString().includes(filter) || ban.moderator.toString().includes(filter) || ban.banType.Type.toLowerCase() == filter.toLowerCase() || ban.reason.toLowerCase().includes(filter.toLowerCase());
-        const results = bans.current.filter(bansFilter);
+        const moderationsFilter = moderation => moderation.moderationType.includes(filter) || moderation.discordID.toString().includes(filter) || moderation.moderationID.includes(filter) || moderation.moderator.toString().includes(filter) || moderation.reason.toLowerCase().includes(filter.toLowerCase());
+        const results = moderations.current.filter(moderationsFilter);
         
         setPagination((prevState) => ({
             data: results,
@@ -51,12 +51,12 @@ function ManageRobloxBans() {
     };
 
     useEffect(() => {
-        getBans()
-            .then(bansReq => {
-                bans.current = bansReq.data || {};
+        getModerations()
+            .then(moderationsReq => {
+                moderations.current = moderationsReq.data || {};
 
                 setPagination({
-                    data: bans.current,
+                    data: moderations.current,
                     offset: 0,
                     numberPerPage: 50,
                     pageCount: 0,
@@ -76,7 +76,7 @@ function ManageRobloxBans() {
             pageCount: Math.ceil(prevState.data.length / prevState.numberPerPage),
             currentData: prevState.data.slice(pagination.offset, pagination.offset + pagination.numberPerPage)
         }));
-    }, [pagination.numberPerPage, pagination.offset, bans.current]);
+    }, [pagination.numberPerPage, pagination.offset, moderations.current]);
 
     return (
         <>
@@ -86,22 +86,22 @@ function ManageRobloxBans() {
                 }
 
                 {popupState == 'opened' && 
-                    <CreateRobloxBanPopup setState={setPopupState}/>
+                    <CreateRobloxWarningPopup setState={setPopupState}/>
                 }
                 
-                {state == 'available' && bans.current &&
+                {state == 'available' && moderations.current &&
                     <>
                         <div style={{'borderBottom': '1px solid #706f6f', 'borderBottomLeftRadius': '5px', 'borderBottomRightRadius': '5px'}} className='manage-roblox-bans-container'>
                             <div className='manage-roblox-bans-container-header-row'>
-                                <h1><i style={{'marginRight': '4px'}} class='fa-solid fa-circle-info'/> Roblox Ban Actions</h1>
+                                <h1><i style={{'marginRight': '4px'}} class='fa-solid fa-circle-info'/> Discord Moderation Actions</h1>
                             </div>
 
                             <div className='manage-roblox-bans-table'>
                                 <div style={{'alignItems': 'center', 'justifyContent': 'center'}} className='manage-roblox-bans-container-row'>
-                                    {authContext.user.permissions.Flags.CREATE_ROBLOX_BANS &&
-                                        <Button animation='raise' onClick={(e) => {setPopupState('opened');}} scheme='btn-confirm'>Create Ban</Button>
+                                    {authContext.user.permissions.Flags.CREATE_DISCORD_MODERATIONS &&
+                                        <Button animation='raise' onClick={(e) => {setPopupState('opened');}} scheme='btn-confirm'>Create Warning</Button>
                                     }
-                                    {!authContext.user.permissions.Flags.CREATE_ROBLOX_BANS &&
+                                    {!authContext.user.permissions.Flags.CREATE_DISCORD_MODERATIONS &&
                                         <span>You are currently a <span style={{'color': '#349fc9'}}>read only</span> access level</span>
                                     }
                                 </div>
@@ -110,18 +110,18 @@ function ManageRobloxBans() {
 
                         <div className='manage-roblox-bans-container'>
                             <div className='manage-roblox-bans-container-header-row'>
-                                <h1><i style={{'marginRight': '4px'}} class='fa-solid fa-gavel'/> Roblox Bans</h1>
+                                <h1><i style={{'marginRight': '4px'}} class='fa-solid fa-gavel'/> Discord Moderations</h1>
                             </div>
 
                             <div className='manage-roblox-bans-container-header-notice'>
                                 <TextBox onKeyUp={(e) => {
                                     if (e.key == 'Enter' || e.keyCode == 13) applyFilter();
-                                }} setState={setFilter} className='filter-textbox' placeholder={'Filter Bans (enter any key or relevant information about the ban)'}/>
+                                }} setState={setFilter} className='filter-textbox' placeholder={'Filter Moderations (enter any key or relevant information about the moderation)'}/>
                             </div>
 
                             <div className='manage-roblox-bans-table manage-roblox-bans-table-container'>
-                                {pagination.currentData && pagination.currentData.map((listedBan, i) => {
-                                    return <ManageBansRow ban={listedBan}/>;
+                                {pagination.currentData && pagination.currentData.map((listedModeration, i) => {
+                                    return <ManageModerationsRow moderation={listedModeration}/>;
                                 })}
                             </div>
 
@@ -146,4 +146,4 @@ function ManageRobloxBans() {
     );
 };
 
-export default ManageRobloxBans;
+export default ManageDiscordModerations;

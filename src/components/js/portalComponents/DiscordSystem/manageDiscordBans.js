@@ -6,13 +6,13 @@ import '../../../css/portalComponents/RobloxSystem/ManageBans.css';
 import Button from '../../Button';
 import TextBox from '../../TextBox';
 import Loader from '../../Loader';
-import ManageBansRow from './manageRobloxBansRow';
-import CreateRobloxBanPopup from '../../popups/CreateRobloxBan';
+import ManageBansRow from './manageDiscordBansRow';
+import CreateDiscordBanPopup from '../../popups/CreateDiscordBan';
 
 import AuthContext from '../../modules/AuthContext';
-import { getBans, searchBan, newBan } from '../../modules/RobloxModerations';
+import { getBans, searchBan, newBan } from '../../modules/DiscordModerations';
 
-function ManageRobloxBans() {
+function ManageDiscordBans() {
     const authContext = useContext(AuthContext);
 
     const [state, setState] = useState('loading');
@@ -37,7 +37,7 @@ function ManageRobloxBans() {
     };
 
     const applyFilter = () => {
-        const bansFilter = ban => ban.rbxID.toString().includes(filter) || ban.moderator.toString().includes(filter) || ban.banType.Type.toLowerCase() == filter.toLowerCase() || ban.reason.toLowerCase().includes(filter.toLowerCase());
+        const bansFilter = ban => ban.discordID.toString().includes(filter) || ban.moderator.toString().includes(filter) || ban.banType.Type.toLowerCase() == filter.toLowerCase() || ban.reason.toLowerCase().includes(filter.toLowerCase());
         const results = bans.current.filter(bansFilter);
         
         setPagination((prevState) => ({
@@ -66,7 +66,7 @@ function ManageRobloxBans() {
 
                 setTimeout(() => {
                     setState('available');
-                }, 3000);
+                }, 1000);
             }).catch(console.log);
     }, []);
 
@@ -86,22 +86,22 @@ function ManageRobloxBans() {
                 }
 
                 {popupState == 'opened' && 
-                    <CreateRobloxBanPopup setState={setPopupState}/>
+                    <CreateDiscordBanPopup setState={setPopupState}/>
                 }
                 
                 {state == 'available' && bans.current &&
                     <>
                         <div style={{'borderBottom': '1px solid #706f6f', 'borderBottomLeftRadius': '5px', 'borderBottomRightRadius': '5px'}} className='manage-roblox-bans-container'>
                             <div className='manage-roblox-bans-container-header-row'>
-                                <h1><i style={{'marginRight': '4px'}} class='fa-solid fa-circle-info'/> Roblox Ban Actions</h1>
+                                <h1><i style={{'marginRight': '4px'}} class='fa-solid fa-circle-info'/> Discord Ban Actions</h1>
                             </div>
 
                             <div className='manage-roblox-bans-table'>
                                 <div style={{'alignItems': 'center', 'justifyContent': 'center'}} className='manage-roblox-bans-container-row'>
-                                    {authContext.user.permissions.Flags.CREATE_ROBLOX_BANS &&
+                                    {authContext.user.permissions.Flags.CREATE_DISCORD_BANS &&
                                         <Button animation='raise' onClick={(e) => {setPopupState('opened');}} scheme='btn-confirm'>Create Ban</Button>
                                     }
-                                    {!authContext.user.permissions.Flags.CREATE_ROBLOX_BANS &&
+                                    {!authContext.user.permissions.Flags.CREATE_DISCORD_BANS &&
                                         <span>You are currently a <span style={{'color': '#349fc9'}}>read only</span> access level</span>
                                     }
                                 </div>
@@ -110,7 +110,7 @@ function ManageRobloxBans() {
 
                         <div className='manage-roblox-bans-container'>
                             <div className='manage-roblox-bans-container-header-row'>
-                                <h1><i style={{'marginRight': '4px'}} class='fa-solid fa-gavel'/> Roblox Bans</h1>
+                                <h1><i style={{'marginRight': '4px'}} class='fa-solid fa-gavel'/> Discord Bans</h1>
                             </div>
 
                             <div className='manage-roblox-bans-container-header-notice'>
@@ -146,4 +146,4 @@ function ManageRobloxBans() {
     );
 };
 
-export default ManageRobloxBans;
+export default ManageDiscordBans;

@@ -3,6 +3,7 @@ const UsersService = require('./UsersService');
 const PermissionsService = require('./PermissionsService');
 const jwt = require('jsonwebtoken');
 
+const API_KEY = '123';
 const ENDPOINT_PERMISSION_FLAGS = {
     '/api/users': PermissionsService.PERMISSION_FLAGS.MANAGE_USERS,
     '/api/users/update': PermissionsService.PERMISSION_FLAGS.MANAGE_USERS,
@@ -19,6 +20,13 @@ const ENDPOINT_PERMISSION_FLAGS = {
 }
 
 // FUNCTIONS
+module.exports.requiresAPIKey = async (req, res, next) => {
+    if (req.headers['apikey'] != API_KEY) {
+        return res.json({message: 'Unauthorized'});
+    };
+    next();
+};
+
 module.exports.privilegedSocket = async(socket, next) => {
     const bearerToken = (socket.handshake.headers.cookie && socket.handshake.headers.cookie.substring(13));
 

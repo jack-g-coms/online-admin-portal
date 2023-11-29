@@ -1,32 +1,50 @@
 // FLAGS
 module.exports.DEFAULT_LEVEL = 1;
 module.exports.PERMISSION_FLAGS = {
-    'MANAGE_USERS': 8,
-    'DELETE_USERS': 9,
+    'MANAGE_USERS': 7,
+    'DELETE_USERS': 8,
 
     'VIEW_ROBLOX_BANS': 1,
-    'CREATE_ROBLOX_BANS': 1,
-    'UPDATE_ROBLOX_BANS': 8,
-    'DELETE_ROBLOX_BANS': 1,
+    'CREATE_ROBLOX_BANS': 2,
+    'UPDATE_ROBLOX_BANS': 7,
+    'DELETE_ROBLOX_BANS': 2,
     'VIEW_ROBLOX_WARNINGS': 1,
-    'CREATE_ROBLOX_WARNINGS': 1,
-    'UPDATE_ROBLOX_WARNINGS': 8,
-    'DELETE_ROBLOX_WARNINGS': 1
+    'CREATE_ROBLOX_WARNINGS': 2,
+    'UPDATE_ROBLOX_WARNINGS': 7,
+    'DELETE_ROBLOX_WARNINGS': 2,
+
+    'VIEW_DISCORD_BANS': 1,
+    'CREATE_DISCORD_BANS': 2,
+    'UPDATE_DISCORD_BANS': 7,
+    'DELETE_DISCORD_BANS': 2,
+    'VIEW_DISCORD_MODERATIONS': 1,
+    'CREATE_DISCORD_MODERATIONS': 2,
+    'UPDATE_DISCORD_MODERATIONS': 7,
+    'DELETE_DISCORD_MODERATIONS': 2
 }
 
 // SETS
 module.exports.PERMISSION_SETS = {
     [10]: {
-        Name: 'Head of Technical Services'
+        Name: 'Portal Director'
     },
     [9]: {
-        Name: 'Head of Staff'
+        Name: 'Portal Automated System'
     },
     [8]: {
-        Name: 'Deputy Head of Staff'
+        Name: 'Portal Oversight'
+    },
+    [7]: {
+        Name: 'Portal Management'
+    },
+    [3]: {
+        Name: 'Portal Supervisor'
+    },
+    [2]: {
+        Name: 'Portal User'
     },
     [1]: {
-        Name: 'User'
+        Name: 'Portal Viewer'
     }
 }
 

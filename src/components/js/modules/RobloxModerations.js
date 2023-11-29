@@ -48,6 +48,14 @@ export const getWarnings = async () => {
     });
 };
 
+export const getModerationProfile = async (rbxID) => {
+    return new Promise((resolve, reject) => {
+        socket.emit('getRobloxModerationProfile', rbxID, (res) => {
+            resolve(res);
+        });
+    });
+};
+
 export const searchWarning = async (warnID) => {
     return new Promise((resolve, reject) => {
         socket.emit('searchRobloxWarning', warnID, (res) => {

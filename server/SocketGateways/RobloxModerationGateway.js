@@ -10,6 +10,7 @@ module.exports.gatewayInfo = {
         return user.permissions.Flags.VIEW_ROBLOX_BANS && user.permissions.Flags.VIEW_ROBLOX_WARNINGS;
     }
 }
+
 module.exports.newSocket = (socket) => {
     // ALL GENERAL PERMITTED SOCKET ENDPOINTS
     socket.on('getAllRobloxBans', (callback) => {
@@ -24,6 +25,26 @@ module.exports.newSocket = (socket) => {
                 console.log(err);
                 callback({message: 'Error'});
             });
+    });
+
+    socket.on('getRobloxModerationProfile', async (rbxID, callback) => {
+        if (!rbxID) return callback({message: 'Error'});
+        
+        const rbxUser = await RobloxService.getUserByID(rbxID);
+        const avatarHeadshotUrl = await RobloxService.getAvatarHeadshot(rbxID);
+
+        if (!rbxUser) return callback({message: 'Not Found'});
+        if (avatarHeadshotUrl.data.data.errors || avatarHeadshotUrl.data.data.length == 0) return res.json({message: 'Not Found'});
+
+        const ban = await RobloxModerationService.searchBanAsync(rbxID);
+        const warnings = await RobloxModerationService.getUserWarnings(rbxID);
+
+        callback({message: 'Success', data: {
+            rbxUser,
+            avatarHeadshotUrl: avatarHeadshotUrl.data.data[0].imageUrl,
+            ban,
+            warnings
+        }});
     });
 
     socket.on('searchRobloxBan', (query, callback) => {
@@ -42,15 +63,13 @@ module.exports.newSocket = (socket) => {
     });
 
     socket.on('getAllRobloxWarnings', async (callback) => {
-        const { rbxID, moderator, evidence, reason, banType } = body;
-        if (!rbxID || !moderator || !evidence || !reason || !banType) return callback({message: 'Error'});
-
-        const outstanding_ban = await RobloxModerationService.searchBanAsync(rbxID);
-        if (outstanding_ban) return callback({message: 'Ban Exists', data: outstanding_ban});
-
-        RobloxModerationService.newBanAsync(rbxID, moderator, evidence, reason, banType)
-            .then(ban => {
-                callback({message: 'Success', data: ban});
+        RobloxModerationService.getAllWarnings()
+            .then(warnings => {
+                if (warnings.length > 0) {
+                    callback({message: 'Success', data: warnings});
+                } else {
+                    callback({message: 'Not Found'});
+                }
             }).catch((err) => {
                 console.log(err);
                 callback({message: 'Error'});
@@ -59,7 +78,7 @@ module.exports.newSocket = (socket) => {
 
     socket.on('searchRobloxWarning', async (query, callback) => {
         if (!query) return callback({message: 'Error'});
-        RobloxModerationService.seachWarningAsync(query)
+        RobloxModerationService.searchWarningAsync(query)
             .then(warning => {
                 if (warning) {
                     callback({message: 'Success', data: warning});
@@ -102,16 +121,13 @@ module.exports.newSocket = (socket) => {
         
             const outstanding_ban = await RobloxModerationService.searchBanAsync(rbxID);
             if (!outstanding_ban) return callback({message: 'Not Found'});
-
-            var bannedOn = outstanding_ban.bannedOn;
         
             if (!moderator) moderator = outstanding_ban.moderator;
             if (!evidence) evidence = outstanding_ban.evidence;
             if (!reason) reason = outstanding_ban.reason;
             if (!banType) banType = outstanding_ban.banType;
-            if (banType.Type != outstanding_ban.banType.Type) bannedOn = Math.round(Date.now() / 1000);
         
-            RobloxModerationService.updateBanAsync(rbxID, moderator, evidence, reason, banType, bannedOn)
+            RobloxModerationService.updateBanAsync(rbxID, moderator, evidence, reason, banType, outstanding_ban.bannedOn)
                 .then(() => {
                     callback({message: 'Success'});
                 }).catch((err) => {
@@ -143,9 +159,13 @@ module.exports.newSocket = (socket) => {
         socket.on('createRobloxWarning', async (body, callback) => {
             const { rbxID, moderator, evidence, reason } = body;
             if (!rbxID || !moderator || !evidence || !reason) return callback({message: 'Error'});
+
+            const rbxInfo = await RobloxService.getUserByID(rbxID);
+            if (!rbxInfo) return callback({message: 'No Roblox User'});
         
             RobloxModerationService.newWarningAsync(rbxID, moderator, evidence, reason)
                 .then(warning => {
+                    warning.username = rbxInfo.name;
                     callback({message: 'Success', data: warning});
                 }).catch((err) => {
                     console.log(err);
@@ -159,7 +179,7 @@ module.exports.newSocket = (socket) => {
             var { warnID, moderator, evidence, reason, acknowledged } = body;
             if (!warnID || (!moderator && !evidence && !reason && !acknowledged)) return callback({message: 'Error'});
         
-            const outstanding_warning = await RobloxModerationService.seachWarningAsync(warnID);
+            const outstanding_warning = await RobloxModerationService.searchWarningAsync(warnID);
             if (!outstanding_warning) return callback({message: 'Not Found'});
         
             if (!moderator) moderator = outstanding_warning.moderator;
@@ -182,7 +202,7 @@ module.exports.newSocket = (socket) => {
             const { warnID } = body;
             if (!warnID) return callback({message: 'Error'});
 
-            const outstanding_warning = await RobloxModerationService.seachWarningAsync(warnID);
+            const outstanding_warning = await RobloxModerationService.searchWarningAsync(warnID);
             if (!outstanding_warning) return callback({message: 'Not Found'});
 
             RobloxModerationService.deleteWarningAsync(warnID)

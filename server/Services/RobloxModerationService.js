@@ -14,7 +14,7 @@ const Ban = class {
         this.banType = JSON.parse(row.banType);
         this.bannedOn = row.bannedOn;
     }
-}
+};
 
 const Warning = class {
     constructor(row) {
@@ -26,7 +26,7 @@ const Warning = class {
         this.warnedOn = row.warnedOn;
         this.warnID = row.warnID;
     }
-}
+};
 
 // FUNCTIONS / UTILITIES
 // ROBLOX / BANS
@@ -124,7 +124,7 @@ module.exports.deleteBanAsync = async (rbxID) => {
 module.exports.getAllWarnings = async () => {
     return new Promise((resolve, reject) => {
         Database.all(
-            'SELECT * FROM Warnings',
+            'SELECT * FROM Warnings ORDER BY warnedOn DESC',
             (err, rows) => {
                 if (!err) {
                     var resolved_rows = [];
@@ -141,7 +141,28 @@ module.exports.getAllWarnings = async () => {
     });
 };
 
-module.exports.seachWarningAsync = async (query) => {
+module.exports.getUserWarnings = async (rbxID) => {
+    return new Promise((resolve, reject) => {
+        Database.all(
+            'SELECT * FROM Warnings WHERE rbxID = ? ORDER BY warnedOn DESC',
+            [rbxID],
+            (err, rows) => {
+                if (!err) {
+                    var resolved_rows = [];
+                    for (var i = 0; i < rows.length; i++) {
+                        resolved_rows.push(new Warning(rows[i]));
+                    }
+
+                    resolve(resolved_rows);
+                } else {
+                    reject(err);
+                }
+            }
+        )
+    });
+};
+
+module.exports.searchWarningAsync = async (query) => {
     return new Promise((resolve, reject) => {
         Database.get(
             `SELECT * FROM Warnings WHERE rbxID = ? OR warnID = ?`,
@@ -171,7 +192,7 @@ module.exports.newWarningAsync = async (rbxID, moderator, evidence, reason) => {
             [rbxID, moderator, JSON.stringify(evidence || []), reason, 0, warnedOn, warnID],
             (err) => {
                 if (!err) {
-                    resolve(new Warning({rbxID, moderator, evidence, reason, acknowledged: 0, warnedOn, warnID}));
+                    resolve(new Warning({rbxID, moderator, evidence: JSON.stringify(evidence), reason, acknowledged: 0, warnedOn, warnID}));
                 } else {
                     reject(err);
                 }
@@ -200,7 +221,7 @@ module.exports.deleteWarningAsync = async (warnID) => {
     return new Promise((resolve, reject) => {
         Database.run(
             'DELETE FROM Warnings WHERE warnID = ?',
-            [rbxID],
+            [warnID],
             (err) => {
                 if (!err) {
                     resolve();
