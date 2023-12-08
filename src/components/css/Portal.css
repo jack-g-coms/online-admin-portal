@@ -1,6 +1,7 @@
 .portal-container {
     display: flex;
     flex: row;
+    min-height: calc(100vh - 76px);
 }
 
 .sidebar-options {
