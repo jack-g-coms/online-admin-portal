@@ -4,7 +4,7 @@
 }
 
 .sidebar-options {
-    height: calc(100vh - 76px);
+    position: relative;
     margin: 0;
     display: flex;
     flex-direction: column;
@@ -13,10 +13,6 @@
     border-right: 1px solid #706f6f;
     background-color: #303030;
     flex-shrink: 0;
-}
-
-#sidetop-item {
-    margin-top: -10px;
 }
 
 .sidebar-profile-view {
@@ -47,6 +43,10 @@
 
 .sidebar-grouping-title h1 {
     font-size: 22px;
+}
+
+#sidebar-top-item {
+    margin-top: -5px;
 }
 
 .sidebar-profile-view-info {

@@ -11,6 +11,8 @@ import { timeFormat } from '../../shared';
 
 import RobloxUserLookupPopup from '../js/popups/RobloxUserLookup';
 
+import Dashboard from '../js/portalComponents/Dashboard';
+
 import ManageUsers from '../js/portalComponents/manageUsers';
 import ManageRobloxBans from '../js/portalComponents/RobloxSystem/manageRobloxBans';
 import ManageRobloxWarnings from '../js/portalComponents/RobloxSystem/manageRobloxWarnings';
@@ -26,7 +28,7 @@ function Portal() {
     const gateways = useRef();
 
     const params = new URLSearchParams(window.location.search);
-    const [portalComponentState, setPortalComponentState] = useState(params.get('view'));
+    const [portalComponentState, setPortalComponentState] = useState(params.get('view') || 'dashboard');
     
     useEffect(() => {
         socket.emit('getConnectedGateways', (res) => {
@@ -97,8 +99,12 @@ function Portal() {
                         </>
                     }
 
-                    <div className='sidebar-profile-view-grouping' id='sidetop-item'>
-                    <div className='sidebar-grouping-title'>
+                    <div className='sidebar-profile-view-grouping' id='sidebar-top-item'>
+                        <Button animation='pop-out color-purple' style={{'width': '100%'}} onClick={(e) => {setPortalComponentState('dashboard');}} size='btn-large' scheme='btn-outlinebottom'><i style={{'marginRight': '8px'}} className='fa-solid fa-home'/>Dashboard</Button>
+                    </div>
+
+                    <div className='sidebar-profile-view-grouping'>
+                        <div className='sidebar-grouping-title'>
                             <img style={{'marginRight': '3px', 'width': '30px', 'height': '30px'}} src='/media/images/discord-logo.png'/> 
                             <h1>Discord System</h1>
                         </div>
@@ -131,6 +137,10 @@ function Portal() {
                         <span>All actions are logged and processed by Portal Administrators apart of Technical Services.</span>
                     </div>
                 </div>
+
+                {portalComponentState == 'dashboard' &&
+                    <Dashboard/>
+                }
 
                 {portalComponentState == 'manageUsers' &&
                     <ManageUsers hidden={false}/>
