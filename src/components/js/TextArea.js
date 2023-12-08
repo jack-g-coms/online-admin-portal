@@ -1,5 +1,4 @@
 import React from 'react';
-import { Interweave } from 'interweave';
 import '../css/TextArea.css';
 
 function TextArea({children, style, defaultValue, setState, placeholder, type, disabled, onClick}) {
