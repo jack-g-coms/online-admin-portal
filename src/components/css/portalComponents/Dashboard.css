@@ -1,0 +1,104 @@
+.loader-keeper {
+    margin: auto;
+    display: flex;
+    justify-content: center;
+    animation: fadeIn 0.2s;
+    align-items: center;
+    width: 50%;
+}
+
+.page {
+    width: 100%;
+    display: flex;
+    gap: 2px;
+    overflow: auto;
+    flex-direction: column;
+    transition: all 0.2s ease-in-out;
+    animation: fadeIn 0.2s;
+    margin-bottom: auto;
+    margin-top: 25px;
+    margin-left: 25px;
+    margin-right: 25px;
+} .page h2 {
+    font-size: 35px;
+} #sub-line {
+    font-size: 20px;
+    opacity: 0.5;
+    margin-left: 2px;
+}
+
+.grouping {
+    display: flex;
+    flex-direction: row;
+    gap: 5px;
+}
+
+.vertical-grouping-dashboard {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.content {
+    margin-top: 15px;
+}
+
+.you {
+    border-radius: 500px;
+    background-color: #222222;
+    width: 150px;
+    height: 150px;
+}
+
+.profile-view {
+    font-weight: 600;
+    font-size: 30px;
+}
+
+.permissions-view span {
+    font-size: 20px;
+} .permissions-container span {
+    font-size: 18px;
+} .permissions-container {
+    display: flex;
+    position: absolute;
+    z-index: 999;
+    flex-direction: column;
+    gap: 5px;
+    margin-top: 35px;
+    animation: fadeIn 0.1s;
+    border: 1px solid #706f6f;
+    border-radius: 5px;
+    background-color: #222222;
+    padding: 10px 10px;
+} .permissions-view i {
+    font-size: 15px;
+}
+
+.perm-click {
+    cursor: pointer;
+} .perm-click:hover {
+    filter: brightness(85%);
+}
+
+.weekly-stats {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+    margin-top: 10px;
+    font-size: 20px;
+}
+
+.chart-holder {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    background-color: #303030;
+    border-radius: 5px;
+    width: fit-content;
+    margin-top: 5px;
+    padding: 15px 15px;
+} .chart-holder h2 {
+    font-size: 25px;
+}

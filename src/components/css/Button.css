@@ -75,6 +75,10 @@
     background-color: #f0be48;
 }
 
+.color-purple:hover {
+    background-color: #7234c9;
+}
+
 .pop-out:hover {
     font-size: larger;
 }

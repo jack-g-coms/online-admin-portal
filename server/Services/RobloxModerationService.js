@@ -2,6 +2,7 @@
 const sqlite3 = require('sqlite3').verbose();
 const uuid = require('uuid').v4;
 
+const RobloxService = require("./RobloxService");
 const Database = new sqlite3.Database('./data/Moderations.db');
 
 // CLASSES
@@ -231,4 +232,75 @@ module.exports.deleteWarningAsync = async (warnID) => {
             }
         )
     });
+};
+
+module.exports.getStatistics = async () => {
+    var statistics = [
+        new Promise((resolve, reject) => {
+            Database.all(
+                "SELECT strftime('%W', DATETIME(ROUND(bannedOn / 1000), 'localtime')) as Week, COUNT(*) as Bans FROM Bans GROUP BY Week LIMIT 5",
+                [],
+                (err, rows) => {
+                    if (err) {
+                        resolve(false);
+                    } else {
+                        resolve(rows);
+                    }
+                }
+            )
+        }),
+        new Promise((resolve, reject) => {
+            Database.all(
+                "SELECT strftime('%W', DATETIME(ROUND(warnedOn / 1000), 'localtime')) as Week, COUNT(*) as Warnings FROM Warnings GROUP BY Week LIMIT 5",
+                [],
+                (err, rows) => {
+                    if (err) {
+                        resolve(false);
+                    } else {
+                        resolve(rows);
+                    }
+                }
+            )
+        }),
+        new Promise((resolve, reject) => {
+            Database.all(
+                "SELECT strftime('%W', DATETIME(ROUND(Bans.bannedOn / 1000), 'localtime')) as Week, Bans.moderator AS Moderator, COUNT(*) AS Moderations FROM Bans GROUP BY Moderator, Week ORDER BY Week ASC, Moderations DESC LIMIT 1",
+                [],
+                (err, rows) => {
+                    if (rows[0]) {
+                        RobloxService.getUserByID(rows[0].Moderator)
+                            .then(rbxUser => {
+                                if (!rbxUser) return resolve(false);
+
+                                rows[0].Moderator = rbxUser;
+                                resolve(rows[0]);
+                            });
+                    } else {
+                        resolve(false);
+                    }
+                }
+            )
+        }),
+        new Promise((resolve, reject) => {
+            Database.all(
+                "SELECT strftime('%W', DATETIME(ROUND(Warnings.warnedOn / 1000), 'localtime')) as Week, Warnings.moderator AS Moderator, COUNT(*) AS Moderations FROM Warnings GROUP BY Moderator, Week ORDER BY Week ASC, Moderations DESC LIMIT 1",
+                [],
+                (err, rows) => {
+                    if (rows[0]) {
+                        RobloxService.getUserByID(rows[0].Moderator)
+                            .then(rbxUser => {
+                                if (!rbxUser) return resolve(false);
+
+                                rows[0].Moderator = rbxUser;
+                                resolve(rows[0]);
+                            });
+                    } else {
+                        resolve(false);
+                    }
+                }
+            )
+        })
+    ];
+
+    return Promise.all(statistics);
 };
