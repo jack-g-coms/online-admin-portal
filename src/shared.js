@@ -1,3 +1,5 @@
+import moment from "moment";
+
 export const baseUrl = 'http://localhost:5000/';
 export const timeFormat = (seconds) => {
     var hours = Math.floor(seconds/3600);
@@ -22,9 +24,5 @@ export const filterString = (string, filterArray, replaceWith)  => {
 }; 
 
 export const getWeek = () => {
-    const currentDate = new Date();
-    const firstDay = new Date(currentDate.getFullYear(), 0, 1);
-    const week = Math.ceil((((currentDate.getTime() - firstDay.getTime()) / 86400000) + firstDay.getDay() + 1) / 7);
-
-    return week;
+    return moment().isoWeek();
 }

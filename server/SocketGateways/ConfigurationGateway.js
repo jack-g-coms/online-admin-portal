@@ -19,7 +19,7 @@ module.exports.newSocket = (socket) => {
     socket.on('updateConfiguration', (announcement, callback) => {
         ConfigurationService.updateConfiguration(announcement || '')
             .then(() => {
-                callback(true)
+                callback(announcement);
             }).catch(err => callback(false));
     });
 }

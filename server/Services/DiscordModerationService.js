@@ -1,5 +1,6 @@
 // CONSTANTS
 const sqlite3 = require('sqlite3').verbose();
+const moment = require("moment");
 const uuid = require('uuid').v4;
 
 const Database = new sqlite3.Database('./data/Moderations.db');
@@ -152,7 +153,7 @@ module.exports.getAllModerations = async () => {
 module.exports.searchModerationAsync = async (query) => {
     return new Promise((resolve, reject) => {
         Database.get(
-            `SELECT * FROM DiscordBans WHERE moderationID = ?`,
+            `SELECT * FROM DiscordModerations WHERE moderationID = ?`,
             [query],
             (err, row) => {
                 if (!err) {
@@ -280,10 +281,7 @@ module.exports.deleteModerationAsync = async (moderationID) => {
 };
 
 module.exports.getStatistics = async () => {
-    const currentDate = new Date();
-    const firstDay = new Date(currentDate.getFullYear(), 0, 1);
-    const week = Math.ceil((((currentDate.getTime() - firstDay.getTime()) / 86400000) + firstDay.getDay() + 1) / 7);
-
+    const week = moment().isoWeek();
     var statistics = [
         new Promise((resolve, reject) => {
             Database.all(

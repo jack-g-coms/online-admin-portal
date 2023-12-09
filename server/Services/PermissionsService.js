@@ -3,6 +3,7 @@ module.exports.DEFAULT_LEVEL = 1;
 module.exports.PERMISSION_FLAGS = {
     'MANAGE_USERS': 7,
     'DELETE_USERS': 8,
+    'CREATE_PORTAL_NOTICE': 8,
 
     'VIEW_ROBLOX_BANS': 1,
     'CREATE_ROBLOX_BANS': 2,

@@ -105,6 +105,7 @@
 
 .dashboard-notice {
     background-color: #303030;
+    border-radius: 5px;
     width: fit-content;
     padding: 5px;
     text-wrap: wrap;

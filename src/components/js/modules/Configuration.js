@@ -8,7 +8,7 @@ export const getConfiguration = async () => {
     });
 };
 
-export const updateConfiguration = async (announcement) => {
+export const updateConfiguration = (announcement) => {
     return new Promise((resolve, reject) => {
         socket.emit('updateConfiguration', announcement, (res) => {
             resolve(res);

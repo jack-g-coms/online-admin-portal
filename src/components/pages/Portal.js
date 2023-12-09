@@ -10,6 +10,7 @@ import AuthContext from '../js/modules/AuthContext';
 import { timeFormat } from '../../shared';
 
 import RobloxUserLookupPopup from '../js/popups/RobloxUserLookup';
+import PortalNoticePopup from '../js/popups/PortalNotice';
 
 import Dashboard from '../js/portalComponents/Dashboard';
 
@@ -23,6 +24,7 @@ import ManageDiscordModerations from '../js/portalComponents/DiscordSystem/manag
 function Portal() {
     const [viewProfileState, setProfileViewState] = useState('closed');
     const [robloxUserLookupPopupState, setRobloxUserLookupPopupState] = useState('closed');
+    const [noticePopupState, setNoticePopupState] = useState('closed');
 
     const authContext = useContext(AuthContext);
     const gateways = useRef();
@@ -46,6 +48,7 @@ function Portal() {
         <>
             <div className='portal-container'>
                 {robloxUserLookupPopupState == 'open' && <RobloxUserLookupPopup setState={setRobloxUserLookupPopupState}/>}
+                {noticePopupState == 'open' && <PortalNoticePopup setState={setNoticePopupState}/>}
                 <div className='sidebar-options'>
                     {authContext.user &&
                         <>
@@ -129,6 +132,7 @@ function Portal() {
                                 <h1>Management System</h1>
                             </div>
                             <Button animation='pop-out color-yellow' style={{'width': '100%'}} onClick={(e) => {setPortalComponentState('manageUsers');}} scheme='btn-outlinebottom'><i style={{'marginRight': '8px'}} className='fa-solid fa-user'/>Users</Button>
+                            {authContext.user.permissions.Flags.CREATE_PORTAL_NOTICE && <Button animation='pop-out color-yellow' style={{'width': '100%'}} onClick={(e) => {setNoticePopupState('open');}} scheme='btn-outlinebottom'><i style={{'marginRight': '8px'}} className='fa-solid fa-flag'/>Portal Notice</Button>}
                         </div>
                     }
 

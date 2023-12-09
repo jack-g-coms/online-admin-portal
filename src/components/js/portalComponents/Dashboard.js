@@ -41,7 +41,6 @@ function Dashboard () {
                 getConfiguration()
                     .then(config => {
                         configuration.current = config;
-                        console.log(config);
                         setState('available');
                     }).catch(console.log);
             }).catch(console.log);
@@ -88,7 +87,7 @@ function Dashboard () {
 
                         {configuration.current && configuration.current.Announcement &&
                             <div className='vertical-grouping-dashboard' style={{'marginTop': '45px'}}>
-                                <h2>Notice from Portal Administration</h2>
+                                <h2><i class="fa-solid fa-circle-exclamation" style={{'color': '#349fc9'}}/> Notice from Portal Administration</h2>
                                 <div className='dashboard-notice'>
                                     <span>{configuration.current.Announcement}</span>
                                 </div>
@@ -96,7 +95,7 @@ function Dashboard () {
                         }
 
                         <div className='vertical-grouping-dashboard' style={{'marginTop': '45px'}}>
-                            <h2>Your Statistical Outlook</h2>
+                            <h2><i class="fa-solid fa-chart-simple" style={{'marginRight': '5px', 'color': '#349fc9'}}/> Your Statistical Outlook</h2>
                             <div className='weekly-stats'>
                                 <div className='grouping'>
                                     {statistics.current.Roblox.pastWeeksBans && <span style={{'backgroundColor': '#303030', 'padding': '10px 10px', 'borderRadius': '5px'}}>There have been <span style={{'color': '#c93434'}}>{statistics.current.Roblox.pastWeeksBans[0].Bans} Roblox Bans</span> this week.</span>}
