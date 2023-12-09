@@ -235,15 +235,24 @@ module.exports.deleteWarningAsync = async (warnID) => {
 };
 
 module.exports.getStatistics = async () => {
+    const currentDate = new Date();
+    const firstDay = new Date(currentDate.getFullYear(), 0, 1);
+    const week = Math.ceil((((currentDate.getTime() - firstDay.getTime()) / 86400000) + firstDay.getDay() + 1) / 7);
+
     var statistics = [
         new Promise((resolve, reject) => {
             Database.all(
-                "SELECT strftime('%W', DATETIME(ROUND(bannedOn / 1000), 'localtime')) as Week, COUNT(*) as Bans FROM Bans GROUP BY Week LIMIT 5",
+                "SELECT CAST(strftime('%W', DATETIME(bannedOn, 'unixepoch', 'localtime')) as decimal) as Week, COUNT(*) as Bans FROM Bans WHERE strftime('%Y', DATETIME(bannedOn, 'unixepoch', 'localtime')) = strftime('%Y', DATE('now')) GROUP BY Week ORDER BY Week DESC LIMIT 5",
                 [],
                 (err, rows) => {
                     if (err) {
                         resolve(false);
                     } else {
+                        if (rows[0] && rows[0].Week != week) {
+                            rows.unshift({Week: week, Bans: 0});
+                        } else if (!rows[0]) {
+                            return resolve(false);
+                        }
                         resolve(rows);
                     }
                 }
@@ -251,12 +260,17 @@ module.exports.getStatistics = async () => {
         }),
         new Promise((resolve, reject) => {
             Database.all(
-                "SELECT strftime('%W', DATETIME(ROUND(warnedOn / 1000), 'localtime')) as Week, COUNT(*) as Warnings FROM Warnings GROUP BY Week LIMIT 5",
+                "SELECT CAST(strftime('%W', DATETIME(warnedOn, 'unixepoch', 'localtime')) as decimal) as Week, COUNT(*) as Warnings FROM Warnings WHERE strftime('%Y', DATETIME(warnedOn, 'unixepoch', 'localtime')) = strftime('%Y', DATE('now')) GROUP BY Week ORDER BY Week DESC LIMIT 5",
                 [],
                 (err, rows) => {
                     if (err) {
                         resolve(false);
                     } else {
+                        if (rows[0] && rows[0].Week != week) {
+                            rows.unshift({Week: week, Warnings: 0});
+                        } else if (!rows[0]) {
+                            return resolve(false);
+                        }
                         resolve(rows);
                     }
                 }
@@ -264,10 +278,15 @@ module.exports.getStatistics = async () => {
         }),
         new Promise((resolve, reject) => {
             Database.all(
-                "SELECT strftime('%W', DATETIME(ROUND(Bans.bannedOn / 1000), 'localtime')) as Week, Bans.moderator AS Moderator, COUNT(*) AS Moderations FROM Bans GROUP BY Moderator, Week ORDER BY Week ASC, Moderations DESC LIMIT 1",
+                "SELECT CAST(strftime('%W', DATETIME(bannedOn, 'unixepoch', 'localtime')) as decimal) as Week, moderator AS Moderator, COUNT(*) AS Bans FROM Bans WHERE strftime('%Y', DATETIME(bannedOn, 'unixepoch', 'localtime')) = strftime('%Y', DATE('now')) GROUP BY Moderator, Week ORDER BY Week DESC, Bans DESC LIMIT 1",
                 [],
                 (err, rows) => {
                     if (rows[0]) {
+                        if (rows[0].Week != week) {
+                            rows[0] = {Week: week, Moderator: 'none'};
+                            resolve(rows[0]);
+                        }
+
                         RobloxService.getUserByID(rows[0].Moderator)
                             .then(rbxUser => {
                                 if (!rbxUser) return resolve(false);
@@ -283,10 +302,15 @@ module.exports.getStatistics = async () => {
         }),
         new Promise((resolve, reject) => {
             Database.all(
-                "SELECT strftime('%W', DATETIME(ROUND(Warnings.warnedOn / 1000), 'localtime')) as Week, Warnings.moderator AS Moderator, COUNT(*) AS Moderations FROM Warnings GROUP BY Moderator, Week ORDER BY Week ASC, Moderations DESC LIMIT 1",
+                "SELECT CAST(strftime('%W', DATETIME(warnedOn, 'unixepoch', 'localtime')) as decimal) as Week, moderator AS Moderator, COUNT(*) AS Warnings FROM Warnings WHERE strftime('%Y', DATETIME(warnedOn, 'unixepoch', 'localtime')) = strftime('%Y', DATE('now')) GROUP BY Moderator, Week ORDER BY Week DESC, Warnings DESC LIMIT 1",
                 [],
                 (err, rows) => {
                     if (rows[0]) {
+                        if (rows[0].Week != week) {
+                            rows[0] = {Week: week, Moderator: 'none'};
+                            resolve(rows[0]);
+                        }
+                        
                         RobloxService.getUserByID(rows[0].Moderator)
                             .then(rbxUser => {
                                 if (!rbxUser) return resolve(false);

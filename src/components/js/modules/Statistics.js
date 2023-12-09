@@ -1,8 +1,8 @@
 import { socket } from './Socket';
 
-export const getRobloxModerationStatistics = async () => {
+export const getModerationStatistics = async () => {
     return new Promise((resolve, reject) => {
-        socket.emit('getRobloxModerationStatistics', (res) => {
+        socket.emit('getModerationStatistics', (res) => {
             resolve(res);
         });
     });

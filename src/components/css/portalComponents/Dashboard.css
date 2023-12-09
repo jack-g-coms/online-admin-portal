@@ -20,7 +20,7 @@
     margin-left: 25px;
     margin-right: 25px;
 } .page h2 {
-    font-size: 35px;
+    font-size: 32px;
 } #sub-line {
     font-size: 20px;
     opacity: 0.5;
@@ -101,4 +101,16 @@
     padding: 15px 15px;
 } .chart-holder h2 {
     font-size: 25px;
+}
+
+.dashboard-notice {
+    background-color: #303030;
+    width: fit-content;
+    padding: 5px;
+    text-wrap: wrap;
+    font-size: 20px;
+    padding: 10px 10px;
+} .dashboard-notice span {
+    word-break: break-all;
+    width: 100%;
 }

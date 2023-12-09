@@ -20,3 +20,11 @@ export const filterString = (string, filterArray, replaceWith)  => {
     }
     return string;
 }; 
+
+export const getWeek = () => {
+    const currentDate = new Date();
+    const firstDay = new Date(currentDate.getFullYear(), 0, 1);
+    const week = Math.ceil((((currentDate.getTime() - firstDay.getTime()) / 86400000) + firstDay.getDay() + 1) / 7);
+
+    return week;
+}

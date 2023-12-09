@@ -1,5 +1,5 @@
 .popup-background {
-    position: absolute;
+    position: fixed;
     display: flex;
     align-items: center;
     padding-top: 20px;
@@ -19,7 +19,7 @@
 }
 
 .popup-background-center {
-    position: absolute;
+    position: fixed;
     display: flex;
     align-items: center;
     justify-content: center;
