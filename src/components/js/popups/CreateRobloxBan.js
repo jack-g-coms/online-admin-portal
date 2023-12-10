@@ -78,7 +78,7 @@ function CreateRobloxBanPopup({setState}) {
 
                         <div className='create-roblox-ban-popup-grouping'>
                             <span>Moderator ID</span>
-                            <TextBox setState={setModID} placeholder={'Input a Valid Roblox ID'}/>
+                            <TextBox setState={setModID} defaultValue={authContext.user.rbxUser.id} placeholder={'Input a Valid Roblox ID'}/>
                         </div>
 
                         <div className='create-roblox-ban-popup-grouping'>

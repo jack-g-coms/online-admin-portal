@@ -27,18 +27,18 @@ module.exports.PERMISSION_FLAGS = {
 // SETS
 module.exports.PERMISSION_SETS = {
     [10]: {
-        Name: 'Portal Director'
+        Name: 'Portal Developer'
     },
     [9]: {
         Name: 'Portal Automated System'
     },
     [8]: {
-        Name: 'Portal Oversight'
+        Name: 'Portal Director'
     },
     [7]: {
         Name: 'Portal Management'
     },
-    [3]: {
+    [6]: {
         Name: 'Portal Supervisor'
     },
     [2]: {

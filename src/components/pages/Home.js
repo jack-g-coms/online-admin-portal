@@ -12,7 +12,7 @@ function Home() {
                 <h2>Welcome to Rome Admin Portal</h2>
                 <img src='/media/images/jack-pic.png'></img>
                 <span>JackManzotti</span>
-                <span>Head of Technical Services</span>
+                <span>Portal Developer</span>
 
                 <p>
                     <strong><span style={{'color': '#f54242'}}>The Rome Admin Portal</span></strong> is the primary interface for the moderation network of the <a href='https://www.roblox.com/groups/6124305/The-Roman-Empire#!/about'>Roman Empire on Roblox.</a> <strong><span style={{'color': '#f5cb42'}}>If you do not have a login for this portal, and believe you should, contact the System Administrator listed above: JackManzotti.</span></strong>
