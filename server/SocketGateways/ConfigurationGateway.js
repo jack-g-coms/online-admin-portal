@@ -16,10 +16,16 @@ module.exports.newSocket = (socket) => {
             }).catch(err => callback(false));
     });
 
-    socket.on('updateConfiguration', (announcement, callback) => {
-        ConfigurationService.updateConfiguration(announcement || '')
+    socket.on('updateConfiguration', async (body, callback) => {
+        var { announcement, devNotice } = body;
+        const current_config = await ConfigurationService.getConfiguration();
+
+        if (!announcement && announcement != '') announcement = current_config.Announcement;
+        if (!devNotice && devNotice != '') devNotice = current_config.DevNotice;
+
+        ConfigurationService.updateConfiguration(announcement, devNotice)
             .then(() => {
-                callback(announcement);
+                callback(true);
             }).catch(err => callback(false));
     });
 }

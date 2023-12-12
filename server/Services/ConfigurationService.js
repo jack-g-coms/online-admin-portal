@@ -21,11 +21,11 @@ module.exports.getConfiguration = () => {
     });
 }
 
-module.exports.updateConfiguration = (announcement) => {
+module.exports.updateConfiguration = (announcement, devNotice) => {
     return new Promise((resolve, reject) => {
         Database.run(
-            "UPDATE Configuration SET Announcement = ?",
-            [announcement],
+            "UPDATE Configuration SET Announcement = ?, DevNotice = ?",
+            [announcement, devNotice],
             (err) => {
                 if (!err) {
                     resolve();
