@@ -7,15 +7,14 @@ const gateways = {};
 
 io.use(ProtectionService.privilegedSocket);
 io.on('connection', (socket) => {
-    if (!socket.User) return;
     var connected_gateways = [];
-
     for (var gateway in gateways) {
         gateway = gateways[gateway];
-        if ((gateway.gatewayInfo.requiresAccessLevel && gateway.gatewayInfo.requiresAccessLevel(socket.User)) || !gateway.gatewayInfo.requiresAccessLevel) {
+        if ((socket.User && gateway.gatewayInfo.requiresAccessLevel && gateway.gatewayInfo.requiresAccessLevel(socket.User)) || (!gateway.gatewayInfo.requiresAccessLevel && socket.User) || gateway.gatewayInfo.Unsecure) {
             gateway.newSocket(socket);
             connected_gateways.push(gateway.gatewayInfo.Name);
         }
+        console.log(connected_gateways)
     }
 
     socket.Gateways = connected_gateways;
@@ -31,7 +30,7 @@ io.on('connection', (socket) => {
     });
 
     // Join permitted rooms
-    if (socket.User.permissionLevel == 9) {
+    if (socket.User && socket.User.permissionLevel == 9) {
         socket.join('SystemChannel');
     }
 });

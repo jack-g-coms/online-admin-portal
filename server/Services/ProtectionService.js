@@ -31,26 +31,19 @@ module.exports.privilegedSocket = async(socket, next) => {
     const bearerToken = (socket.handshake.headers.cookie && socket.handshake.headers.cookie.substring(13));
 
     if (typeof bearerToken != "undefined") {
-        if (typeof bearerToken == "undefined") {
-            return next(new Error('Unauthorized'));
-        }
-
         jwt.verify(bearerToken, ".OAUTHSECURE", (err, agent) => {
-            if (typeof agent == "undefined") {
-                return next(new Error('Unauthorized'));
-            } else {
+            if (typeof agent != "undefined") {
                 UsersService.searchUserAsync(agent.secret || agent.user.secret)
                     .then((user) => {
                         socket.User = user;
                         next();
-                    })
-                    .catch(() => {
-                        return next(new Error('Unauthorized'));
-                    })
+                    }).catch(console.log);
+            } else {
+                next();
             }
         });
     } else {
-        return next(new Error('Unauthorized'));
+        next();
     }
 };
 
