@@ -19,6 +19,20 @@ const ENDPOINT_PERMISSION_FLAGS = {
     '/api/roblox/warnings/search': PermissionsService.PERMISSION_FLAGS.VIEW_ROBLOX_WARNINGS
 }
 
+const getCookie = (cookieString, cookieName) => {
+    const splitCookieString = cookieString.split(';');
+    var cookie;
+
+    for (var i = 0; i < splitCookieString.length; i++) {
+        var indexCookie = splitCookieString[i].replace(/\s/g, '');
+        if (indexCookie.substring(0, cookieName.length) == cookieName) {
+            cookie = indexCookie.substring(cookieName.length + 1);
+        }
+    }
+
+    return cookie;
+};
+
 // FUNCTIONS
 module.exports.requiresAPIKey = async (req, res, next) => {
     if (req.headers['apikey'] != API_KEY) {
@@ -28,7 +42,7 @@ module.exports.requiresAPIKey = async (req, res, next) => {
 };
 
 module.exports.privilegedSocket = async(socket, next) => {
-    const bearerToken = (socket.handshake.headers.cookie && socket.handshake.headers.cookie.substring(13));
+    const bearerToken = socket.handshake.headers.cookie && getCookie(socket.handshake.headers.cookie, '.OAUTHSECURE');
 
     if (typeof bearerToken != "undefined") {
         jwt.verify(bearerToken, ".OAUTHSECURE", (err, agent) => {
