@@ -36,20 +36,20 @@ function ManageModerationsRow({moderation}) {
 
     return (
         <>
-            {applyModifyPopup == 'open' && <ApplyModifyDiscordModerationPopup editedModeration={editedModeration.current} setState={setApplyModifyPopup} changes={changed.current}/>}
+            {applyModifyPopup == 'open' && <ApplyModifyDiscordModerationPopup editedModeration={editedModeration.current} setState={setApplyModifyPopup} changed={changed}/>}
             <div onClick={(e) => {if ((e.target.classList.contains('textarea') || popupState == 'loading')) return; if (editorState == 'open') return; setEditorState('open'); editedModeration.current = JSON.parse(JSON.stringify(moderation));}} className='manage-roblox-bans-container-row'>
                 {editorState == 'open' &&
                     <>
                         <div className='ban-editor-container fade-in'>
                             <div style={{'alignItems': 'start', 'marginBottom': '10px'}} className='ban-editor-row-edit-info'>
-                                {authContext.user.permissions.Flags.UPDATE_DISCORD_MODERATIONS && moderation.moderationType != 'Ban' && moderation.moderationType != 'Permanent Ban' &&
+                                {authContext.user.permissions.Flags.UPDATE_DISCORD_MODERATIONS && (!moderation.isActive || (moderation.isActive && moderation.moderationType != 'Ban' && moderation.moderationType != 'Permanent Ban')) &&
                                     <Button animation='raise' scheme='btn-confirm' onClick={(e) => {if (changed.current.moderator || changed.current.reason || changed.current.evidence || changed.current.duration) {setApplyModifyPopup('open');}}}>{state != 'loading' && <><i class="fa-solid fa-gear"></i> Save</> || <><i className='fa-solid fa-spinner loader'/> Saving...</>}</Button>
                                 }
 
                                 {state != 'loading' &&
                                     <>
                                         <Button animation='raise' scheme='btn-cancel' onClick={(e) => {setEditorState('hidden'); setState('available'); changed.current = {};}}><i class="fa-solid fa-ban"></i> Close</Button>
-                                        {authContext.user.permissions.Flags.DELETE_DISCORD_MODERATIONS && moderation.moderationType != 'Ban' && moderation.moderationType != 'Permanent Ban' &&
+                                        {authContext.user.permissions.Flags.UPDATE_DISCORD_MODERATIONS && (!moderation.isActive || (moderation.isActive && moderation.moderationType != 'Ban' && moderation.moderationType != 'Permanent Ban')) &&
                                             <Button animation='raise' scheme='btn-cancel' onClick={(e) => {deleteTrigger();}}><i class="fa-solid fa-trash"></i> Delete</Button>
                                         }
                                     </>

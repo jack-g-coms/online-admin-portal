@@ -43,7 +43,7 @@ function PortalUser({user}) {
             <div className='manage-users-table-row'>
                 {actionsVisible == 'hidden' &&
                     <>
-                        <div className='manage-users-table-info fade-up'>
+                        <div className='manage-users-table-info'>
                             <img src={user.rbxUser.imageUrl}/>
 
                             <div className='manage-users-table-row-info' style={{'minWidth': '220px'}}>

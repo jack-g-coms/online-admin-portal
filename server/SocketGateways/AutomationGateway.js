@@ -31,18 +31,11 @@ module.exports.newSocket = (socket) => {
             });
     });
 
-    socket.on('updatedDiscordModerationAutomation', async (moderationID, updatedModeration) => {
+    socket.on('deletedDiscordModerationAutomation', async (moderationID, callback) => {
         const moderation = await DiscordModerationService.searchModerationAsync(moderationID);
         if (!moderation) callback({message: 'Not Found'});
 
-        if (updatedModeration.moderationType == 'Ban' || updatedModeration.moderationType == 'Permanent Ban') {
-            DiscordModerationService.updateBanAsync(updatedModeration.discordID, updatedModeration.moderator, updatedModeration.evidence, updatedModeration.reason, updatedModeration.banType, updatedModeration.bannedOn)
-                .catch(() => {
-                    callback({message: 'Error'});
-                });
-        }
-
-        DiscordModerationService.updateModerationAsync(moderationID, updatedModeration.moderationType, updatedModeration.moderator, updatedModeration.evidence, updatedModeration.reason, updatedModeration.extraInfo || {})
+        DiscordModerationService.deleteModerationAsync(moderationID)
             .then(() => {
                 callback({message: 'Success'});
             }).catch(() => {
@@ -50,7 +43,26 @@ module.exports.newSocket = (socket) => {
             });
     });
 
-    socket.on('createdDiscordModerationAutomation', async (newModeration) => {
+    socket.on('updatedDiscordModerationAutomation', async (moderationID, updatedModeration, callback) => {
+        const moderation = await DiscordModerationService.searchModerationAsync(moderationID);
+        if (!moderation) callback({message: 'Not Found'});
+
+        if (updatedModeration.moderationType == 'Ban' || updatedModeration.moderationType == 'Permanent Ban') {
+            DiscordModerationService.updateBanAsync(updatedModeration.discordID, updatedModeration.moderator || moderation.moderator, updatedModeration.evidence || moderation.evidence, updatedModeration.reason || moderation.reason, updatedModeration.banType, updatedModeration.bannedOn)
+                .catch(() => {
+                    callback({message: 'Error'});
+                });
+        }
+
+        DiscordModerationService.updateModerationAsync(moderationID, updatedModeration.moderationType || moderation.moderationType, updatedModeration.moderator || moderation.moderator, updatedModeration.evidence || moderation.evidence, updatedModeration.reason || moderation.reason, updatedModeration.extraInfo || {})
+            .then(() => {
+                callback({message: 'Success'});
+            }).catch(() => {
+                callback({message: 'Error'});
+            });
+    });
+
+    socket.on('createdDiscordModerationAutomation', async (newModeration, callback) => {
         if (newModeration.moderationType == 'Ban' || newModeration.moderationType == 'Permanent Ban') {
             DiscordModerationService.newBanAsync(newModeration.discordID, newModeration.moderator, newModeration.evidence, newModeration.reason, newModeration.banType)
                 .catch(() => {

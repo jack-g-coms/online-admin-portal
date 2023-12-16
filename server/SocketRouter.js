@@ -28,8 +28,11 @@ io.on('connection', (socket) => {
         };
     });
 
+    console.log(socket.User);
+
     // Join permitted rooms
     if (socket.User && socket.User.permissions.Name == 'Portal Automated System') {
+        console.log(socket.User);
         socket.join('Automation');
     }
 });

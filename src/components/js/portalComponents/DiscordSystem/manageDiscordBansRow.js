@@ -36,7 +36,7 @@ function ManageBansRow({ban}) {
 
     return (
         <>
-            {applyModifyPopup == 'open' && <ApplyModifyDiscordBanPopup editedBan={editedBan.current} setState={setApplyModifyPopup} changes={changed.current}/>}
+            {applyModifyPopup == 'open' && <ApplyModifyDiscordBanPopup editedBan={editedBan.current} setState={setApplyModifyPopup} changed={changed}/>}
             <div onClick={(e) => {if ((e.target.classList.contains('textarea') || popupState == 'loading')) return; if (editorState == 'open') return; setEditorState('open'); editedBan.current = JSON.parse(JSON.stringify(ban));}} className='manage-roblox-bans-container-row'>
                 {editorState == 'open' &&
                     <>

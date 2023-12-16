@@ -44,11 +44,10 @@ function CreateDiscordBanPopup({setState}) {
                 } else if (res.message == 'Error') {
                     Swal.fire({title: 'Error', icon: 'error', text: `There was an issue trying to process your request.`, confirmButtonText: 'Ok'});
                 } else {
-                    Swal.fire({title: 'Success', icon: 'success', text: `${discordID} has been successfully banned!`, confirmButtonText: 'Ok'})
+                    Swal.fire({title: 'Success', icon: 'success', text: `Discord Automation has been sent the request to create this ban. If it is not created in the next 5 minutes, retry.`, confirmButtonText: 'Ok'})
                         .then((res) => {
                             if (res.isConfirmed) {
                                 setState('closed');
-                                window.location.reload();
                             }
                         });
                 }
@@ -76,7 +75,7 @@ function CreateDiscordBanPopup({setState}) {
 
                         <div className='create-roblox-ban-popup-grouping'>
                             <span>Moderator ID</span>
-                            <TextBox setState={setModID} placeholder={'Input a Valid Roblox ID'}/>
+                            <TextBox setState={setModID} placeholder={'Input a Valid Discord ID'}/>
                         </div>
 
                         <div className='create-roblox-ban-popup-grouping'>

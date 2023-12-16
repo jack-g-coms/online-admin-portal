@@ -339,12 +339,12 @@ module.exports.getStatistics = async () => {
         }),
         new Promise((resolve, reject) => {
             Database.all(
-                "SELECT strftime('%W', DATETIME(ROUND(DiscordModerations.moderatedOn / 1000), 'localtime')) as Week, DiscordModerations.moderator AS Moderator, COUNT(*) AS Moderations FROM DiscordModerations GROUP BY Moderator, Week ORDER BY Week ASC, Moderations DESC LIMIT 1",
+                "SELECT CAST(strftime('%W', DATETIME(moderatedOn, 'unixepoch', 'localtime')) as decimal) as Week, moderator AS Moderator, COUNT(*) AS Moderations FROM DiscordModerations WHERE strftime('%Y', DATETIME(moderatedOn, 'unixepoch', 'localtime')) = strftime('%Y', DATE('now')) GROUP BY Moderator, Week ORDER BY Week DESC, Moderations DESC LIMIT 1",
                 [],
                 (err, rows) => {
                     if (rows[0]) {
-                        if (rows[0].Week != "00") {
-                            rows.unshift({Week: '00', Moderator: 'none'});
+                        if (rows[0].Week != week) {
+                            rows.unshift({Week: week, Moderator: 'none'});
                         } else {
                             rows[0].Moderator = rows[0].Moderator.toString().substring(0, rows[0].Moderator.toString().length - 1);
                         }

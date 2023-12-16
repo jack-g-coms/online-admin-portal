@@ -7,20 +7,21 @@ import '../../css/popups/ApplyModify.css';
 import Button from "../Button";
 import { updateBan } from '../modules/DiscordModerations';
 
-function ApplyModifyDiscordBanPopup({setState, editedBan, changes}) {
+function ApplyModifyDiscordBanPopup({setState, editedBan, changed}) {
     const [popupState, setPopupState] = useState('available');
 
     const applyChanges = () => {
         updateBan(editedBan.discordID, editedBan.moderator, editedBan.evidence, editedBan.reason, editedBan.banType)
             .then(response => {
-                setState('closed');
                 if (response.message == 'Not Found') {
                     Swal.fire({title: 'Error', icon: 'error', text: `No Discord Ban under the ID ${editedBan.discordID} was found. This ban could've already been deleted.`, confirmButtonText: 'Ok'});
                 } else if (response.message == 'Success') {
                     Swal.fire({title: 'Success', text: 'Discord Automation has been sent the request to update this ban. If it is not updated in the next 5 minutes, retry.', icon: 'success', confirmButtonText: 'Ok'});
+                    changed.current = {};
                 } else {
                     Swal.fire({title: 'Error', icon: 'error', text: `There was a problem while trying to update this ban.`, confirmButtonText: 'Ok'});
                 }
+                setState('closed');
             }).catch(console.log);
     };
 
@@ -38,8 +39,8 @@ function ApplyModifyDiscordBanPopup({setState, editedBan, changes}) {
 
                     <div className='apply-modify-user-popup-content'>
                         <div className='apply-modify-table'>
-                            {Object.keys(changes).map((key, index) => {
-                                const change = changes[key];
+                            {Object.keys(changed.current).map((key, index) => {
+                                const change = changed.current[key];
                                 return (
                                     <>
                                         <p><span style={{'width': 'fit-content', 'marginRight': '5px'}}>{index + 1}</span>Change <span style={{'color': '#349fc9'}}>'{key}'</span> from <span style={{'color': '#f0be48'}}>'{change.old}'</span> to <span style={{'color': '#f0be48'}}>'{change.new}'</span></p>

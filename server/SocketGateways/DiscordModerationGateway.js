@@ -95,9 +95,9 @@ module.exports.newSocket = (socket) => {
             } else {
                 extraInfo = {active: true}
             }
-            if (!extraInfo.length && !extraInfo.expires && !extraInfo.active) return;
+            if (!extraInfo.length && !extraInfo.expires && !extraInfo.active) return callback({message: 'Error'});
 
-            process.io.to('Automation').emit('createDiscordModeration', {discordID, moderator, moderationType, evidence, reason, extraInfo, banType});
+            process.io.to('Automation').emit('createDiscordModeration', {discordID, moderator, moderationType: modType, evidence, reason, extraInfo, banType});
             callback({message: 'Success'});
         });
     }
@@ -105,11 +105,11 @@ module.exports.newSocket = (socket) => {
     if (socket.User.permissions.Flags.UPDATE_DISCORD_BANS) {
         socket.on('updateDiscordBan', async (body, callback) => {
             var { discordID, moderator, evidence, reason, banType } = body;
-            if (!discordID || (!moderator && !evidence && !reason)) return callback({message: 'Error'});
+            if (!discordID) return callback({message: 'Error'});
         
             const outstanding_ban = await DiscordModerationService.searchBanAsync(discordID);
             const linked_moderation = await DiscordModerationService.getActiveModerationAsync(discordID, ['Ban', 'Permanent Ban'])
-            if (!outstanding_ban) return callback({message: 'Not Found'});
+            if (!outstanding_ban || !linked_moderation) return callback({message: 'Not Found'});
 
             var bannedOn = outstanding_ban.bannedOn;
         
@@ -120,7 +120,7 @@ module.exports.newSocket = (socket) => {
 
             var extraInfo = {};
             var modType = '';
-            if (banType.Type !='"Permanent') {
+            if (banType.Type != 'Permanent') {
                 modType = 'Ban'
                 extraInfo = {length: banType.Time, expires: Math.round(Date.now() / 1000) + banType.Time}
             } else {
@@ -128,9 +128,9 @@ module.exports.newSocket = (socket) => {
                 extraInfo = {active: true}
             }
 
-            if (!extraInfo.length && !extraInfo.expires && !extraInfo.active) return;
+            if (!extraInfo.length && !extraInfo.expires && !extraInfo.active) return callback({message: 'Error'});;
 
-            process.io.to('Automation').emit('createDiscordModeration', {discordID, moderator, moderationType: modType, evidence, reason, extraInfo, banType, bannedOn});
+            process.io.to('Automation').emit('updateDiscordModeration', linked_moderation, {discordID, moderator, moderationType: modType, evidence, reason, extraInfo, banType, bannedOn});
             callback({message: 'Success'});
         });
     }
@@ -156,6 +156,7 @@ module.exports.newSocket = (socket) => {
             if (!discordID || !moderator || !moderationType || !evidence || !reason) return callback({message: 'Error'});
 
             process.io.to('Automation').emit('createDiscordModeration', {discordID, moderator, moderationType, evidence, reason, extraInfo});
+            callback({message: 'Success'});
         });
     }
 
@@ -167,7 +168,7 @@ module.exports.newSocket = (socket) => {
             const outstanding_moderation = await DiscordModerationService.searchModerationAsync(moderationID);
             if (!outstanding_moderation) return callback({message: 'Not Found'});
             
-            if (outstanding_moderation.moderationType == 'Ban' || outstanding_moderation.moderationType == 'Permanent Ban') {
+            if (outstanding_moderation.isActive && (outstanding_moderation.moderationType == 'Ban' || outstanding_moderation.moderationType == 'Permanent Ban')) {
                 return callback({message: 'Updating bans is not supported on the discord moderation page.'});
             }
         
@@ -200,7 +201,7 @@ module.exports.newSocket = (socket) => {
                 return callback({message: 'Deleting active moderations of this type is not supported on the moderations page'});
             }
 
-            process.io.to('Automation').emit('deactivateDiscordModeration', outstanding_moderation);
+            process.io.to('Automation').emit('deleteDiscordModeration', outstanding_moderation);
             callback({message: 'Success'});
         });
     }
