@@ -29,10 +29,7 @@ function ManageBansRow({ban}) {
                 if (response.message != 'Success') {
                     Swal.fire({title: 'Error', icon: 'error', text: `There was a problem while trying to update this ban.`, confirmButtonText: 'Ok'});
                 } else {
-                    Swal.fire({title: 'Success', text: 'Ban has been successfully deleted.', icon: 'success', confirmButtonText: 'Ok'})
-                        .then(() => {
-                            window.location.reload();
-                        });
+                    Swal.fire({title: 'Success', text: 'Discord Automation has been sent the request to delete this ban. If it is not gone in the next 5 minutes, retry.', icon: 'success', confirmButtonText: 'Ok'});
                 }
             }).catch(console.log);
     };

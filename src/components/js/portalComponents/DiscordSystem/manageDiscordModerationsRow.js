@@ -8,7 +8,7 @@ import TextBox from '../../TextBox';
 import TextArea from '../../TextArea';
 
 import AuthContext from '../../modules/AuthContext';
-import ApplyModifyRobloxWarningPopup from '../../popups/ApplyModifyRobloxWarning';
+import ApplyModifyDiscordModerationPopup from '../../popups/ApplyModifyDiscordModeration';
 import { updateModeration, deleteModeration, newModeration } from '../../modules/DiscordModerations';
 import { convertToLocal, filterString } from '../../../../shared';
 
@@ -29,30 +29,27 @@ function ManageModerationsRow({moderation}) {
                 if (response.message != 'Success') {
                     Swal.fire({title: 'Error', icon: 'error', text: `There was a problem while trying to update this moderation.`, confirmButtonText: 'Ok'});
                 } else {
-                    Swal.fire({title: 'Success', text: 'Moderation has been successfully deleted.', icon: 'success', confirmButtonText: 'Ok'})
-                        .then(() => {
-                            window.location.reload();
-                        });
+                    Swal.fire({title: 'Success', text: 'Discord Automation has been sent the request to delete this moderation. If it is not gone in the next 5 minutes, retry.', icon: 'success', confirmButtonText: 'Ok'});
                 }
             }).catch(console.log);
     };
 
     return (
         <>
-            {applyModifyPopup == 'open' && <ApplyModifyRobloxWarningPopup editedWarning={editedModeration.current} setState={setApplyModifyPopup} changes={changed.current}/>}
+            {applyModifyPopup == 'open' && <ApplyModifyDiscordModerationPopup editedModeration={editedModeration.current} setState={setApplyModifyPopup} changes={changed.current}/>}
             <div onClick={(e) => {if ((e.target.classList.contains('textarea') || popupState == 'loading')) return; if (editorState == 'open') return; setEditorState('open'); editedModeration.current = JSON.parse(JSON.stringify(moderation));}} className='manage-roblox-bans-container-row'>
                 {editorState == 'open' &&
                     <>
                         <div className='ban-editor-container fade-in'>
                             <div style={{'alignItems': 'start', 'marginBottom': '10px'}} className='ban-editor-row-edit-info'>
-                                {authContext.user.permissions.Flags.UPDATE_DISCORD_MODERATIONS &&
+                                {authContext.user.permissions.Flags.UPDATE_DISCORD_MODERATIONS && moderation.moderationType != 'Ban' && moderation.moderationType != 'Permanent Ban' &&
                                     <Button animation='raise' scheme='btn-confirm' onClick={(e) => {if (changed.current.moderator || changed.current.reason || changed.current.evidence || changed.current.duration) {setApplyModifyPopup('open');}}}>{state != 'loading' && <><i class="fa-solid fa-gear"></i> Save</> || <><i className='fa-solid fa-spinner loader'/> Saving...</>}</Button>
                                 }
 
                                 {state != 'loading' &&
                                     <>
                                         <Button animation='raise' scheme='btn-cancel' onClick={(e) => {setEditorState('hidden'); setState('available'); changed.current = {};}}><i class="fa-solid fa-ban"></i> Close</Button>
-                                        {authContext.user.permissions.Flags.DELETE_DISCORD_MODERATIONS && !moderation.isActive &&
+                                        {authContext.user.permissions.Flags.DELETE_DISCORD_MODERATIONS && moderation.moderationType != 'Ban' && moderation.moderationType != 'Permanent Ban' &&
                                             <Button animation='raise' scheme='btn-cancel' onClick={(e) => {deleteTrigger();}}><i class="fa-solid fa-trash"></i> Delete</Button>
                                         }
                                     </>
@@ -94,6 +91,34 @@ function ManageModerationsRow({moderation}) {
                                     }} defaultValue={editedModeration.current.evidence.join(' ')} disabled={!authContext.user.permissions.Flags.UPDATE_DISCORD_MODERATIONS || (moderation.isActive && (moderation.moderationType == 'Permanent Ban' || moderation.moderationType == 'Ban'))}/>
                                 </div>
                             </div>
+
+                            {moderation.extraInfo.length && moderation.extraInfo.expires &&
+                                <div style={{'gap': '15px'}} className='ban-editor-row-edit-info'>
+                                    <div className='ban-editor-row-edit-grouping'>
+                                        <strong><span><i style={{'fontSize': '15px'}} class="fa-solid fa-clock"/> Duration</span></strong>
+                                        <TextBox setState={(newText) => {
+                                            var extraInfo = {};
+                                            var modTime;
+                                            const newState = filterString(newText, ['day', 'Day', 'Days', 's', 'week'], ''); 
+
+                                            if (newState.toLowerCase() == 'permanent' || (Number(newState) == 0)) {
+                                                modTime = 'Permanent';
+                                                extraInfo = {active: true} 
+                                            } else if (Number(newState) && Number(newState) > 0) {
+                                                modTime = Number(newState) * 86400;
+                                                extraInfo = {length: modTime, expires: Math.round(Date.now() / 1000) + modTime}
+                                            }
+
+                                            if (!extraInfo.length && !extraInfo.expires && !extraInfo.active) return;
+
+                                            changed.current.duration = {new: extraInfo.length && extraInfo.length + ' seconds' || 'Permanent', old: (moderation.extraInfo.length && moderation.extraInfo.length + ' seconds') || 'Permanent'};
+                                            editedModeration.current.extraInfo = extraInfo;
+
+                                            setState('changedType');
+                                        }} defaultValue={moderation.extraInfo.length} disabled={!authContext.user.permissions.Flags.UPDATE_DISCORD_MODERATIONS}/>
+                                    </div>
+                                </div>
+                            }
 
                             {(changed.current.moderator || changed.current.reason || changed.current.evidence || changed.current.duration) &&
                                 <span style={{'color': '#f0be48', 'paddingLeft': '13px', 'marginTop': '8px'}}><i style={{'marginRight': '2px'}} className='fa-solid fa-circle-exclamation'/> You have made unsaved changes</span>

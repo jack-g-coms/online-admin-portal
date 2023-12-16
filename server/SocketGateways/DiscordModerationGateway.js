@@ -20,8 +20,7 @@ module.exports.newSocket = (socket) => {
                 } else {
                     callback({message: 'Not Found'});
                 }
-            }).catch((err) => {
-                console.log(err);
+            }).catch(() => {
                 callback({message: 'Error'});
             });
     });
@@ -34,8 +33,7 @@ module.exports.newSocket = (socket) => {
                 } else {
                     callback({message: 'Not Found'});
                 }
-            }).catch((err) => {
-                console.log(err);
+            }).catch(() => {
                 callback({message: 'Error'});
             });
     });
@@ -48,8 +46,7 @@ module.exports.newSocket = (socket) => {
                 } else {
                     callback({message: 'Not Found'});
                 }
-            }).catch((err) => {
-                console.log(err);
+            }).catch(() => {
                 callback({message: 'Error'});
             });
     });
@@ -63,8 +60,7 @@ module.exports.newSocket = (socket) => {
                 } else {
                     callback({message: 'Not Found'});
                 }
-            }).catch((err) => {
-                console.log(err);
+            }).catch(() => {
                 callback({message: 'Error'});
             });
     });
@@ -78,8 +74,7 @@ module.exports.newSocket = (socket) => {
                 } else {
                     callback({message: 'Not Found'});
                 }
-            }).catch((err) => {
-                console.log(err);
+            }).catch(() => {
                 callback({message: 'Error'});
             });
     });
@@ -100,17 +95,10 @@ module.exports.newSocket = (socket) => {
             } else {
                 extraInfo = {active: true}
             }
+            if (!extraInfo.length && !extraInfo.expires && !extraInfo.active) return;
 
-            DiscordModerationService.newBanAsync(discordID, moderator, evidence, reason, banType)
-                .then(ban => {
-                    DiscordModerationService.newModerationAsync(discordID, moderator, modType, evidence, extraInfo, reason)
-                        .then(moderation => {
-                            callback({message: 'Success', data: ban});
-                        });
-                }).catch((err) => {
-                    console.log(err);
-                    callback({message: 'Error'});
-                });
+            process.io.to('Automation').emit('createDiscordModeration', {discordID, moderator, moderationType, evidence, reason, extraInfo, banType});
+            callback({message: 'Success'});
         });
     }
 
@@ -131,25 +119,19 @@ module.exports.newSocket = (socket) => {
             if (!banType) banType = outstanding_ban.banType;
 
             var extraInfo = {};
-            var modType = "";
-            if (banType.Type != "Permanent") {
-                modType = "Ban"
+            var modType = '';
+            if (banType.Type !='"Permanent') {
+                modType = 'Ban'
                 extraInfo = {length: banType.Time, expires: Math.round(Date.now() / 1000) + banType.Time}
             } else {
-                modType = "Permanent Ban"
+                modType = 'Permanent Ban'
                 extraInfo = {active: true}
             }
-        
-            DiscordModerationService.updateBanAsync(discordID, moderator, evidence, reason, banType, bannedOn)
-                .then(() => {
-                    DiscordModerationService.updateModerationAsync(linked_moderation.moderationID, modType, moderator, evidence, reason, extraInfo)
-                        .then(() => {
-                            callback({message: 'Success'});
-                        });
-                }).catch((err) => {
-                    console.log(err);
-                    callback({message: 'Error'});
-                });
+
+            if (!extraInfo.length && !extraInfo.expires && !extraInfo.active) return;
+
+            process.io.to('Automation').emit('createDiscordModeration', {discordID, moderator, moderationType: modType, evidence, reason, extraInfo, banType, bannedOn});
+            callback({message: 'Success'});
         });
     }
 
@@ -163,16 +145,8 @@ module.exports.newSocket = (socket) => {
 
             if (!outstanding_ban) return callback({message: 'Not Found'});
 
-            DiscordModerationService.deleteBanAsync(discordID)
-                .then(() => {
-                    DiscordModerationService.updateModerationAsync(activeModeration.moderationID, activeModeration.moderationType, activeModeration.moderator, activeModeration.evidence, activeModeration.reason, {websiteUnban: true})
-                        .then(() => {
-                            callback({message: 'Success'});
-                        });
-                }).catch((err) => {
-                    console.log(err);
-                    callback({message: 'Error'});
-                });
+            process.io.to('Automation').emit('deactivateDiscordModeration', activeModeration);
+            callback({message: 'Success'});
         });
     }
 
@@ -180,18 +154,8 @@ module.exports.newSocket = (socket) => {
         socket.on('createDiscordModeration', async (body, callback) => {
             const { discordID, moderator, moderationType, evidence, extraInfo, reason } = body;
             if (!discordID || !moderator || !moderationType || !evidence || !reason) return callback({message: 'Error'});
-        
-            if (moderationType != 'Warn') {
-                return callback({message: 'Moderation Type is not Currently Supported'});
-            }
 
-            DiscordModerationService.newModerationAsync(discordID, moderator, moderationType, evidence, extraInfo, reason)
-                .then(moderation => {
-                    callback({message: 'Success', data: moderation});
-                }).catch((err) => {
-                    console.log(err);
-                    callback({message: 'Error'});
-                });
+            process.io.to('Automation').emit('createDiscordModeration', {discordID, moderator, moderationType, evidence, reason, extraInfo});
         });
     }
 
@@ -202,21 +166,25 @@ module.exports.newSocket = (socket) => {
 
             const outstanding_moderation = await DiscordModerationService.searchModerationAsync(moderationID);
             if (!outstanding_moderation) return callback({message: 'Not Found'});
-
-            if (outstanding_moderation.moderationType == 'Ban' || outstanding_moderation.moderationType == 'Permanent Ban') return callback({message: 'Not Permitted'});
+            
+            if (outstanding_moderation.moderationType == 'Ban' || outstanding_moderation.moderationType == 'Permanent Ban') {
+                return callback({message: 'Updating bans is not supported on the discord moderation page.'});
+            }
         
             if (!moderator) moderator = outstanding_moderation.moderator + 'a';
             if (!evidence) evidence = outstanding_moderation.evidence;
             if (!reason) reason = outstanding_moderation.reason;
             if (!extraInfo) extraInfo = outstanding_moderation.extraInfo;
 
-            DiscordModerationService.updateModerationAsync(moderationID, outstanding_moderation.moderationType, moderator, evidence, reason, extraInfo)
-                .then(() => {
-                    callback({message: 'Success'});
-                }).catch((err) => {
-                    console.log(err);
-                    callback({message: 'Error'});
-                });
+            const new_moderation = {
+                moderator,
+                evidence,
+                reason,
+                extraInfo
+            };
+
+            process.io.to('Automation').emit('updateDiscordModeration', outstanding_moderation, new_moderation);
+            callback({message: 'Success'});
         });
     }
 
@@ -228,17 +196,12 @@ module.exports.newSocket = (socket) => {
             const outstanding_moderation = await DiscordModerationService.searchModerationAsync(moderationID);
             if (!outstanding_moderation) return callback({message: 'Not Found'});
 
-            if (outstanding_moderation.isActive) {
-                return callback({message: 'Deleting active moderations is not supported on the moderations page'});
+            if (outstanding_moderation.isActive && (outstanding_moderation.moderationType == 'Ban' || outstanding_moderation.moderationType == 'Permanent Ban')) {
+                return callback({message: 'Deleting active moderations of this type is not supported on the moderations page'});
             }
 
-            DiscordModerationService.deleteModerationAsync(moderationID)
-                .then(() => {
-                    callback({message: 'Success'});
-                }).catch((err) => {
-                    console.log(err);
-                    callback({message: 'Error'});
-                });
+            process.io.to('Automation').emit('deactivateDiscordModeration', outstanding_moderation);
+            callback({message: 'Success'});
         });
     }
 };
