@@ -2,7 +2,9 @@ const express = require('express');
 const app = express();
 const server = require('http').createServer(app);
 
-const io = require('socket.io')(server);
+const io = require('socket.io')(server, {
+    path: '/api/gateway'
+});
 
 const bodyParser = require('body-parser');
 const cookieParser = require('cookie-parser');
@@ -13,13 +15,13 @@ const cors = require('cors');
 app.use(express.static('public'));
 app.use(bodyParser.json());
 app.use(cors({
-    origin: ['http://localhost:3000', 'https://reqbin.com'],
+    origin: ['https://portal.romestaff.com', 'http://localhost:3000', 'https://romestaff.com'],
     credentials: true,
     exposedHeaders: ['set-cookie']
 }));
 app.use(cookieParser());
-server.listen(6000, () => {
-    console.log('Server Started Listening on Port 6000');
+server.listen(5050, () => {
+    console.log('Server Started Listening on Port 5050');
 });
 
 process.Server = app;

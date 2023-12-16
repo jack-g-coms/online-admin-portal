@@ -2,22 +2,22 @@ import { baseUrl } from "../../../shared";
 import { socket } from './Socket';
 
 export const login = async (identifier, password) => {
-    const response = await fetch(baseUrl + 'api/users/login', {method: 'POST', headers: {'Content-Type': 'application/json'}, credentials: 'include', body: JSON.stringify({identifier, password})});
+    const response = await fetch(baseUrl + '/users/login', {method: 'POST', headers: {'Content-Type': 'application/json'}, credentials: 'include', body: JSON.stringify({identifier, password})});
     return response.json();
 };
 
 export const logout = async () => {
-    const response = await fetch(baseUrl + 'api/users/logout', {method: 'POST', credentials: 'include'});
+    const response = await fetch(baseUrl + '/users/logout', {method: 'POST', credentials: 'include'});
     return response.json();
 };
 
 export const signup = async (email, username, password) => {
-    const response = await fetch(baseUrl + 'api/users/sign-up', {method: 'POST', headers: {'Content-Type': 'application/json'}, credentials: 'include', body: JSON.stringify({email, username, password})});
+    const response = await fetch(baseUrl + '/users/sign-up', {method: 'POST', headers: {'Content-Type': 'application/json'}, credentials: 'include', body: JSON.stringify({email, username, password})});
     return response.json();
 };
 
 export const search = async (query) => {
-    const response = await fetch(baseUrl + 'api/users/search?query=' + query, {method: 'GET', credentials: 'include'});
+    const response = await fetch(baseUrl + '/users/search?query=' + query, {method: 'GET', credentials: 'include'});
     return response.json();
 };
 
@@ -30,7 +30,7 @@ export const getUsers = async () => {
 };
 
 export const refresh = async () => {
-    const response = await fetch(baseUrl + 'api/users/me', {method: 'GET', credentials: 'include'});
+    const response = await fetch(baseUrl + '/users/me', {method: 'GET', credentials: 'include'});
     return response.json();
 };
 

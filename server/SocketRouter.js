@@ -1,8 +1,7 @@
 const fs = require('fs');
-
 const ProtectionService = require('./Services/ProtectionService');
-const io = process.io;
 
+const io = process.io;
 const gateways = {};
 
 io.use(ProtectionService.privilegedSocket);
