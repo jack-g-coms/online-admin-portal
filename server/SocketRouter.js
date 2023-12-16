@@ -14,6 +14,7 @@ io.on('connection', (socket) => {
             gateway.newSocket(socket);
             connected_gateways.push(gateway.gatewayInfo.Name);
         }
+        console.log(connected_gateways)
     }
 
     socket.Gateways = connected_gateways;
