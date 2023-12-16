@@ -29,8 +29,8 @@ io.on('connection', (socket) => {
     });
 
     // Join permitted rooms
-    if (socket.User && socket.User.permissionLevel == 9) {
-        socket.join('SystemChannel');
+    if (socket.User && socket.User.permissions.Name == 'Portal Automated System') {
+        socket.join('Automation');
     }
 });
 

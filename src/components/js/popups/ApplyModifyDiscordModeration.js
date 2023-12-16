@@ -5,21 +5,21 @@ import '../../css/Popup.css';
 import '../../css/popups/ApplyModify.css';
 
 import Button from "../Button";
-import { updateBan } from '../modules/DiscordModerations';
+import { updateModeration } from '../modules/DiscordModerations';
 
-function ApplyModifyDiscordBanPopup({setState, editedBan, changes}) {
+function ApplyModifyDiscordModerationPopup({setState, editedModeration, changes}) {
     const [popupState, setPopupState] = useState('available');
 
     const applyChanges = () => {
-        updateBan(editedBan.discordID, editedBan.moderator, editedBan.evidence, editedBan.reason, editedBan.banType)
+        updateModeration(editedModeration.moderationID, editedModeration.moderator, editedModeration.evidence, editedModeration.extraInfo, editedModeration.reason)
             .then(response => {
                 setState('closed');
                 if (response.message == 'Not Found') {
-                    Swal.fire({title: 'Error', icon: 'error', text: `No Discord Ban under the ID ${editedBan.discordID} was found. This ban could've already been deleted.`, confirmButtonText: 'Ok'});
+                    Swal.fire({title: 'Error', icon: 'error', text: `No Discord Moderation under the ID ${editedModeration.moderationID} was found. This moderation could've already been deleted.`, confirmButtonText: 'Ok'});
                 } else if (response.message == 'Success') {
-                    Swal.fire({title: 'Success', text: 'Discord Automation has been sent the request to update this ban. If it is not updated in the next 5 minutes, retry.', icon: 'success', confirmButtonText: 'Ok'});
+                    Swal.fire({title: 'Success', text: 'Discord Automation has been sent the request to update this moderation. If it is not updated in the next 5 minutes, retry.', icon: 'success', confirmButtonText: 'Ok'});
                 } else {
-                    Swal.fire({title: 'Error', icon: 'error', text: `There was a problem while trying to update this ban.`, confirmButtonText: 'Ok'});
+                    Swal.fire({title: 'Error', icon: 'error', text: `There was a problem while trying to update this moderation.`, confirmButtonText: 'Ok'});
                 }
             }).catch(console.log);
     };
@@ -61,4 +61,4 @@ function ApplyModifyDiscordBanPopup({setState, editedBan, changes}) {
     );
 };
 
-export default ApplyModifyDiscordBanPopup;
+export default ApplyModifyDiscordModerationPopup;
