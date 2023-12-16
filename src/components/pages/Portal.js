@@ -11,6 +11,7 @@ import { timeFormat } from '../../shared';
 
 import RobloxUserLookupPopup from '../js/popups/RobloxUserLookup';
 import PortalNoticePopup from '../js/popups/PortalNotice';
+import DevNoticePopup from '../js/popups/DevelopmentNotice';
 
 import Dashboard from '../js/portalComponents/Dashboard';
 
@@ -25,6 +26,7 @@ function Portal() {
     const [viewProfileState, setProfileViewState] = useState('closed');
     const [robloxUserLookupPopupState, setRobloxUserLookupPopupState] = useState('closed');
     const [noticePopupState, setNoticePopupState] = useState('closed');
+    const [devNoticePopupState, setDevNoticePopupState] = useState('closed');
 
     const authContext = useContext(AuthContext);
     const gateways = useRef();
@@ -49,6 +51,8 @@ function Portal() {
             <div className='portal-container'>
                 {robloxUserLookupPopupState == 'open' && <RobloxUserLookupPopup setState={setRobloxUserLookupPopupState}/>}
                 {noticePopupState == 'open' && <PortalNoticePopup setState={setNoticePopupState}/>}
+                {devNoticePopupState == 'open' && <DevNoticePopup setState={setDevNoticePopupState}/>}
+
                 <div className='sidebar-options'>
                     {authContext.user &&
                         <>
@@ -133,6 +137,8 @@ function Portal() {
                             </div>
                             <Button animation='pop-out color-yellow' style={{'width': '100%'}} onClick={(e) => {setPortalComponentState('manageUsers');}} scheme='btn-outlinebottom'><i style={{'marginRight': '8px'}} className='fa-solid fa-user'/>Users</Button>
                             {authContext.user.permissions.Flags.CREATE_PORTAL_NOTICE && <Button animation='pop-out color-yellow' style={{'width': '100%'}} onClick={(e) => {setNoticePopupState('open');}} scheme='btn-outlinebottom'><i style={{'marginRight': '8px'}} className='fa-solid fa-flag'/>Portal Notice</Button>}
+                            {authContext.user.permissions.Flags.CREATE_PORTAL_NOTICE && <Button animation='pop-out color-yellow' style={{'width': '100%'}} onClick={(e) => {setDevNoticePopupState('open');}} scheme='btn-outlinebottom'><i style={{'marginRight': '8px'}} className='fa-solid fa-hammer'/>Development Notice</Button>}
+
                         </div>
                     }
 

@@ -13,7 +13,7 @@ import TextArea from '../TextArea';
 import AuthContext from '../modules/AuthContext';
 import { convertToLocal } from '../../../shared';
 
-function PortalNoticePopup({setState}) {
+function DevNoticePopup({setState}) {
     const authContext = useContext(AuthContext);
 
     const [popupState, setPopupState] = useState('loading');
@@ -23,7 +23,7 @@ function PortalNoticePopup({setState}) {
     const configuration = useRef();
 
     const updateNotice = (toSet) => {
-        updateConfiguration(toSet)
+        updateConfiguration(null, toSet)
             .then(() => {
                 Swal.fire({title: 'Success', icon: 'success', text: `Successfully set notice.`, confirmButtonText: 'Ok'})
                     .then((res) => {
@@ -42,8 +42,8 @@ function PortalNoticePopup({setState}) {
                 configuration.current = config;
                 setPopupState('available');
 
-                if (configuration.current.Announcement) {
-                    setNotice(configuration.current.Announcement);
+                if (configuration.current.DevNotice) {
+                    setNotice(configuration.current.DevNotice);
                 }
             });
     }, []);
@@ -52,7 +52,7 @@ function PortalNoticePopup({setState}) {
         <>
             <div className='popup-background-center' onClick={(e) => {if (e.target != e.currentTarget || popupState == 'loading') return; setState('closed');}}>
                 <div className='popup-container'>
-                    <h2>Portal Notice Setup</h2>
+                    <h2>Development Notice Setup</h2>
 
                     <div style={{'alignItems': popupState == 'loading' && 'center', 'marginTop': '-1px'}} className='content'>
                         {popupState == 'loading' &&
@@ -62,12 +62,12 @@ function PortalNoticePopup({setState}) {
                             <>
                                 <div className='vertical-grouping-portal-notice search-container'>
                                     <div>
-                                        <span><i style={{'marginRight': '1px'}} class='fa-solid fa-flag'/> Portal Notice</span>
+                                        <span><i style={{'marginRight': '1px'}} class='fa-solid fa-hammer'/> Development Notice</span>
                                         <TextBox placeholder='Enter a valid and appropriate notice' style={{'marginTop': '6px'}} setState={setNotice} defaultValue={notice}/>
 
                                         <div className='row-portal-notice' style={{'justifyContent': 'center', 'gap': '10px'}}>
-                                            <Button style={{'marginTop': '10px', 'width': configuration.current.Announcement ? '50%' : '100%'}} animation='raise' scheme='btn-confirm' onClick={(e) => {if (actionState == 'available') {setActionState('loading'); updateNotice(notice);}}}><i class="fa-solid fa-gear"></i> Save</Button>
-                                            {configuration.current.Announcement && <Button style={{'marginTop': '10px', 'width': '50%'}} animation='raise' scheme='btn-cancel' onClick={(e) => {if (actionState == 'available') {setActionState('loading'); updateNotice('');}}}><i class="fa-solid fa-trash"></i> Clear</Button>}
+                                            <Button style={{'marginTop': '10px', 'width': configuration.current.DevNotice ? '50%' : '100%'}} animation='raise' scheme='btn-confirm' onClick={(e) => {if (actionState == 'available') {setActionState('loading'); updateNotice(notice);}}}><i class="fa-solid fa-gear"></i> Save</Button>
+                                            {configuration.current.DevNotice && <Button style={{'marginTop': '10px', 'width': '50%'}} animation='raise' scheme='btn-cancel' onClick={(e) => {if (actionState == 'available') {setActionState('loading'); updateNotice('');}}}><i class="fa-solid fa-trash"></i> Clear</Button>}
                                         </div>
                                     </div>
                                 </div>
@@ -80,4 +80,4 @@ function PortalNoticePopup({setState}) {
     );
 };
 
-export default PortalNoticePopup;
+export default DevNoticePopup;
