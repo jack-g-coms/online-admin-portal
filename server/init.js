@@ -18,8 +18,8 @@ app.use(cors({
     exposedHeaders: ['set-cookie']
 }));
 app.use(cookieParser());
-server.listen(5000, () => {
-    console.log('Server Started Listening on Port 5000');
+server.listen(6000, () => {
+    console.log('Server Started Listening on Port 6000');
 });
 
 process.Server = app;
