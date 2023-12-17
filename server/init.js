@@ -2,6 +2,8 @@ const express = require('express');
 const app = express();
 const server = require('http').createServer(app);
 
+const DiscordModerationService = require('./Services/DiscordModerationService');
+
 const io = require('socket.io')(server, {
     path: '/api/gateway'
 });
@@ -37,3 +39,18 @@ fs.readdir('./server/API', (err, files) => {
         require(`./API/${f}`);
     });
 });
+
+setInterval(async () => {
+    DiscordModerationService.getActiveModerations()
+        .then(async moderations => {
+            for (var i = 0; i < moderations.length; i++) {
+                const moderation = moderations[i];
+                if ((moderation.extraInfo.expires && moderation.extraInfo.expires <= Math.round(Date.now() / 1000))) {
+                    console.log('remove moderation: ' + moderation.moderationID)
+                    process.io.to('Automation').emit('deactivateDiscordModeration', moderation);
+                }
+            }
+        }).catch((err) => {
+            console.log('Moderation loop failed: ' + err);
+        });
+}, 10000);

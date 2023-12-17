@@ -122,7 +122,7 @@ module.exports.newSocket = (socket) => {
             var modType = '';
             if (banType.Type != 'Permanent') {
                 modType = 'Ban'
-                extraInfo = {length: banType.Time, expires: Math.round(Date.now() / 1000) + banType.Time}
+                extraInfo = {length: banType.Time, expires: bannedOn + banType.Time}
             } else {
                 modType = 'Permanent Ban'
                 extraInfo = {active: true}

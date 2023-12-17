@@ -78,7 +78,7 @@ function PortalUser({user}) {
                     </>
                 || 
                     <>
-                        <div className='manage-users-table-row-edit-container fade-in'>
+                        <div className='manage-users-table-row-edit-container'>
                             <div style={{'alignItems': 'start', 'marginBottom': '10px'}} className='manage-users-table-row-edit-info'>
                                 {!canEdit ?
                                     <Button animation='raise' scheme='btn-cancel' onClick={(e) => {setActionsVisible('hidden'); setState('available');}}><i class="fa-solid fa-ban"></i> Close</Button>

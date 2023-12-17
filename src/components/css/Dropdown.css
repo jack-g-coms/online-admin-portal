@@ -1,0 +1,17 @@
+.dropdown-basic {
+    border-radius: 5px;
+    background-color: #242424;
+    color: #fff;
+    border: none;
+    font-size: 15px;
+    margin: 0;
+    padding: 10px 10px;
+    -webkit-box-sizing: border-box;
+    box-sizing: border-box;
+    appearance: none;
+
+    background-image: url('https://upload.wikimedia.org/wikipedia/commons/9/96/Chevron-icon-drop-down-menu-WHITE.png');
+    background-repeat: no-repeat;
+    background-size: 10px 8px;
+    background-position: calc(100% - 16px);
+}

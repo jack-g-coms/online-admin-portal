@@ -92,30 +92,26 @@ function ManageModerationsRow({moderation}) {
                                 </div>
                             </div>
 
-                            {moderation.extraInfo.length && moderation.extraInfo.expires &&
+                            {moderation.extraInfo.length && moderation.extraInfo.expires && moderation.moderationType == 'Mute' &&
                                 <div style={{'gap': '15px'}} className='ban-editor-row-edit-info'>
                                     <div className='ban-editor-row-edit-grouping'>
                                         <strong><span><i style={{'fontSize': '15px'}} class="fa-solid fa-clock"/> Duration</span></strong>
                                         <TextBox setState={(newText) => {
                                             var extraInfo = {};
                                             var modTime;
-                                            const newState = filterString(newText, ['day', 'Day', 'Days', 's', 'week'], ''); 
+                                            const newState = filterString(newText, ['hour', 'Hour', 'Hours', 's'], ''); 
 
-                                            if (newState.toLowerCase() == 'permanent' || (Number(newState) == 0)) {
-                                                modTime = 'Permanent';
-                                                extraInfo = {active: true} 
-                                            } else if (Number(newState) && Number(newState) > 0) {
-                                                modTime = Number(newState) * 86400;
-                                                extraInfo = {length: modTime, expires: Math.round(Date.now() / 1000) + modTime}
+                                            if (newState && Number(newState) && Number(newState) > 0) {
+                                                extraInfo.length = Number(newState) * 3600;
+                                                extraInfo.expires = moderation.moderatedOn + extraInfo.length
                                             }
+                                            if (!extraInfo.length && !extraInfo.expires) return;
 
-                                            if (!extraInfo.length && !extraInfo.expires && !extraInfo.active) return;
-
-                                            changed.current.duration = {new: extraInfo.length && extraInfo.length + ' seconds' || 'Permanent', old: (moderation.extraInfo.length && moderation.extraInfo.length + ' seconds') || 'Permanent'};
+                                            changed.current.duration = {new: newState + ' Hours', old: Math.ceil((moderation.extraInfo.length / 60) / 60) + ' Hours'};
                                             editedModeration.current.extraInfo = extraInfo;
 
                                             setState('changedType');
-                                        }} defaultValue={moderation.extraInfo.length} disabled={!authContext.user.permissions.Flags.UPDATE_DISCORD_MODERATIONS}/>
+                                        }} defaultValue={Math.ceil((moderation.extraInfo.length / 60) / 60) + ' Hours'} disabled={!authContext.user.permissions.Flags.UPDATE_DISCORD_MODERATIONS}/>
                                     </div>
                                 </div>
                             }

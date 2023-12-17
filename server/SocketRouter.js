@@ -13,7 +13,6 @@ io.on('connection', (socket) => {
             gateway.newSocket(socket);
             connected_gateways.push(gateway.gatewayInfo.Name);
         }
-        console.log(connected_gateways)
     }
 
     socket.Gateways = connected_gateways;
@@ -28,11 +27,8 @@ io.on('connection', (socket) => {
         };
     });
 
-    console.log(socket.User);
-
     // Join permitted rooms
     if (socket.User && socket.User.permissions.Name == 'Portal Automated System') {
-        console.log(socket.User);
         socket.join('Automation');
     }
 });

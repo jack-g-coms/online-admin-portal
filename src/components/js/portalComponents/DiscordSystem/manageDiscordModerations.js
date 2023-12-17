@@ -7,7 +7,7 @@ import Button from '../../Button';
 import TextBox from '../../TextBox';
 import Loader from '../../Loader';
 import ManageModerationsRow from './manageDiscordModerationsRow';
-import CreateDiscordWarningPopup from '../../popups/CreateDiscordWarning';
+import CreateDiscordModerationPopup from '../../popups/CreateDiscordModeration';
 
 import AuthContext from '../../modules/AuthContext';
 import { getModerations, searchModeration, newModeration } from '../../modules/DiscordModerations';
@@ -86,7 +86,7 @@ function ManageDiscordModerations() {
                 }
 
                 {popupState == 'opened' && 
-                    <CreateDiscordWarningPopup setState={setPopupState}/>
+                    <CreateDiscordModerationPopup setState={setPopupState}/>
                 }
                 
                 {state == 'available' && moderations.current &&
@@ -99,7 +99,7 @@ function ManageDiscordModerations() {
                             <div className='manage-roblox-bans-table'>
                                 <div style={{'alignItems': 'center', 'justifyContent': 'center'}} className='manage-roblox-bans-container-row'>
                                     {authContext.user.permissions.Flags.CREATE_DISCORD_MODERATIONS &&
-                                        <Button animation='raise' onClick={(e) => {setPopupState('opened');}} scheme='btn-confirm'>Create Warning</Button>
+                                        <Button animation='raise' onClick={(e) => {setPopupState('opened');}} scheme='btn-confirm'>Create Moderation</Button>
                                     }
                                     {!authContext.user.permissions.Flags.CREATE_DISCORD_MODERATIONS &&
                                         <span>You are currently a <span style={{'color': '#349fc9'}}>read only</span> access level</span>
