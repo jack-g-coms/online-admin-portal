@@ -7,7 +7,7 @@ import Button from '../../Button';
 import TextBox from '../../TextBox';
 import Loader from '../../Loader';
 import ManageModerationsRow from './manageDiscordModerationsRow';
-import CreateRobloxWarningPopup from '../../popups/CreateRobloxWarning';
+import CreateDiscordWarningPopup from '../../popups/CreateDiscordWarning';
 
 import AuthContext from '../../modules/AuthContext';
 import { getModerations, searchModeration, newModeration } from '../../modules/DiscordModerations';
@@ -86,7 +86,7 @@ function ManageDiscordModerations() {
                 }
 
                 {popupState == 'opened' && 
-                    <CreateRobloxWarningPopup setState={setPopupState}/>
+                    <CreateDiscordWarningPopup setState={setPopupState}/>
                 }
                 
                 {state == 'available' && moderations.current &&
