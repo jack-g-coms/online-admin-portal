@@ -38,6 +38,19 @@ module.exports.newSocket = (socket) => {
             });
     });
 
+    socket.on('getUserDiscordModerations', (query, callback) => {
+        DiscordModerationService.getUserModerations(query)
+            .then(moderations => {
+                if (moderations.length > 0) {
+                    callback({message: 'Success', data: moderations});
+                } else {
+                    callback({message: 'Not Found'});
+                }
+            }).catch(() => {
+                callback({message: 'Error'});
+            });
+    });
+
     socket.on('getActiveDiscordModerations', (callback) => {
         DiscordModerationService.getActiveModerations()
             .then(moderations => {

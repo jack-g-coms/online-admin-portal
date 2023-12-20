@@ -56,8 +56,8 @@ Server.post('/api/users/login', async (req, res) => {
 });
 
 Server.post('/api/users/sign-up', async (req, res) => {
-    const { email, username, password } = req.body;
-    if (!email || !username || !password) return res.json({message: 'Error'});
+    const { email, username, discordid, password } = req.body;
+    if (!email || !username || !discordid || !password) return res.json({message: 'Error'});
 
     const rbxInfo = await RobloxService.getUser(username);
     if (!rbxInfo) return res.json({message: 'No Roblox User'});
@@ -68,7 +68,7 @@ Server.post('/api/users/sign-up', async (req, res) => {
     const avatarHeadshotUrl = await RobloxService.getAvatarHeadshot(rbxInfo.id);
     if (avatarHeadshotUrl.data.data.errors || avatarHeadshotUrl.data.data.length == 0) return res.json({message: 'No Roblox User'});
 
-    UsersService.createUserAsync(email, {username, id: rbxInfo.id, imageUrl: avatarHeadshotUrl.data.data[0].imageUrl}, password)
+    UsersService.createUserAsync(email, {username, id: rbxInfo.id, imageUrl: avatarHeadshotUrl.data.data[0].imageUrl}, discordid, password)
         .then(user => { 
             res.json({message: 'Success', data: user});
         }).catch((err) => {

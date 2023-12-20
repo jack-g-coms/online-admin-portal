@@ -12,11 +12,12 @@ function Signup() {
 
     const [email, setEmail] = useState();
     const [username, setUsername] = useState();
+    const [discordId, setDiscordId] = useState();
     const [password, setPassword] = useState();
 
     const triggerAccountSignup = () => {
-        if (!email || !username || !password) return setState('available');
-        signup(email, username, password)
+        if (!email || !username || !discordId || !password) return setState('available');
+        signup(email, username, discordId, password)
             .then(response => {
                 if (response.message == 'No Roblox User') {
                     Swal.fire({title: 'Error', icon: 'error', text: `No Roblox User under the username ${username} was found. Ensure that you have the correct username, and that it is spelt correctly.`, confirmButtonText: 'Ok'});
@@ -48,6 +49,11 @@ function Signup() {
                     <div className='signup-container-field'>
                         <span><i style={{'marginRight': '3px'}} class='fa-solid fa-user'/> Enter ROBLOX Username</span>
                         <TextBox style={{'width': '100%', 'text-align': 'center'}} placeholder='Input Username' required={true} setState={setUsername}>{username}</TextBox>
+                    </div>
+
+                    <div className='signup-container-field'>
+                        <span><i style={{'marginRight': '3px'}} class='fa-brands fa-discord'/> Enter Discord ID</span>
+                        <TextBox style={{'width': '100%', 'text-align': 'center'}} placeholder='Input Discord ID' required={true} setState={setDiscordId}>{discordId}</TextBox>
                     </div>
 
                     <div className='signup-container-field'>

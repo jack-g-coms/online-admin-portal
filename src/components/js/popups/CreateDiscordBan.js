@@ -16,7 +16,7 @@ function CreateDiscordBanPopup({setState}) {
     const [popupState, setPopupState] = useState('available');
 
     const [discordID, setDiscordID] = useState();
-    const [modID, setModID] = useState();
+    const [modID, setModID] = useState(authContext.user.discordId);
     const [evidence, setEvidence] = useState();
     const [reason, setReason] = useState();
     const [banDuration, setBanDuration] = useState();
@@ -75,7 +75,7 @@ function CreateDiscordBanPopup({setState}) {
 
                         <div className='create-roblox-ban-popup-grouping'>
                             <span>Moderator ID</span>
-                            <TextBox setState={setModID} placeholder={'Input a Valid Discord ID'}/>
+                            <TextBox setState={setModID} defaultValue={modID} placeholder={'Input a Valid Discord ID'}/>
                         </div>
 
                         <div className='create-roblox-ban-popup-grouping'>

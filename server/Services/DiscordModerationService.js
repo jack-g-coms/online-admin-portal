@@ -4,6 +4,7 @@ const moment = require("moment");
 const uuid = require('uuid').v4;
 
 const Database = new sqlite3.Database('./data/Moderations.db');
+const cachedDiscordData = {};
 
 // CLASSES
 const Ban = class {
@@ -280,6 +281,27 @@ module.exports.deleteModerationAsync = async (moderationID) => {
     });
 };
 
+module.exports.getDiscordUserInfo = async (discordId) => {
+    return new Promise((resolve, rejected) => {
+        if (cachedDiscordData[discordId]) {
+            return resolve(cachedDiscordData[discordId]);
+        }
+
+        if (process.DiscordAutomationSocket) {
+            process.DiscordAutomationSocket.emit('getDiscordUserAutomation', discordId, (response) => {
+                if (response.message == 'Success') {
+                    cachedDiscordData[discordId] = response.data;
+                    resolve(response.data);
+                } else {
+                    rejected();
+                }
+            });
+        } else {
+            rejected();
+        }
+    });
+};
+
 module.exports.getStatistics = async () => {
     const week = moment().isoWeek();
     var statistics = [
@@ -323,12 +345,21 @@ module.exports.getStatistics = async () => {
             Database.all(
                 "SELECT CAST(strftime('%W', DATETIME(bannedOn, 'unixepoch', 'localtime')) as decimal) as Week, moderator AS Moderator, COUNT(*) AS Bans FROM DiscordBans WHERE strftime('%Y', DATETIME(bannedOn, 'unixepoch', 'localtime')) = strftime('%Y', DATE('now')) GROUP BY Moderator, Week ORDER BY Week DESC, Bans DESC LIMIT 1",
                 [],
-                (err, rows) => {
+                async (err, rows) => {
                     if (rows[0]) {
                         if (rows[0].Week != week) {
                             rows.unshift({Week: week, Moderator: 'none'});
                         } else {
+                            var userDiscordInfo;
                             rows[0].Moderator = rows[0].Moderator.toString().substring(0, rows[0].Moderator.toString().length - 1);
+
+                            try {
+                                userDiscordInfo = await this.getDiscordUserInfo(rows[0].Moderator);
+                            } catch {}
+
+                            if (userDiscordInfo) {
+                                rows[0].Moderator = userDiscordInfo.username;
+                            }
                         }
                         resolve(rows[0]);
                     } else {
@@ -341,12 +372,21 @@ module.exports.getStatistics = async () => {
             Database.all(
                 "SELECT CAST(strftime('%W', DATETIME(moderatedOn, 'unixepoch', 'localtime')) as decimal) as Week, moderator AS Moderator, COUNT(*) AS Moderations FROM DiscordModerations WHERE strftime('%Y', DATETIME(moderatedOn, 'unixepoch', 'localtime')) = strftime('%Y', DATE('now')) GROUP BY Moderator, Week ORDER BY Week DESC, Moderations DESC LIMIT 1",
                 [],
-                (err, rows) => {
+                async (err, rows) => {
                     if (rows[0]) {
                         if (rows[0].Week != week) {
                             rows.unshift({Week: week, Moderator: 'none'});
                         } else {
+                            var userDiscordInfo;
                             rows[0].Moderator = rows[0].Moderator.toString().substring(0, rows[0].Moderator.toString().length - 1);
+
+                            try {
+                                userDiscordInfo = await this.getDiscordUserInfo(rows[0].Moderator);
+                            } catch {}
+
+                            if (userDiscordInfo) {
+                                rows[0].Moderator = userDiscordInfo.username;
+                            }
                         }
                         resolve(rows[0]);
                     } else {

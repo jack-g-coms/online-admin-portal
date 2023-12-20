@@ -14,7 +14,7 @@ const Database = new sqlite3.Database('./data/Database.db');
 Database.serialize(() => {
     if (!databaseExists) {
         Database.run(
-            'CREATE TABLE Users(email TEXT, rbxUser TEXT, password TEXT, accountCreated INTEGER, id TEXT, permissionLevel INTEGER, verified INTEGER)'
+            'CREATE TABLE Users(email TEXT, rbxUser TEXT, discordId TEXT, password TEXT, accountCreated INTEGER, id TEXT, permissionLevel INTEGER, verified INTEGER)'
         );
     }
 });
@@ -26,6 +26,7 @@ const User = class {
         (async () => {
             this.email = row.email;
             this.rbxUser = JSON.parse(row.rbxUser);
+            this.discordId = row.discordId;
             this.#password = row.password;
             this.accountCreated = row.accountCreated;
             this.id = row.id;
@@ -86,7 +87,7 @@ module.exports.searchUserAsync = async (query) => {
     });
 };
 
-module.exports.createUserAsync = async (email, rbxUser, password) => {
+module.exports.createUserAsync = async (email, rbxUser, discordId, password) => {
     return new Promise((resolve, reject) => {
         const user_id = uuid();
         const account_created = Math.round(Date.now() / 1000);
@@ -94,8 +95,8 @@ module.exports.createUserAsync = async (email, rbxUser, password) => {
         bCrypt.genSalt(1, (err, salt) => {
             bCrypt.hash(password, salt, (err, hash) => {
                 Database.run(
-                    'INSERT INTO Users(email, rbxUser, password, accountCreated, id, permissionLevel, verified) VALUES(?,?,?,?,?,?,?)',
-                    [email, JSON.stringify(rbxUser), hash, account_created, user_id, PermissionsService.DEFAULT_LEVEL, 0],
+                    'INSERT INTO Users(email, rbxUser, discordId, password, accountCreated, id, permissionLevel, verified) VALUES(?,?,?,?,?,?,?,?)',
+                    [email, JSON.stringify(rbxUser), discordId, hash, account_created, user_id, PermissionsService.DEFAULT_LEVEL, 0],
                     (err) => {
                         if (!err) {
                             resolve(new User({email, rbxUser: JSON.stringify(rbxUser), password: hash, accountCreated: account_created, id: user_id, permissionLevel: PermissionsService.DEFAULT_LEVEL, verified: 0}));
@@ -109,11 +110,11 @@ module.exports.createUserAsync = async (email, rbxUser, password) => {
     })
 };
 
-module.exports.updateUserAsync = async (id, email, rbxUser, permissionLevel, verified) => {
+module.exports.updateUserAsync = async (id, email, rbxUser, discordId, permissionLevel, verified) => {
     return new Promise((resolve, reject) => {
         Database.run(
-            'UPDATE Users SET email = ?, rbxUser = ?, permissionLevel = ?, verified = ? WHERE id = ?',
-            [email, JSON.stringify(rbxUser), permissionLevel, verified, id],
+            'UPDATE Users SET email = ?, rbxUser = ?, discordId = ?, permissionLevel = ?, verified = ? WHERE id = ?',
+            [email, JSON.stringify(rbxUser), discordId, permissionLevel, verified, id],
             (err) => {
                 if (!err) {
                     resolve();

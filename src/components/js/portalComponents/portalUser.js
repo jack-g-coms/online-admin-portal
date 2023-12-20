@@ -84,7 +84,7 @@ function PortalUser({user}) {
                                     <Button animation='raise' scheme='btn-cancel' onClick={(e) => {setActionsVisible('hidden'); setState('available');}}><i class="fa-solid fa-ban"></i> Close</Button>
                                 :
                                     <>
-                                        <Button animation='raise' scheme='btn-confirm' onClick={(e) => {if (changed.current.email || changed.current.username || changed.current.permissions || changed.current.authenticated) {setApplyModifyPopup('open');}}}>{state != 'loading' && <><i class="fa-solid fa-gear"></i> Save</> || <><i className='fa-solid fa-spinner loader'/> Saving...</>}</Button>
+                                        <Button animation='raise' scheme='btn-confirm' onClick={(e) => {if (changed.current.email || changed.current.username || changed.current.permissions || changed.current.authenticated || changed.current.discordid) {setApplyModifyPopup('open');}}}>{state != 'loading' && <><i class="fa-solid fa-gear"></i> Save</> || <><i className='fa-solid fa-spinner loader'/> Saving...</>}</Button>
                                     
                                         {state != 'loading' &&
                                             <>
@@ -118,7 +118,18 @@ function PortalUser({user}) {
                                 </div>
 
                                 <div className='manage-users-table-row-edit-grouping'>
-                                    <strong><span><i style={{'fontSize': '15px'}} class="fa-solid fa-user"/> Permission</span></strong>
+                                    <strong><span><i style={{'fontSize': '15px'}} class="fa-brands fa-discord"/> Discord ID</span></strong>
+                                    <TextBox setState={(newState) => {
+                                        changed.current.discordid = {new: newState, old: user.discordId};
+                                        editedUser.current.discordId = newState;
+                                        setState('changedDiscordId');
+                                    }} defaultValue={editedUser.current.discordId} disabled={!canEdit}/>
+                                </div>
+                            </div>
+                                
+                            <div style={{'gap': '15px', 'marginTop': '5px'}} className='manage-users-table-row-edit-info'>
+                                <div className='manage-users-table-row-edit-grouping'>
+                                    <strong><span><i style={{'fontSize': '15px'}} class="fa-solid fa-key"/> Permission</span></strong>
                                     <TextBox setState={(newState) => {
                                         changed.current.permissions = {new: newState, old: user.permissions.Name};
                                         editedUser.current.permissions.Name = newState;
@@ -132,7 +143,7 @@ function PortalUser({user}) {
                                 </div>
                             </div>
 
-                            <div style={{'alignItems': 'center'}} className='manage-users-table-row-edit-info'>
+                            <div style={{'alignItems': 'center', 'marginTop': '5px'}} className='manage-users-table-row-edit-info'>
                                 {editedUser.current.verified &&
                                     <div className='manage-users-table-row-edit-grouping'>
                                         <strong><span><i style={{'fontSize': '15px'}} class="fa-solid fa-signal"/> Status</span></strong>
@@ -153,7 +164,7 @@ function PortalUser({user}) {
                                 }
                             </div>
 
-                            {(changed.current.email || changed.current.username || changed.current.permissions || changed.current.authenticated) &&
+                            {(changed.current.email || changed.current.username || changed.current.permissions || changed.current.authenticated || changed.current.discordid) &&
                                 <span style={{'color': '#f0be48', 'marginTop': '8px'}}><i style={{'marginRight': '2px'}} className='fa-solid fa-circle-exclamation'/> You have made unsaved changes</span>
                             }
                         </div>   

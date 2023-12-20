@@ -70,7 +70,7 @@ module.exports.newSocket = (socket) => {
                 payload.permissions.Level = permissionLevel;
             }
         
-            UsersService.updateUserAsync(id, payload.email, payload.rbxUser, payload.permissions.Level, Boolean(payload.verified).valueOf())
+            UsersService.updateUserAsync(id, payload.email, payload.rbxUser, payload.discordId, payload.permissions.Level, Boolean(payload.verified).valueOf())
                 .then(() => {
                     callback({message: 'Success'});
                 }).catch((err) => {

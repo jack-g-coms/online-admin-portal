@@ -11,8 +11,8 @@ export const logout = async () => {
     return response.json();
 };
 
-export const signup = async (email, username, password) => {
-    const response = await fetch(baseUrl + '/users/sign-up', {method: 'POST', headers: {'Content-Type': 'application/json'}, credentials: 'include', body: JSON.stringify({email, username, password})});
+export const signup = async (email, username, discordid, password) => {
+    const response = await fetch(baseUrl + '/users/sign-up', {method: 'POST', headers: {'Content-Type': 'application/json'}, credentials: 'include', body: JSON.stringify({email, username, discordid, password})});
     return response.json();
 };
 

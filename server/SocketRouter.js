@@ -30,6 +30,7 @@ io.on('connection', (socket) => {
     // Join permitted rooms
     if (socket.User && socket.User.permissions.Name == 'Portal Automated System') {
         socket.join('Automation');
+        process.DiscordAutomationSocket = socket;
     }
 });
 
