@@ -176,8 +176,8 @@ module.exports.newSocket = (socket) => {
 
     if (socket.User.permissions.Flags.UPDATE_ROBLOX_WARNINGS) {
         socket.on('updateRobloxWarning', async (body, callback) => {
-            var { warnID, moderator, evidence, reason, acknowledged } = body;
-            if (!warnID || (!moderator && !evidence && !reason && !acknowledged)) return callback({message: 'Error'});
+            var { rbxID, warnID, moderator, evidence, reason, acknowledged } = body;
+            if (!warnID || !rbxID || (!moderator && !evidence && !reason && !acknowledged)) return callback({message: 'Error'});
         
             const outstanding_warning = await RobloxModerationService.searchWarningAsync(warnID);
             if (!outstanding_warning) return callback({message: 'Not Found'});
@@ -187,7 +187,7 @@ module.exports.newSocket = (socket) => {
             if (!reason) reason = outstanding_warning.reason;
             if (!acknowledged) acknowledged = outstanding_warning.acknowledged;
         
-            RobloxModerationService.updateWarningAsync(warnID, moderator, evidence, reason, acknowledged)
+            RobloxModerationService.updateWarningAsync(rbxID, warnID, moderator, evidence, reason, acknowledged)
                 .then(() => {
                     callback({message: 'Success'});
                 }).catch((err) => {
@@ -199,13 +199,13 @@ module.exports.newSocket = (socket) => {
 
     if (socket.User.permissions.Flags.DELETE_ROBLOX_WARNINGS) {
         socket.on('deleteRobloxWarning', async (body, callback) => {
-            const { warnID } = body;
+            const { rbxID, warnID } = body;
             if (!warnID) return callback({message: 'Error'});
 
             const outstanding_warning = await RobloxModerationService.searchWarningAsync(warnID);
             if (!outstanding_warning) return callback({message: 'Not Found'});
 
-            RobloxModerationService.deleteWarningAsync(warnID)
+            RobloxModerationService.deleteWarningAsync(rbxID, warnID)
                 .then(() => {
                     callback({message: 'Success'});
                 }).catch((err) => {

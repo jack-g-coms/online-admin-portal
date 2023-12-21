@@ -1,13 +1,18 @@
 // CONSTANTS
 const ProtectionService = require('../Services/ProtectionService');
+const RobloxService = require('../Services/RobloxService')
 const RobloxModerationService = require('../Services/RobloxModerationService');
 const Server = process.Server;
 
 // GET
-Server.get('/api/roblox/bans', ProtectionService.privilegedCall, ProtectionService.requiresAccessLevel, async (req, res) => {
-    RobloxModerationService.getAllBans()
-        .then(bans => {
+Server.get('/api/roblox/bans', ProtectionService.requiresAPIKey, (req, res) => {
+    RobloxModerationService.getAllBans(50)
+        .then(async bans => {
             if (bans.length > 0) {
+                for (var i = 0; i < bans.length; i++) {
+                    var rbxUser = await RobloxService.getUserByID(bans[i].rbxID);
+                    bans[i].rbxUser = rbxUser;
+                }
                 res.json({message: 'Success', data: bans});
             } else {
                 res.json({message: 'Not Found'});
@@ -18,13 +23,16 @@ Server.get('/api/roblox/bans', ProtectionService.privilegedCall, ProtectionServi
         });
 });
 
-Server.get('/api/roblox/bans/search', ProtectionService.privilegedCall, ProtectionService.requiresAccessLevel, async (req, res) => {
+Server.get('/api/roblox/bans/search', ProtectionService.requiresAPIKey, (req, res) => {
     const { query } = req.query;
     if (!query) return res.json({message: 'Error'});
 
     RobloxModerationService.searchBanAsync(query)
-        .then(ban => {
+        .then(async ban => {
             if (ban) {
+                var rbxUser = await RobloxService.getUserByID(ban.rbxID);
+                ban.rbxUser = rbxUser;
+                
                 res.json({message: 'Success', data: ban});
             } else {
                 res.json({message: 'Not Found'});
@@ -35,7 +43,7 @@ Server.get('/api/roblox/bans/search', ProtectionService.privilegedCall, Protecti
         });
 });
 
-Server.get('/api/roblox/warnings', ProtectionService.privilegedCall, ProtectionService.requiresAccessLevel, async (req, res) => {
+Server.get('/api/roblox/warnings', ProtectionService.requiresAPIKey, async (req, res) => {
     RobloxModerationService.getAllWarnings()
         .then(warnings => {
             if (warnings.length > 0) {
@@ -49,14 +57,14 @@ Server.get('/api/roblox/warnings', ProtectionService.privilegedCall, ProtectionS
         });
 });
 
-Server.get('/api/roblox/warnings/search', ProtectionService.privilegedCall, ProtectionService.requiresAccessLevel, async (req, res) => {
-    const { query } = req.query;
+Server.get('/api/roblox/warnings/search', ProtectionService.requiresAPIKey, async (req, res) => {
+    const { query, acknowledgement } = req.query;
     if (!query) return res.json({message: 'Error'});
 
-    RobloxModerationService.searchWarningAsync(query)
-        .then(warning => {
-            if (warning) {
-                res.json({message: 'Success', data: warning});
+    RobloxModerationService.getUserWarnings(query, acknowledgement)
+        .then(warnings => {
+            if (warnings.length > 0) {
+                res.json({message: 'Success', data: warnings});
             } else {
                 res.json({message: 'Not Found'});
             }
@@ -67,7 +75,7 @@ Server.get('/api/roblox/warnings/search', ProtectionService.privilegedCall, Prot
 });
 
 // POST
-Server.post('/api/roblox/bans/create', ProtectionService.privilegedCall, ProtectionService.requiresAccessLevel, async (req, res) => {
+Server.post('/api/roblox/bans/create', ProtectionService.requiresAPIKey, async (req, res) => {
     const { rbxID, moderator, evidence, reason, banType } = req.body;
     if (!rbxID || !moderator || !evidence || !reason || !banType) return res.json({message: 'Error'});
 
@@ -83,7 +91,24 @@ Server.post('/api/roblox/bans/create', ProtectionService.privilegedCall, Protect
         });
 });
 
-Server.post('/api/roblox/bans/update', ProtectionService.privilegedCall, ProtectionService.requiresAccessLevel, async (req, res) => {
+Server.post('/api/roblox/bans/delete', ProtectionService.requiresAPIKey, async (req, res) => {
+    const { rbxID, moderator } = req.body;
+    if (!rbxID || !moderator) return res.json({message: 'Error'});
+
+    const outstanding_ban = await RobloxModerationService.searchBanAsync(rbxID);
+    if (!outstanding_ban) return res.json({message: 'Not Found'});
+
+    RobloxModerationService.deleteBanAsync(rbxID)
+        .then(() => {
+            res.json({message: 'Success'});
+        }).catch((err) => {
+            console.log(err);
+            res.json({message: 'Error'});
+        });
+});
+
+
+Server.post('/api/roblox/bans/update', ProtectionService.requiresAPIKey, async (req, res) => {
     var { rbxID, moderator, evidence, reason } = req.body;
     if (!rbxID || (!moderator && !evidence && !reason)) return res.json({message: 'Error'});
 
@@ -103,7 +128,7 @@ Server.post('/api/roblox/bans/update', ProtectionService.privilegedCall, Protect
         });
 });
 
-Server.post('/api/roblox/warnings/create', ProtectionService.privilegedCall, ProtectionService.requiresAccessLevel, async (req, res) => {
+Server.post('/api/roblox/warnings/create', ProtectionService.requiresAPIKey, async (req, res) => {
     const { rbxID, moderator, evidence, reason } = req.body;
     if (!rbxID || !moderator || !evidence || !reason) return res.json({message: 'Error'});
 
@@ -116,9 +141,25 @@ Server.post('/api/roblox/warnings/create', ProtectionService.privilegedCall, Pro
         });
 });
 
-Server.post('/api/roblox/warnings/update', ProtectionService.privilegedCall, ProtectionService.requiresAccessLevel, async (req, res) => {
-    var { warnID, moderator, evidence, reason, acknowledged } = req.body;
-    if (!warnID || (!moderator && !evidence && !reason && !acknowledged)) return res.json({message: 'Error'});
+Server.post('/api/roblox/warnings/delete', ProtectionService.requiresAPIKey, async (req, res) => {
+    const { rbxID, warnID, moderator } = req.body;
+    if (!warnID || !rbxID || !moderator) return res.json({message: 'Error'});
+
+    const outstanding_warning = await RobloxModerationService.searchWarningAsync(warnID);
+    if (!outstanding_warning) return res.json({message: 'Not Found'});
+
+    RobloxModerationService.deleteWarningAsync(rbxID, warnID)
+        .then(() => {
+            res.json({message: 'Success'});
+        }).catch((err) => {
+            console.log(err);
+            res.json({message: 'Error'});
+        });
+});
+
+Server.post('/api/roblox/warnings/update', ProtectionService.requiresAPIKey, async (req, res) => {
+    var { rbxID, warnID, moderator, evidence, reason, acknowledged } = req.body;
+    if (!warnID || !rbxID || (!moderator && !evidence && !reason && !acknowledged)) return res.json({message: 'Error'});
 
     const outstanding_warning = await RobloxModerationService.searchWarningAsync(warnID);
     if (!outstanding_warning) return res.json({message: 'Not Found'});
@@ -128,7 +169,7 @@ Server.post('/api/roblox/warnings/update', ProtectionService.privilegedCall, Pro
     if (!reason) reason = outstanding_warning.reason;
     if (!acknowledged) acknowledged = outstanding_warning.acknowledged;
 
-    RobloxModerationService.updateWarningAsync(warnID, moderator, evidence, reason, acknowledged)
+    RobloxModerationService.updateWarningAsync(rbxID, warnID, moderator, evidence, reason, acknowledged)
         .then(() => {
             res.json({message: 'Success'});
         }).catch((err) => {

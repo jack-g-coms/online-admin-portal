@@ -3,7 +3,7 @@ const UsersService = require('./UsersService');
 const PermissionsService = require('./PermissionsService');
 const jwt = require('jsonwebtoken');
 
-const API_KEY = '123';
+const API_KEY = '8D110F73-F59C-4A3F-8FEE-ABCBC3FC2313';
 const ENDPOINT_PERMISSION_FLAGS = {
     '/api/users': PermissionsService.PERMISSION_FLAGS.MANAGE_USERS,
     '/api/users/update': PermissionsService.PERMISSION_FLAGS.MANAGE_USERS,
@@ -35,7 +35,7 @@ const getCookie = (cookieString, cookieName) => {
 
 // FUNCTIONS
 module.exports.requiresAPIKey = async (req, res, next) => {
-    if (req.headers['apikey'] != API_KEY) {
+    if (req.headers['key'] != API_KEY) {
         return res.json({message: 'Unauthorized'});
     };
     next();

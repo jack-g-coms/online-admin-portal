@@ -24,7 +24,7 @@ function ManageWarningsRow({warning}) {
     const changed = useRef({});
 
     const deleteTrigger = () => {
-        deleteWarning(warning.warnID)
+        deleteWarning(warning.rbxID, warning.warnID)
             .then(response => {
                 if (response.message != 'Success') {
                     Swal.fire({title: 'Error', icon: 'error', text: `There was a problem while trying to update this warning.`, confirmButtonText: 'Ok'});

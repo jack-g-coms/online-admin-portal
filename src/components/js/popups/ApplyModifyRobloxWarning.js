@@ -11,7 +11,7 @@ function ApplyModifyRobloxWarningPopup({setState, editedWarning, changes}) {
     const [popupState, setPopupState] = useState('available');
 
     const applyChanges = () => {
-        updateWarning(editedWarning.warnID, editedWarning.moderator, editedWarning.evidence, editedWarning.reason)
+        updateWarning(editedWarning.rbxID, editedWarning.warnID, editedWarning.moderator, editedWarning.evidence, editedWarning.reason)
             .then(response => {
                 setState('closed');
                 if (response.message == 'Not Found') {

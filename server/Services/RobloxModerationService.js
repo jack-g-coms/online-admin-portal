@@ -32,23 +32,42 @@ const Warning = class {
 
 // FUNCTIONS / UTILITIES
 // ROBLOX / BANS
-module.exports.getAllBans = async () => {
+module.exports.getAllBans = async (limit) => {
     return new Promise((resolve, reject) => {
-        Database.all(
-            'SELECT * FROM Bans ORDER BY bannedOn DESC',
-            (err, rows) => {
-                if (!err) {
-                    var resolved_rows = [];
-                    for (var i = 0; i < rows.length; i++) {
-                        resolved_rows.push(new Ban(rows[i]));
+        if (!limit) {
+            Database.all(
+                'SELECT * FROM Bans ORDER BY bannedOn DESC',
+                (err, rows) => {
+                    if (!err) {
+                        var resolved_rows = [];
+                        for (var i = 0; i < rows.length; i++) {
+                            resolved_rows.push(new Ban(rows[i]));
+                        }
+    
+                        resolve(resolved_rows);
+                    } else {
+                        reject(err);
                     }
-
-                    resolve(resolved_rows);
-                } else {
-                    reject(err);
                 }
-            }
-        )
+            )
+        } else {
+            Database.all(
+                'SELECT * FROM Bans ORDER BY bannedOn DESC LIMIT ?',
+                [limit],
+                (err, rows) => {
+                    if (!err) {
+                        var resolved_rows = [];
+                        for (var i = 0; i < rows.length; i++) {
+                            resolved_rows.push(new Ban(rows[i]));
+                        }
+    
+                        resolve(resolved_rows);
+                    } else {
+                        reject(err);
+                    }
+                }
+            )
+        }
     });
 };
 
@@ -143,32 +162,51 @@ module.exports.getAllWarnings = async () => {
     });
 };
 
-module.exports.getUserWarnings = async (rbxID) => {
+module.exports.getUserWarnings = async (rbxID, acknowledgement) => {
     return new Promise((resolve, reject) => {
-        Database.all(
-            'SELECT * FROM Warnings WHERE rbxID = ? ORDER BY warnedOn DESC',
-            [rbxID],
-            (err, rows) => {
-                if (!err) {
-                    var resolved_rows = [];
-                    for (var i = 0; i < rows.length; i++) {
-                        resolved_rows.push(new Warning(rows[i]));
+        if (!acknowledgement) {
+            Database.all(
+                'SELECT * FROM Warnings WHERE rbxID = ? ORDER BY warnedOn DESC',
+                [rbxID],
+                (err, rows) => {
+                    if (!err) {
+                        var resolved_rows = [];
+                        for (var i = 0; i < rows.length; i++) {
+                            resolved_rows.push(new Warning(rows[i]));
+                        }
+    
+                        resolve(resolved_rows);
+                    } else {
+                        reject(err);
                     }
-
-                    resolve(resolved_rows);
-                } else {
-                    reject(err);
                 }
-            }
-        )
+            )
+        } else {
+            Database.all(
+                'SELECT * FROM Warnings WHERE rbxID = ? AND acknowledged = ? ORDER BY warnedOn DESC',
+                [rbxID, acknowledgement],
+                (err, rows) => {
+                    if (!err) {
+                        var resolved_rows = [];
+                        for (var i = 0; i < rows.length; i++) {
+                            resolved_rows.push(new Warning(rows[i]));
+                        }
+    
+                        resolve(resolved_rows);
+                    } else {
+                        reject(err);
+                    }
+                }
+            )
+        }
     });
 };
 
 module.exports.searchWarningAsync = async (query) => {
     return new Promise((resolve, reject) => {
         Database.get(
-            `SELECT * FROM Warnings WHERE rbxID = ? OR warnID = ?`,
-            [query, query],
+            `SELECT * FROM Warnings WHERE warnID = ?`,
+            [query],
             (err, row) => {
                 if (!err) {
                     if (row) {
@@ -203,11 +241,11 @@ module.exports.newWarningAsync = async (rbxID, moderator, evidence, reason) => {
     });
 };
 
-module.exports.updateWarningAsync = async (warnID, moderator, evidence, reason, acknowledged) => {
+module.exports.updateWarningAsync = async (rbxID, warnID, moderator, evidence, reason, acknowledged) => {
     return new Promise((resolve, reject) => {
         Database.run(
-            'UPDATE Warnings SET moderator = ?, evidence = ?, reason = ?, acknowledged = ? WHERE warnID = ?',
-            [moderator, JSON.stringify(evidence || []), reason, acknowledged, warnID],
+            'UPDATE Warnings SET moderator = ?, evidence = ?, reason = ?, acknowledged = ? WHERE warnID = ? AND rbxID = ?',
+            [moderator, JSON.stringify(evidence || []), reason, acknowledged, warnID, rbxID],
             (err) => {
                 if (!err) {
                     resolve();
@@ -219,11 +257,11 @@ module.exports.updateWarningAsync = async (warnID, moderator, evidence, reason, 
     });
 };
 
-module.exports.deleteWarningAsync = async (warnID) => {
+module.exports.deleteWarningAsync = async (rbxID, warnID) => {
     return new Promise((resolve, reject) => {
         Database.run(
-            'DELETE FROM Warnings WHERE warnID = ?',
-            [warnID],
+            'DELETE FROM Warnings WHERE warnID = ? AND rbxID = ?',
+            [warnID, rbxID],
             (err) => {
                 if (!err) {
                     resolve();

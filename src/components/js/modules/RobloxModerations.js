@@ -72,17 +72,17 @@ export const newWarning = async (rbxID, moderator, evidence, reason) => {
     });
 };
 
-export const updateWarning = async (warnID, moderator, evidence, reason, acknowledged) => {
+export const updateWarning = async (rbxID, warnID, moderator, evidence, reason, acknowledged) => {
     return new Promise((resolve, reject) => {
-        socket.emit('updateRobloxWarning', {warnID, moderator, evidence, reason, acknowledged}, (res) => {
+        socket.emit('updateRobloxWarning', {rbxID, warnID, moderator, evidence, reason, acknowledged}, (res) => {
             resolve(res);
         });
     });
 };
 
-export const deleteWarning = async (warnID) => {
+export const deleteWarning = async (rbxID, warnID) => {
     return new Promise((resolve, reject) => {
-        socket.emit('deleteRobloxWarning', {warnID}, (res) => {
+        socket.emit('deleteRobloxWarning', {rbxID, warnID}, (res) => {
             resolve(res);
         });
     });

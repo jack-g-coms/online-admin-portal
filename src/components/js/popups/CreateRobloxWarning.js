@@ -16,7 +16,7 @@ function CreateRobloxWarningPopup({setState}) {
     const [popupState, setPopupState] = useState('available');
 
     const [rbxID, setRbxID] = useState();
-    const [modID, setModID] = useState();
+    const [modID, setModID] = useState(authContext.user.rbxUser.id);
     const [evidence, setEvidence] = useState();
     const [reason, setReason] = useState();
 
