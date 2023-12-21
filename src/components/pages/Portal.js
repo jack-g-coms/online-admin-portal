@@ -22,7 +22,7 @@ import ManageRobloxWarnings from '../js/portalComponents/RobloxSystem/manageRobl
 import ManageDiscordBans from '../js/portalComponents/DiscordSystem/manageDiscordBans';
 import ManageDiscordModerations from '../js/portalComponents/DiscordSystem/manageDiscordModerations';
 
-function Portal() {
+function Portal({view}) {
     const [viewProfileState, setProfileViewState] = useState('closed');
     const [robloxUserLookupPopupState, setRobloxUserLookupPopupState] = useState('closed');
     const [noticePopupState, setNoticePopupState] = useState('closed');
@@ -32,7 +32,7 @@ function Portal() {
     const gateways = useRef();
 
     const params = new URLSearchParams(window.location.search);
-    const [portalComponentState, setPortalComponentState] = useState(params.get('view') || 'dashboard');
+    const [portalComponentState, setPortalComponentState] = useState(view || 'dashboard');
     
     useEffect(() => {
         socket.emit('getConnectedGateways', (res) => {
@@ -42,8 +42,11 @@ function Portal() {
 
     useEffect(() => {
         if (!portalComponentState) return;
-        const newURl = window.location.protocol + "//" + window.location.host + window.location.pathname + '?view=' + portalComponentState;
-        window.history.pushState({path: newURl}, '', newURl);
+        const newURl = window.location.protocol + '//' + window.location.host + '/portal/' + portalComponentState
+
+        if (newURl != window.location.protocol + '//' + window.location.host + window.location.pathname) {
+            window.history.pushState({path: newURl}, '', newURl);
+        }
     }, [portalComponentState]);
 
     return (
@@ -115,8 +118,8 @@ function Portal() {
                             <img style={{'marginRight': '3px', 'width': '30px', 'height': '30px'}} src='/media/images/discord-logo.png'/> 
                             <h1>Discord System</h1>
                         </div>
-                        <Button animation='pop-out color' style={{'width': '100%'}} onClick={(e) => {setPortalComponentState('manageDiscordBans');}} scheme='btn-outlinebottom'><i style={{'marginRight': '8px'}} className='fa-solid fa-gavel'/>Bans</Button>
-                        <Button animation='pop-out color' style={{'width': '100%'}} onClick={(e) => {setPortalComponentState('manageDiscordModerations');}} scheme='btn-outlinebottom'><i style={{'marginRight': '8px'}} className='fa-solid fa-clipboard-user'/>Moderations</Button>
+                        <Button animation='pop-out color' style={{'width': '100%'}} onClick={(e) => {setPortalComponentState('discordBans');}} scheme='btn-outlinebottom'><i style={{'marginRight': '8px'}} className='fa-solid fa-gavel'/>Bans</Button>
+                        <Button animation='pop-out color' style={{'width': '100%'}} onClick={(e) => {setPortalComponentState('discordModerations');}} scheme='btn-outlinebottom'><i style={{'marginRight': '8px'}} className='fa-solid fa-clipboard-user'/>Moderations</Button>
                     </div>
 
                     <div className='sidebar-profile-view-grouping'>
@@ -124,8 +127,8 @@ function Portal() {
                             <img style={{'marginRight': '3px', 'width': '30px', 'height': '30px'}} src='/media/images/roblox-logo-red.png'/> 
                             <h1>Roblox System</h1>
                         </div>
-                        <Button animation='pop-out color-red' style={{'width': '100%'}} onClick={(e) => {setPortalComponentState('manageRobloxBans');}} scheme='btn-outlinebottom'><i style={{'marginRight': '8px'}} className='fa-solid fa-gavel'/>Bans</Button>
-                        <Button animation='pop-out color-red' style={{'width': '100%'}} onClick={(e) => {setPortalComponentState('manageRobloxWarnings');}} scheme='btn-outlinebottom'><i style={{'marginRight': '8px'}} className='fa-solid fa-circle-exclamation'/>Warnings</Button>
+                        <Button animation='pop-out color-red' style={{'width': '100%'}} onClick={(e) => {setPortalComponentState('robloxBans');}} scheme='btn-outlinebottom'><i style={{'marginRight': '8px'}} className='fa-solid fa-gavel'/>Bans</Button>
+                        <Button animation='pop-out color-red' style={{'width': '100%'}} onClick={(e) => {setPortalComponentState('robloxWarnings');}} scheme='btn-outlinebottom'><i style={{'marginRight': '8px'}} className='fa-solid fa-circle-exclamation'/>Warnings</Button>
                         <Button animation='pop-out color-red' style={{'width': '100%'}} onClick={(e) => {setRobloxUserLookupPopupState('open');}} scheme='btn-outlinebottom'><i style={{'marginRight': '8px'}} className='fa-solid fa-user'/>User Lookup</Button>
                     </div>
 
@@ -135,10 +138,9 @@ function Portal() {
                                 <img style={{'marginRight': '3px', 'width': '30px', 'height': '30px'}} src='/media/images/management-logo.png'/> 
                                 <h1>Management System</h1>
                             </div>
-                            <Button animation='pop-out color-yellow' style={{'width': '100%'}} onClick={(e) => {setPortalComponentState('manageUsers');}} scheme='btn-outlinebottom'><i style={{'marginRight': '8px'}} className='fa-solid fa-user'/>Users</Button>
+                            <Button animation='pop-out color-yellow' style={{'width': '100%'}} onClick={(e) => {setPortalComponentState('users');}} scheme='btn-outlinebottom'><i style={{'marginRight': '8px'}} className='fa-solid fa-user'/>Users</Button>
                             {authContext.user.permissions.Flags.CREATE_PORTAL_NOTICE && <Button animation='pop-out color-yellow' style={{'width': '100%'}} onClick={(e) => {setNoticePopupState('open');}} scheme='btn-outlinebottom'><i style={{'marginRight': '8px'}} className='fa-solid fa-flag'/>Portal Notice</Button>}
                             {authContext.user.permissions.Flags.CREATE_PORTAL_NOTICE && <Button animation='pop-out color-yellow' style={{'width': '100%'}} onClick={(e) => {setDevNoticePopupState('open');}} scheme='btn-outlinebottom'><i style={{'marginRight': '8px'}} className='fa-solid fa-hammer'/>Development Notice</Button>}
-
                         </div>
                     }
 
@@ -152,23 +154,23 @@ function Portal() {
                     <Dashboard/>
                 }
 
-                {portalComponentState == 'manageUsers' &&
-                    <ManageUsers hidden={false}/>
+                {portalComponentState == 'users' &&
+                    <ManageUsers/>
                 } 
 
-                {portalComponentState == 'manageRobloxBans' &&
+                {portalComponentState == 'robloxBans' &&
                     <ManageRobloxBans/>
                 }
 
-                {portalComponentState == 'manageRobloxWarnings' &&
+                {portalComponentState == 'robloxWarnings' &&
                     <ManageRobloxWarnings/>
                 }
 
-                {portalComponentState == 'manageDiscordBans' &&
+                {portalComponentState == 'discordBans' &&
                     <ManageDiscordBans/>
                 }
 
-                {portalComponentState == 'manageDiscordModerations' &&
+                {portalComponentState == 'discordModerations' &&
                     <ManageDiscordModerations/>
                 }
             </div>

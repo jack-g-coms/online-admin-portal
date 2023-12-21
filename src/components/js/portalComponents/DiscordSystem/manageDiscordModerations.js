@@ -64,9 +64,7 @@ function ManageDiscordModerations() {
                     currentData: []
                 })
 
-                setTimeout(() => {
-                    setState('available');
-                }, 3000);
+                setState('available');
             }).catch(console.log);
     }, []);
 

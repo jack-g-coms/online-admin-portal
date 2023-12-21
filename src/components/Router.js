@@ -7,13 +7,14 @@ import Login from './pages/Login';
 import Signup from './pages/Signup';
 import Home from './pages/Home';
 import Portal from './pages/Portal';
+import NotFound from './pages/NotFound';
 
 function RouterComponent() {
     const authContext = useContext(AuthContext);
 
     const GuestRoute = () => {
         if (authContext.user && authContext.user.verified) {
-            return <Navigate to={`/portal`} replace/>;
+            return <Navigate to={`/portal/dashboard`} replace/>;
         } else {
             return <Outlet/>;
         }
@@ -27,6 +28,15 @@ function RouterComponent() {
         }
     };
 
+    const RequiresFlag = ({flag}) => {
+        console.log(flag, authContext.user)
+        if (authContext.user && authContext.user.verified && authContext.user.permissions.Flags[flag]) {
+            return <Outlet/>;
+        } else {
+            return <Navigate to={`/portal/dashboard`} replace/>;
+        }
+    };
+
     return (
         <>
             <Routes>
@@ -37,8 +47,19 @@ function RouterComponent() {
                 </Route>
 
                 <Route element={<ProtectedRoute/>}>
-                    <Route path='/portal' element={<Portal/>}/>
+                    <Route exact path='/portal' element={<Portal view='dashboard'/>}/>
+                    <Route path='/portal/dashboard' element={<Portal view='dashboard'/>}/>
+                    <Route path='/portal/robloxBans' element={<Portal view='robloxBans'/>}/>
+                    <Route path='/portal/robloxWarnings' element={<Portal view='robloxWarnings'/>}/>
+                    <Route path='/portal/discordModerations' element={<Portal view='discordModerations'/>}/>
+                    <Route path='/portal/discordBans' element={<Portal view='discordBans'/>}/>
                 </Route>
+
+                <Route element={<RequiresFlag flag='MANAGE_USERS'/>}>
+                    <Route path='/portal/users' element={<Portal view='users'/>}/>
+                </Route>
+
+                <Route path='*' element={<NotFound/>}/>
             </Routes>
         </>
     );

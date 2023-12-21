@@ -30,7 +30,7 @@ function ManageUsers({hidden}) {
 
     return (
         <>
-            <div className={!hidden ? 'manage-users-page' : 'manage-users-hidden'}>
+            <div className='manage-users-page'>
                 {state == 'loading' && !users.current &&
                     <Loader style={{'margin': 'auto'}}/>
                 }

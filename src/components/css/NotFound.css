@@ -1,0 +1,24 @@
+.not-found-container {
+    transform: translate(-50%, 0);
+    position: fixed;
+    left: 50%;
+    top: 12%;
+    text-align: center;
+    transform: translate(-50%, 0);
+    display: flex;
+    gap: 5px;
+    flex-direction: column;
+    width: 1000px;
+    align-items: center;
+} .not-found-container img {
+    width: 350px;
+    margin-top: 40px;
+    height: 350px;
+}
+
+.not-found-info {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    width: 70%
+}

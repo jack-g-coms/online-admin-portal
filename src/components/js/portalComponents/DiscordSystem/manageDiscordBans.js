@@ -64,9 +64,7 @@ function ManageDiscordBans() {
                     currentData: []
                 })
 
-                setTimeout(() => {
-                    setState('available');
-                }, 1000);
+                setState('available');
             }).catch(console.log);
     }, []);
 
