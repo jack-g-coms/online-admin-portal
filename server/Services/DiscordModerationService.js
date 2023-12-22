@@ -43,7 +43,7 @@ module.exports.getAllBans = async () => {
                     var resolved_rows = [];
                     for (var i = 0; i < rows.length; i++) {
                         const ban = new Ban(rows[i]);
-                        const linkedModeration = await this.getActiveModerationAsync(ban.discordID, ['Permanent Ban', 'Ban']);
+                        const linkedModeration = await this.getUserActiveModerationAsync(ban.discordID, ['Permanent Ban', 'Ban']);
 
                         if (linkedModeration) {
                             ban.linkedModeration = linkedModeration;
@@ -171,6 +171,27 @@ module.exports.searchModerationAsync = async (query) => {
     });
 };
 
+module.exports.getUserModerations = async (query, modType) => {
+    return new Promise((resolve, reject) => {
+        Database.all(
+            `SELECT * FROM DiscordModerations WHERE (discordID = ? AND moderationType = ?) OR discordID = ?`,
+            [query, modType],
+            (err, rows) => {
+                if (!err) {
+                    var resolved_rows = [];
+                    for (var i = 0; i < rows.length; i++) {
+                        resolved_rows.push(new Moderation(rows[i]));
+                    }
+
+                    resolve(resolved_rows);
+                } else {
+                    reject(err);
+                }
+            }
+        )
+    });
+};
+
 module.exports.getActiveModerations = async () => {
     return new Promise((resolve, reject) => {
         Database.all(
@@ -192,7 +213,7 @@ module.exports.getActiveModerations = async () => {
     });
 };
 
-module.exports.getActiveModerationAsync = async (discordID, type) => {
+module.exports.getUserActiveModerationAsync = async (discordID, type) => {
     return new Promise((resolve, reject) => {
         if (typeof type == 'string') {
             Database.get(
@@ -210,10 +231,26 @@ module.exports.getActiveModerationAsync = async (discordID, type) => {
                     }
                 }
             )
-        } else {
+        } else if (typeof type == 'object') {
             Database.get(
                 'SELECT * FROM DiscordModerations WHERE discordID = ? AND moderationType IN (?,?) AND extraInfo != ?',
                 [discordID + 'a', type[0], type[1], '{}'],
+                (err, row) => {
+                    if (!err) {
+                        if (row) {
+                            resolve(new Moderation(row));
+                        } else {
+                            resolve();
+                        }
+                    } else {
+                        reject(err);
+                    }
+                }
+            )
+        } else {
+            Database.all(
+                'SELECT * FROM DiscordModerations WHERE discordID = ? AND extraInfo != ?',
+                [discordID + 'a', '{}'],
                 (err, row) => {
                     if (!err) {
                         if (row) {
