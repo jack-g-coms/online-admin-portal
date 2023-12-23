@@ -17,6 +17,7 @@ function ManageModerationsRow({moderation}) {
     const [state, setState] = useState('available');
     const [applyModifyPopup, setApplyModifyPopup] = useState('hidden');
     const [popupState, setPoupState] = useState('available');
+    const [actionState, setActionState] = useState('none');
 
     const authContext = useContext(AuthContext);
 
@@ -30,14 +31,17 @@ function ManageModerationsRow({moderation}) {
                     Swal.fire({title: 'Error', icon: 'error', text: `There was a problem while trying to update this moderation.`, confirmButtonText: 'Ok'});
                 } else {
                     Swal.fire({title: 'Success', text: 'Discord Automation has been sent the request to delete this moderation. If it is not gone in the next 5 minutes, retry.', icon: 'success', confirmButtonText: 'Ok'});
+                    setActionState('deleted');
+                    setEditorState('hidden');
                 }
             }).catch(console.log);
     };
 
     return (
         <>
-            {applyModifyPopup == 'open' && <ApplyModifyDiscordModerationPopup editedModeration={editedModeration.current} setState={setApplyModifyPopup} changed={changed}/>}
-            <div onClick={(e) => {if ((e.target.classList.contains('textarea') || popupState == 'loading')) return; if (editorState == 'open') return; setEditorState('open'); editedModeration.current = JSON.parse(JSON.stringify(moderation));}} className='manage-roblox-bans-container-row'>
+            {applyModifyPopup == 'open' && <ApplyModifyDiscordModerationPopup editedModeration={editedModeration.current} setState={setApplyModifyPopup} setActionState={setActionState} setEditorState={setEditorState} changed={changed}/>}
+
+            <div onClick={(e) => {if ((e.target.classList.contains('textarea') || popupState == 'loading')) return; if (editorState == 'open' || actionState != 'none') return; setEditorState('open'); editedModeration.current = JSON.parse(JSON.stringify(moderation));}} className='manage-roblox-bans-container-row'>
                 {editorState == 'open' &&
                     <>
                         <div className='ban-editor-container fade-in'>
@@ -49,7 +53,7 @@ function ManageModerationsRow({moderation}) {
                                 {state != 'loading' &&
                                     <>
                                         <Button animation='raise' scheme='btn-cancel' onClick={(e) => {setEditorState('hidden'); setState('available'); changed.current = {};}}><i class="fa-solid fa-ban"></i> Close</Button>
-                                        {authContext.user.permissions.Flags.UPDATE_DISCORD_MODERATIONS && (!moderation.isActive || (moderation.isActive && moderation.moderationType != 'Ban' && moderation.moderationType != 'Permanent Ban')) &&
+                                        {authContext.user.permissions.Flags.DELETE_DISCORD_MODERATIONS && (!moderation.isActive || (moderation.isActive && moderation.moderationType != 'Ban' && moderation.moderationType != 'Permanent Ban')) &&
                                             <Button animation='raise' scheme='btn-cancel' onClick={(e) => {deleteTrigger();}}><i class="fa-solid fa-trash"></i> Delete</Button>
                                         }
                                     </>
@@ -125,6 +129,13 @@ function ManageModerationsRow({moderation}) {
                             }
                         </div>
                     </>
+                }
+
+                {actionState != 'none' &&
+                    <div className='action-state-overlay'>
+                        <span style={{'color': '#349fc9', 'fontWeight': '600'}}><i style={{'marginRight': '2px'}} class="fa-solid fa-circle-info"></i> You have made modifications to this moderation that require Roman Systems Automation to complete.</span>
+                        <span>If you refresh and the expected changes haven't been made, wait 5 minutes before retrying.</span>
+                    </div>
                 }
 
                 {editorState == 'hidden' &&

@@ -7,7 +7,7 @@ import '../../css/popups/ApplyModify.css';
 import Button from "../Button";
 import { updateBan } from '../modules/DiscordModerations';
 
-function ApplyModifyDiscordBanPopup({setState, editedBan, changed}) {
+function ApplyModifyDiscordBanPopup({setState, setActionState, setEditorState, editedBan, changed}) {
     const [popupState, setPopupState] = useState('available');
 
     const applyChanges = () => {
@@ -18,6 +18,8 @@ function ApplyModifyDiscordBanPopup({setState, editedBan, changed}) {
                 } else if (response.message == 'Success') {
                     Swal.fire({title: 'Success', text: 'Discord Automation has been sent the request to update this ban. If it is not updated in the next 5 minutes, retry.', icon: 'success', confirmButtonText: 'Ok'});
                     changed.current = {};
+                    setActionState('updating');
+                    setEditorState('hidden');
                 } else {
                     Swal.fire({title: 'Error', icon: 'error', text: `There was a problem while trying to update this ban.`, confirmButtonText: 'Ok'});
                 }

@@ -29,7 +29,7 @@ function Dashboard () {
 
             data[i] = {Week: newWeekNumber, [key1]: (array1Index != -1 && arr1[array1Index][key1]) || 0, [key2]: (array2Index != -1 && arr2[array2Index][key2]) || 0};
         }
-        return data;
+        return data.reverse();
     }
 
     useEffect(() => {
@@ -113,7 +113,7 @@ function Dashboard () {
                             {statistics.current.Roblox.pastWeeksBans && statistics.current.Roblox.pastWeeksWarnings &&
                                 <>
                                     <h2>Roblox Moderations for the Past 4 Weeks</h2>
-                                    <span style={{'color': '#f0be48'}}><i class='fa-solid fa-flag' style={{'marginRight': '3px'}}></i> Note that the left most week is this week</span>
+                                    <span style={{'color': '#f0be48'}}><i class='fa-solid fa-flag' style={{'marginRight': '3px'}}></i> Note that the right most week is this week</span>
 
                                     <LineChart style={{'marginTop': '15px', 'marginRight': 'none'}} width={730} height={350} data={getGraphData(statistics.current.Roblox.pastWeeksBans, statistics.current.Roblox.pastWeeksWarnings, "Bans", "Warnings", "Week")}>
                                         <CartesianGrid/>
@@ -146,7 +146,7 @@ function Dashboard () {
                             {statistics.current.Discord.pastWeeksBans && statistics.current.Discord.pastWeeksModerations &&
                                 <>
                                     <h2>Discord Moderations for the Past 4 Weeks</h2>
-                                    <span style={{'color': '#f0be48'}}><i class='fa-solid fa-flag' style={{'marginRight': '3px'}}></i> Note that the left most week is this week</span>
+                                    <span style={{'color': '#f0be48'}}><i class='fa-solid fa-flag' style={{'marginRight': '3px'}}></i> Note that the right most week is this week</span>
                                     <LineChart style={{'marginTop': '15px', 'marginRight': 'none'}} width={730} height={350} data={getGraphData(statistics.current.Discord.pastWeeksBans, statistics.current.Discord.pastWeeksModerations, "Bans", "Moderations", "Week")}>
                                         <CartesianGrid/>
                                         <XAxis dataKey="Week" offset={25}/>
