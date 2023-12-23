@@ -38,8 +38,11 @@ module.exports.newSocket = (socket) => {
             });
     });
 
-    socket.on('getUserDiscordModerations', (query, callback) => {
-        DiscordModerationService.getUserModerations(query)
+    socket.on('getUserDiscordModerations', (body, callback) => {
+        const {discordid, modType} = body;
+        if (!discordid) return callback({message: 'Error'});
+
+        DiscordModerationService.getUserModerations(query, modType)
             .then(moderations => {
                 if (moderations.length > 0) {
                     callback({message: 'Success', data: moderations});
@@ -55,6 +58,22 @@ module.exports.newSocket = (socket) => {
         DiscordModerationService.getActiveModerations()
             .then(moderations => {
                 if (moderations.length > 0) {
+                    callback({message: 'Success', data: moderations});
+                } else {
+                    callback({message: 'Not Found'});
+                }
+            }).catch(() => {
+                callback({message: 'Error'});
+            });
+    });
+
+    socket.on('getUserActiveDiscordModerations', (body, callback) => {
+        const {discordid, modType} = body;
+        if (!discordid) return callback({message: 'Error'});
+
+        DiscordModerationService.getUserActiveModerationAsync(discordid, modType)
+            .then(moderations => {
+                if ((!modType && moderations.length > 0) || (modType && moderations)) {
                     callback({message: 'Success', data: moderations});
                 } else {
                     callback({message: 'Not Found'});
@@ -121,7 +140,7 @@ module.exports.newSocket = (socket) => {
             if (!discordID) return callback({message: 'Error'});
         
             const outstanding_ban = await DiscordModerationService.searchBanAsync(discordID);
-            const linked_moderation = await DiscordModerationService.getActiveModerationAsync(discordID, ['Ban', 'Permanent Ban'])
+            const linked_moderation = await DiscordModerationService.getUserActiveModerationAsync(discordID, ['Ban', 'Permanent Ban'])
             if (!outstanding_ban || !linked_moderation) return callback({message: 'Not Found'});
 
             var bannedOn = outstanding_ban.bannedOn;
@@ -153,7 +172,7 @@ module.exports.newSocket = (socket) => {
             const { discordID } = body;
             if (!discordID) return callback({message: 'Error'});
 
-            const activeModeration = await DiscordModerationService.getActiveModerationAsync(discordID, ['Ban', 'Permanent Ban']);
+            const activeModeration = await DiscordModerationService.getUserActiveModerationAsync(discordID, ['Ban', 'Permanent Ban']);
             const outstanding_ban = await DiscordModerationService.searchBanAsync(discordID);
 
             if (!outstanding_ban) return callback({message: 'Not Found'});
