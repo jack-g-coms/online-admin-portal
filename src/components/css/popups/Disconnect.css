@@ -1,0 +1,22 @@
+.disconnect-notice {
+    margin-top: 5px;
+    color: #fff;
+    font-weight: bold;
+    background-color: #349fc9;
+    border: 1px solid #706f6f;
+    border-radius: 5px;
+    padding: 5px 5px 5px 5px;
+}
+
+.disconnect-btns {
+    background-color: #222222;
+    border-top: 1px solid #706f6f;
+    display: flex;
+    justify-content: center;
+    align-content: center;
+    border-bottom-left-radius: 5px;
+    border-bottom-right-radius: 5px;
+    padding: 8px 8px;
+    width: 100%;
+    margin-top: 10px;
+}

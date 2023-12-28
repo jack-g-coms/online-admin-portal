@@ -173,22 +173,41 @@ module.exports.searchModerationAsync = async (query) => {
 
 module.exports.getUserModerations = async (query, modType) => {
     return new Promise((resolve, reject) => {
-        Database.all(
-            `SELECT * FROM DiscordModerations WHERE (discordID = ? AND moderationType = ?) OR discordID = ?`,
-            [query, modType],
-            (err, rows) => {
-                if (!err) {
-                    var resolved_rows = [];
-                    for (var i = 0; i < rows.length; i++) {
-                        resolved_rows.push(new Moderation(rows[i]));
+        if (modType) {
+            Database.all(
+                `SELECT * FROM DiscordModerations WHERE discordID = ? AND moderationType = ? ORDER BY moderatedOn DESC`,
+                [query + 'a', modType],
+                (err, rows) => {
+                    if (!err) {
+                        var resolved_rows = [];
+                        for (var i = 0; i < rows.length; i++) {
+                            resolved_rows.push(new Moderation(rows[i]));
+                        }
+    
+                        resolve(resolved_rows);
+                    } else {
+                        reject(err);
                     }
-
-                    resolve(resolved_rows);
-                } else {
-                    reject(err);
                 }
-            }
-        )
+            )
+        } else {
+            Database.all(
+                `SELECT * FROM DiscordModerations WHERE discordID = ? ORDER BY moderatedOn DESC`,
+                [query + 'a'],
+                (err, rows) => {
+                    if (!err) {
+                        var resolved_rows = [];
+                        for (var i = 0; i < rows.length; i++) {
+                            resolved_rows.push(new Moderation(rows[i]));
+                        }
+    
+                        resolve(resolved_rows);
+                    } else {
+                        reject(err);
+                    }
+                }
+            )
+        }
     });
 };
 

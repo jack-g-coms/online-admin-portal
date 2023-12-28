@@ -12,6 +12,7 @@ import { timeFormat } from '../../shared';
 import RobloxUserLookupPopup from '../js/popups/RobloxUserLookup';
 import PortalNoticePopup from '../js/popups/PortalNotice';
 import DevNoticePopup from '../js/popups/DevelopmentNotice';
+import DisconnectedPopup from '../js/popups/Disconnected';
 
 import Dashboard from '../js/portalComponents/Dashboard';
 
@@ -25,8 +26,10 @@ import ManageDiscordModerations from '../js/portalComponents/DiscordSystem/manag
 function Portal({view}) {
     const [viewProfileState, setProfileViewState] = useState('closed');
     const [robloxUserLookupPopupState, setRobloxUserLookupPopupState] = useState('closed');
+
     const [noticePopupState, setNoticePopupState] = useState('closed');
     const [devNoticePopupState, setDevNoticePopupState] = useState('closed');
+    const [disconnectPopupState, setDisconnectPopupState] = useState({open: false});
 
     const authContext = useContext(AuthContext);
     const gateways = useRef();
@@ -37,6 +40,12 @@ function Portal({view}) {
     useEffect(() => {
         socket.emit('getConnectedGateways', (res) => {
             gateways.current = res;
+        });
+
+        socket.on('forceDisconnect', (data, response) => {
+            if (!data.reason) return;
+            if (response) response();
+            setDisconnectPopupState({open: true, reason: data.reason});
         });
     }, []);
 
@@ -55,6 +64,7 @@ function Portal({view}) {
                 {robloxUserLookupPopupState == 'open' && <RobloxUserLookupPopup setState={setRobloxUserLookupPopupState}/>}
                 {noticePopupState == 'open' && <PortalNoticePopup setState={setNoticePopupState}/>}
                 {devNoticePopupState == 'open' && <DevNoticePopup setState={setDevNoticePopupState}/>}
+                {disconnectPopupState.open == true && <DisconnectedPopup reason={disconnectPopupState.reason}/>}
 
                 <div className='sidebar-options'>
                     {authContext.user &&

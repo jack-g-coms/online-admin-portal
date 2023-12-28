@@ -72,6 +72,10 @@ module.exports.newSocket = (socket) => {
         
             UsersService.updateUserAsync(id, payload.email, payload.rbxUser, payload.discordId, payload.permissions.Level, Boolean(payload.verified).valueOf())
                 .then(() => {
+                    const targetSocket = process.sockets[id];
+                    if (targetSocket) {
+                        targetSocket.emit('forceDisconnect', {reason: "User Change"});
+                    }
                     callback({message: 'Success'});
                 }).catch((err) => {
                     console.log(err);
@@ -90,6 +94,12 @@ module.exports.newSocket = (socket) => {
         
             UsersService.deleteUserAsync(id)
                 .then(() => {
+                    const targetSocket = process.sockets[id];
+                    if (targetSocket) {
+                        targetSocket.emit('forceDisconnect', {reason: "Access Removed"}, () => {
+                            targetSocket.disconnect();
+                        });
+                    }
                     callback({message: 'Success'});
                 }).catch((err) => {
                     console.log(err);

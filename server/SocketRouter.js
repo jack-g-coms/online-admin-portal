@@ -4,8 +4,14 @@ const ProtectionService = require('./Services/ProtectionService');
 const io = process.io;
 const gateways = {};
 
+process.sockets = {}
+
 io.use(ProtectionService.privilegedSocket);
 io.on('connection', (socket) => {
+    if (socket.User) {
+        process.sockets[socket.User.id] = socket;
+    }
+    
     var connected_gateways = [];
     for (var gateway in gateways) {
         gateway = gateways[gateway];

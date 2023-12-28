@@ -76,6 +76,21 @@ module.exports.newSocket = (socket) => {
             });
     });
 
+    socket.on('getUserRobloxWarnings', async (rbxID, callback) => {
+        if (!rbxID) return callback({message: 'Error'});
+        RobloxModerationService.getUserWarnings(rbxID)
+            .then(warnings => {
+                if (warnings.length > 0) {
+                    callback({message: 'Success', data: warnings});
+                } else {
+                    callback({message: 'Not Found'});
+                }
+            }).catch((err) => {
+                console.log(err);
+                callback({message: 'Error'});
+            });
+    });
+
     socket.on('searchRobloxWarning', async (query, callback) => {
         if (!query) return callback({message: 'Error'});
         RobloxModerationService.searchWarningAsync(query)
@@ -117,7 +132,7 @@ module.exports.newSocket = (socket) => {
     if (socket.User.permissions.Flags.UPDATE_ROBLOX_BANS) {
         socket.on('updateRobloxBan', async (body, callback) => {
             var { rbxID, moderator, evidence, reason, banType } = body;
-            if (!rbxID || (!moderator && !evidence && !reason)) return callback({message: 'Error'});
+            if (!rbxID || (!moderator && !evidence && !reason && !banType)) return callback({message: 'Error'});
         
             const outstanding_ban = await RobloxModerationService.searchBanAsync(rbxID);
             if (!outstanding_ban) return callback({message: 'Not Found'});

@@ -42,8 +42,9 @@ module.exports.newSocket = (socket) => {
         const {discordid, modType} = body;
         if (!discordid) return callback({message: 'Error'});
 
-        DiscordModerationService.getUserModerations(query, modType)
+        DiscordModerationService.getUserModerations(discordid, modType)
             .then(moderations => {
+                console.log(moderations)
                 if (moderations.length > 0) {
                     callback({message: 'Success', data: moderations});
                 } else {
@@ -145,7 +146,7 @@ module.exports.newSocket = (socket) => {
 
             var bannedOn = outstanding_ban.bannedOn;
         
-            if (!moderator) moderator = outstanding_ban.moderator + 'a';
+            if (!moderator) moderator = outstanding_ban.moderator;
             if (!evidence) evidence = outstanding_ban.evidence;
             if (!reason) reason = outstanding_ban.reason;
             if (!banType) banType = outstanding_ban.banType;
@@ -194,7 +195,7 @@ module.exports.newSocket = (socket) => {
 
     if (socket.User.permissions.Flags.UPDATE_DISCORD_MODERATIONS) {
         socket.on('updateDiscordModeration', async (body, callback) => {
-            const { moderationID, moderator, evidence, extraInfo, reason } = body;
+            var { moderationID, moderator, evidence, extraInfo, reason } = body;
             if (!moderationID) return callback({message: 'Not Found'});
 
             const outstanding_moderation = await DiscordModerationService.searchModerationAsync(moderationID);
@@ -204,7 +205,7 @@ module.exports.newSocket = (socket) => {
                 return callback({message: 'Updating bans is not supported on the discord moderation page.'});
             }
         
-            if (!moderator) moderator = outstanding_moderation.moderator + 'a';
+            if (!moderator) moderator = outstanding_moderation.moderator;
             if (!evidence) evidence = outstanding_moderation.evidence;
             if (!reason) reason = outstanding_moderation.reason;
             if (!extraInfo) extraInfo = outstanding_moderation.extraInfo;
