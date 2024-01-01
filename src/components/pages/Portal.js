@@ -23,6 +23,8 @@ import ManageRobloxWarnings from '../js/portalComponents/RobloxSystem/manageRobl
 import ManageDiscordBans from '../js/portalComponents/DiscordSystem/manageDiscordBans';
 import ManageDiscordModerations from '../js/portalComponents/DiscordSystem/manageDiscordModerations';
 
+import CreateEmbed from '../js/portalComponents/BotAutomation/CreateEmbed';
+
 function Portal({view}) {
     const [viewProfileState, setProfileViewState] = useState('closed');
     const [robloxUserLookupPopupState, setRobloxUserLookupPopupState] = useState('closed');
@@ -154,6 +156,16 @@ function Portal({view}) {
                         </div>
                     }
 
+                    {authContext.user.permissions.Flags.BOT_ACTIONS &&
+                        <div className='sidebar-profile-view-grouping'>
+                            <div className='sidebar-grouping-title'>
+                                <i style={{'marginRight': '10px', 'marginLeft': '5px', 'marginBottom': '4px'}} id='robot-logo' class="fa-solid fa-robot"></i>
+                                <h1>Bot Actions</h1>
+                            </div>
+                            <Button animation='pop-out color-purple' style={{'width': '100%'}} onClick={(e) => {setPortalComponentState('createEmbed');}} scheme='btn-outlinebottom'><i style={{'marginRight': '8px'}} className='fa-solid fa-envelope'/>Create Embed</Button>
+                        </div>
+                    }
+
                     <div className='sidebar-profile-view-bottom'>
                         <i class="fa-solid fa-circle-info"></i>
                         <span>All actions are logged and processed by Portal Administrators apart of Technical Services.</span>
@@ -182,6 +194,10 @@ function Portal({view}) {
 
                 {portalComponentState == 'discordModerations' &&
                     <ManageDiscordModerations/>
+                }
+
+                {portalComponentState == 'createEmbed' &&
+                    <CreateEmbed/>
                 }
             </div>
         </>

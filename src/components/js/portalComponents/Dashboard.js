@@ -8,6 +8,7 @@ import { getConfiguration } from '../modules/Configuration';
 import { getWeek } from '../../../shared';
 
 import Loader from '../Loader';
+import moment from 'moment';
 
 function Dashboard () {
     const authContext = useContext(AuthContext);
@@ -25,7 +26,7 @@ function Dashboard () {
             var newWeekNumber = weekNumber - i;
             var array1Index = arr1.findIndex(({ Week }) => Week === newWeekNumber);
             var array2Index = arr2.findIndex(({ Week }) => Week === newWeekNumber);
-            if (weekNumber < 0) break;
+            if (newWeekNumber <= 0) break;
 
             data[i] = {Week: newWeekNumber, [key1]: (array1Index != -1 && arr1[array1Index][key1]) || 0, [key2]: (array2Index != -1 && arr2[array2Index][key2]) || 0};
         }
@@ -103,8 +104,8 @@ function Dashboard () {
                                 </div>
 
                                 <div className='grouping'>
-                                    {(statistics.current.Roblox.thisWeeksTopBanModerator && statistics.current.Roblox.thisWeeksTopBanModerator.Moderator == 'none') ? <span style={{'backgroundColor': '#303030', 'padding': '10px 10px', 'borderRadius': '5px'}}>There have been no roblox bans this week so there is<span style={{'color': '#c93434'}}> no top moderator yet.</span></span> : <span style={{'backgroundColor': '#303030', 'padding': '10px 10px', 'borderRadius': '5px'}}>Top Roblox Ban Moderator this week is <span style={{'color': '#c93434'}}>{statistics.current.Roblox.thisWeeksTopBanModerator.Moderator.name}</span> with {statistics.current.Roblox.thisWeeksTopBanModerator.Bans} bans.</span>}
-                                    {(statistics.current.Roblox.thisWeeksTopWarningModerator && statistics.current.Roblox.thisWeeksTopWarningModerator.Moderator == 'none') ? <span style={{'backgroundColor': '#303030', 'padding': '10px 10px', 'borderRadius': '5px'}}>There have been no roblox warnings this week so there is<span style={{'color': '#c93434'}}> no top moderator yet.</span></span> : <span style={{'backgroundColor': '#303030', 'padding': '10px 10px', 'borderRadius': '5px'}}>Top Roblox Warning Moderator this week is <span style={{'color': '#c93434'}}>{statistics.current.Roblox.thisWeeksTopWarningModerator.Moderator.name}</span> with {statistics.current.Roblox.thisWeeksTopWarningModerator.Warnings} warnings.</span>}
+                                    {((statistics.current.Roblox.thisWeeksTopBanModerator && statistics.current.Roblox.thisWeeksTopBanModerator.Moderator == 'none') || !statistics.current.Roblox.thisWeeksTopBanModerator) ? <span style={{'backgroundColor': '#303030', 'padding': '10px 10px', 'borderRadius': '5px'}}>There have been no roblox bans this week so there is<span style={{'color': '#c93434'}}> no top moderator yet.</span></span> : <span style={{'backgroundColor': '#303030', 'padding': '10px 10px', 'borderRadius': '5px'}}>Top Roblox Ban Moderator this week is <span style={{'color': '#c93434'}}>{statistics.current.Roblox.thisWeeksTopBanModerator.Moderator.name}</span> with {statistics.current.Roblox.thisWeeksTopBanModerator.Bans} bans.</span>}
+                                    {((statistics.current.Roblox.thisWeeksTopWarningModerator && statistics.current.Roblox.thisWeeksTopWarningModerator.Moderator == 'none') || !statistics.current.Roblox.thisWeeksTopWarningModerator) ? <span style={{'backgroundColor': '#303030', 'padding': '10px 10px', 'borderRadius': '5px'}}>There have been no roblox warnings this week so there is<span style={{'color': '#c93434'}}> no top moderator yet.</span></span> : <span style={{'backgroundColor': '#303030', 'padding': '10px 10px', 'borderRadius': '5px'}}>Top Roblox Warning Moderator this week is <span style={{'color': '#c93434'}}>{statistics.current.Roblox.thisWeeksTopWarningModerator.Moderator.name}</span> with {statistics.current.Roblox.thisWeeksTopWarningModerator.Warnings} warnings.</span>}
                                 </div>
                             </div>
                         </div>
@@ -115,7 +116,7 @@ function Dashboard () {
                                     <h2>Roblox Moderations for the Past 4 Weeks</h2>
                                     <span style={{'color': '#f0be48'}}><i class='fa-solid fa-flag' style={{'marginRight': '3px'}}></i> Note that the right most week is this week</span>
 
-                                    <LineChart style={{'marginTop': '15px', 'marginRight': 'none'}} width={730} height={350} data={getGraphData(statistics.current.Roblox.pastWeeksBans, statistics.current.Roblox.pastWeeksWarnings, "Bans", "Warnings", "Week")}>
+                                    <LineChart style={{'marginTop': '15px', 'marginRight': 'none'}} width={730} height={350} data={getGraphData(statistics.current.Roblox.pastWeeksBans || [], statistics.current.Roblox.pastWeeksWarnings || [], "Bans", "Warnings", "Week")}>
                                         <CartesianGrid/>
                                         <XAxis dataKey="Week" offset={25}/>
                                         <YAxis width={20}/>
@@ -136,8 +137,8 @@ function Dashboard () {
                                 </div>
 
                                 <div className='grouping' style={{'flexWrap': 'wrap'}}>
-                                    {(statistics.current.Discord.thisWeeksTopBanModerator && statistics.current.Discord.thisWeeksTopBanModerator.Moderator == 'none') ? <span style={{'backgroundColor': '#303030', 'padding': '10px 10px', 'borderRadius': '5px'}}>There have been no discord bans this week so there is<span style={{'color': '#349fc9'}}> no top moderator yet.</span></span> : <span style={{'backgroundColor': '#303030', 'padding': '10px 10px', 'borderRadius': '5px'}}>Top Discord Ban Moderator this week is <span style={{'color': '#349fc9'}}>{statistics.current.Discord.thisWeeksTopBanModerator.Moderator}</span> with {statistics.current.Discord.thisWeeksTopBanModerator.Bans} bans.</span>}
-                                    {(statistics.current.Discord.thisWeeksTopModerationModerator && statistics.current.Discord.thisWeeksTopModerationModerator.Moderator == 'none') ? <span style={{'backgroundColor': '#303030', 'padding': '10px 10px', 'borderRadius': '5px'}}>There have been no discord moderations this week so there is<span style={{'color': '#349fc9'}}> no top moderator yet.</span></span> : <span style={{'backgroundColor': '#303030', 'padding': '10px 10px', 'borderRadius': '5px'}}>Top Discord Moderation Moderator this week is <span style={{'color': '#349fc9'}}>{statistics.current.Discord.thisWeeksTopModerationModerator.Moderator}</span> with {statistics.current.Discord.thisWeeksTopModerationModerator.Moderations} moderations.</span>}
+                                    {((statistics.current.Discord.thisWeeksTopBanModerator && statistics.current.Discord.thisWeeksTopBanModerator.Moderator == 'none') || !statistics.current.Discord.thisWeeksTopBanModerator) ? <span style={{'backgroundColor': '#303030', 'padding': '10px 10px', 'borderRadius': '5px'}}>There have been no discord bans this week so there is<span style={{'color': '#349fc9'}}> no top moderator yet.</span></span> : <span style={{'backgroundColor': '#303030', 'padding': '10px 10px', 'borderRadius': '5px'}}>Top Discord Ban Moderator this week is <span style={{'color': '#349fc9'}}>{statistics.current.Discord.thisWeeksTopBanModerator.Moderator}</span> with {statistics.current.Discord.thisWeeksTopBanModerator.Bans} bans.</span>}
+                                    {((statistics.current.Discord.thisWeeksTopModerationModerator && statistics.current.Discord.thisWeeksTopModerationModerator.Moderator == 'none') || !statistics.current.Discord.thisWeeksTopModerationModerator) ? <span style={{'backgroundColor': '#303030', 'padding': '10px 10px', 'borderRadius': '5px'}}>There have been no discord moderations this week so there is<span style={{'color': '#349fc9'}}> no top moderator yet.</span></span> : <span style={{'backgroundColor': '#303030', 'padding': '10px 10px', 'borderRadius': '5px'}}>Top Discord Moderation Moderator this week is <span style={{'color': '#349fc9'}}>{statistics.current.Discord.thisWeeksTopModerationModerator.Moderator}</span> with {statistics.current.Discord.thisWeeksTopModerationModerator.Moderations} moderations.</span>}
                                 </div>
                             </div>
                         </div>
@@ -147,7 +148,7 @@ function Dashboard () {
                                 <>
                                     <h2>Discord Moderations for the Past 4 Weeks</h2>
                                     <span style={{'color': '#f0be48'}}><i class='fa-solid fa-flag' style={{'marginRight': '3px'}}></i> Note that the right most week is this week</span>
-                                    <LineChart style={{'marginTop': '15px', 'marginRight': 'none'}} width={730} height={350} data={getGraphData(statistics.current.Discord.pastWeeksBans, statistics.current.Discord.pastWeeksModerations, "Bans", "Moderations", "Week")}>
+                                    <LineChart style={{'marginTop': '15px', 'marginRight': 'none'}} width={730} height={350} data={getGraphData(statistics.current.Discord.pastWeeksBans || [], statistics.current.Discord.pastWeeksModerations || [], "Bans", "Moderations", "Week")}>
                                         <CartesianGrid/>
                                         <XAxis dataKey="Week" offset={25}/>
                                         <YAxis width={20}/>

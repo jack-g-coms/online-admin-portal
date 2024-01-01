@@ -98,8 +98,9 @@ module.exports.newBanAsync = async (rbxID, moderator, evidence, reason, banType)
         Database.run(
             'INSERT INTO Bans(rbxID, moderator, evidence, reason, banType, bannedOn) VALUES(?,?,?,?,?,?)',
             [rbxID, moderator, JSON.stringify(evidence || []), reason, JSON.stringify(banType), bannedOn],
-            (err) => {
+            async (err) => {
                 if (!err) {
+                    await this.newWarningAsync(rbxID, moderator, evidence, `${reason} (Game Banned)`);
                     resolve(new Ban({rbxID, moderator, evidence: JSON.stringify(evidence), reason, banType: JSON.stringify(banType), bannedOn}));
                 } else {
                     reject(err);
@@ -284,10 +285,8 @@ module.exports.getStatistics = async () => {
                     if (err) {
                         resolve(false);
                     } else {
-                        if (rows[0] && rows[0].Week != week) {
+                        if (!rows[0] || rows[0].Week != week) {
                             rows.unshift({Week: week, Bans: 0});
-                        } else if (!rows[0]) {
-                            return resolve(false);
                         }
                         resolve(rows);
                     }
@@ -302,10 +301,8 @@ module.exports.getStatistics = async () => {
                     if (err) {
                         resolve(false);
                     } else {
-                        if (rows[0] && rows[0].Week != week) {
+                        if (!rows[0] || rows[0].Week != week) {
                             rows.unshift({Week: week, Warnings: 0});
-                        } else if (!rows[0]) {
-                            return resolve(false);
                         }
                         resolve(rows);
                     }

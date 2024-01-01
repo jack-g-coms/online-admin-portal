@@ -30,8 +30,16 @@ h2 {
   animation: fadeIn 0.2s;
 }
 
+.opacity-in {
+  animation: opacityIn 0.2s;
+}
+
 .fade-up {
   animation: fadeUp 0.2s;
+}
+
+.size-up {
+  animation: sizeUp 0.2s;
 }
 
 @keyframes color {
@@ -57,6 +65,11 @@ h2 {
 @keyframes fadeUp {
   0% { transform: translateY(-100px); opacity: 0; }
   100% { transform: 0; opacity: 1; }
+}
+
+@keyframes sizeUp {
+  0% { transform: scale(0.9); opacity: 0; }
+  100% { transform: scale(1); opacity: 1; }
 }
 
 .dev-notice-container {

@@ -369,10 +369,8 @@ module.exports.getStatistics = async () => {
                     if (err) {
                         resolve(false);
                     } else {
-                        if (rows[0] && rows[0].Week != week) {
+                        if (!rows[0] || rows[0].Week != week) {
                             rows.unshift({Week: week, Bans: 0});
-                        } else if (!rows[0]) {
-                            return resolve(false);
                         }
                         resolve(rows);
                     }
@@ -387,10 +385,8 @@ module.exports.getStatistics = async () => {
                     if (err) {
                         resolve(false);
                     } else {
-                        if (rows[0] && rows[0].Week != week) {
+                        if (!rows[0] || rows[0].Week != week) {
                             rows.unshift({Week: week, Moderations: 0});
-                        } else if (!rows[0]) {
-                            return resolve(false);
                         }
                         resolve(rows);
                     }
