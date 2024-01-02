@@ -50,7 +50,7 @@ function LoadEmbedPopup({setState, setEmbed}) {
                 <div style={{'width': '100%'}} className='embed-page-horizontal-grouping'>
                     <Button onClick={() => {
                         if (selected) {
-                            setEmbed(selected);
+                            setEmbed(JSON.parse(JSON.stringify(selected)));
                             setState('closed');
                         }
                     }} animation='raise' scheme='btn-confirm' style={{'width': '100%'}}><i style={{'marginRight': '3px'}} class="fa-solid fa-download"></i> Load</Button>
@@ -189,7 +189,7 @@ function Field({index, info, embedSetState}) {
             <div className='embed-page-vertical-grouping'>
                 <div style={{'alignItems': 'start', 'marginBottom': '10px'}} className='embed-page-horizontal-grouping'>
                     <i style={{'cursor': 'pointer', 'marginTop': '5px'}} onClick={() => setOpen(false)} class="fa-solid fa-angle-down"></i>
-                    <span style={{'wordBreak': 'break-all', 'fontSize': '20px'}}>{fieldInfo.title || 'Field'}</span>
+                    <span style={{'wordBreak': 'break-all', 'fontSize': '20px'}}>{info.title || 'Field'}</span>
                     <Button animation='raise' onClick={deleteField} style={{'padding': '5px 10px', 'marginLeft': 'auto'}} scheme='btn-cancel'>Delete</Button>
                 </div>
 
@@ -313,24 +313,12 @@ function CreateEmbed() {
                         <div className='embed-page-horizontal-grouping'>
                             <div className='embed-page-vertical-grouping'>
                                 <span className='requiredTitle'>Server ID</span>
-                                <TextBox setState={(newState) => {
-                                    if (newState == '') {
-                                        setState({messageSendType: 'Channel', channelID: state.channelID, available: true, fields: []});
-                                    } else {
-                                        setState(Object.assign({}, state, {serverID: newState}));
-                                    }
-                                }} placeholder='Input a Valid Discord Server ID'>{state.serverID}</TextBox>
+                                <TextBox setState={adjustState(setState, 'serverID')} placeholder='Input a Valid Discord Server ID'>{state.serverID}</TextBox>
                             </div>
 
                             <div className='embed-page-vertical-grouping'>
                                 <span className='requiredTitle'>Channel ID</span>
-                                <TextBox setState={(newState) => {
-                                    if (newState == '') {
-                                        setState({messageSendType: 'Channel', serverID: state.serverID, available: true, fields: []});
-                                    } else {
-                                        setState(Object.assign({}, state, {channelID: newState}));
-                                    }
-                                }} placeholder='Input a Valid Discord Channel ID'>{state.channelID}</TextBox>
+                                <TextBox setState={adjustState(setState, 'channelID')} placeholder='Input a Valid Discord Channel ID'>{state.channelID}</TextBox>
                             </div>
                         </div>
                     }
@@ -338,13 +326,7 @@ function CreateEmbed() {
                     {state.messageSendType == 'User' &&
                         <div className='embed-page-vertical-grouping'>
                             <span className='requiredTitle'>User ID</span>
-                            <TextBox setState={(newState) => {
-                                if (newState == '') {
-                                    setState({messageSendType: 'User', available: true, fields: []});
-                                } else {
-                                    setState(Object.assign({}, state, {userID: newState}));
-                                }
-                            }} placeholder='Input a Valid Discord ID'>{state.userID}</TextBox>
+                            <TextBox setState={adjustState(setState, 'userID')} placeholder='Input a Valid Discord ID'>{state.userID}</TextBox>
                         </div>
                     }
 
