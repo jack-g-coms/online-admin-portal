@@ -77,12 +77,13 @@
     display: flex;
     flex-direction: column;
     gap: 15px;
+    word-wrap: break-word;
+    word-break: break-all;
 }
 
 .embed {
     width: 100%;
     height: fit-content;
-    min-height: 100px;
     display: flex;
     position: relative;
     flex-direction: row;
@@ -96,26 +97,19 @@
 } .embed-content {
     border-top-right-radius: 5px;
     border-bottom-right-radius: 5px;
-    display: flex;
-    flex-direction: column;
     padding: 10px 10px;
+    word-wrap: break-word;
     word-break: break-all;
     background-color: #3f3e3e;
     width: 100%;
     height: 100;
 } .embed-content .footer {
     margin-top: 10px;
-} .embed-content img {
-    position: absolute;
-    padding: 8px 8px;
-    border-radius: 15px;
-    height: 100px;
-    width: 100px;
-    max-height: 100%;
-    box-sizing: border-box;
-    right: 0;
-    bottom: 0;
-    top: 0;
 } .embed-content .bodyTitle {
     font-weight: bold;
+} .embed-content img {
+    border-radius: 20px;
+    padding: 10px 10px;
+    height: 100px;
+    width: 100px;
 }
