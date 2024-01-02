@@ -272,7 +272,7 @@ function CreateEmbed() {
         }
 
         setState((orgState) => {
-            return Object.assign({}, orgState, {available: true});
+            return Object.assign({}, orgState, {available: false});
         });
     }
 
@@ -375,7 +375,7 @@ function CreateEmbed() {
                             </div>
 
                             <div style={{'marginTop': '25px'}} className='embed-page-horizontal-grouping'>
-                                <Button onClick={sendEmbed} style={{'width': 'fit-content'}} animation='raise' scheme='btn-confirm'><i style={{'marginRight': '5px', 'fontSize': '15px'}} class="fa-brands fa-discord"/> Send Embed</Button>
+                                <Button onClick={sendEmbed} style={{'width': 'fit-content'}} animation='raise' scheme='btn-confirm'>{state.available && <><i style={{'marginRight': '5px', 'fontSize': '15px'}} class="fa-brands fa-discord"/> Send Embed</> || <i className='fa-solid fa-spinner loader'/>}</Button>
                                 <Button onClick={() => setSaveEmbedPopup('open')} style={{'width': 'fit-content'}} animation='raise' scheme='btn-info'><i style={{'marginRight': '5px'}} class="fa-solid fa-upload"></i> Save Embed</Button>
                             </div>
                         </>
