@@ -113,6 +113,25 @@ module.exports.newSocket = (socket) => {
     });
 
     // PRIVILEGED
+    if (socket.User.permissions.Flags.BOT_ACTIONS) {
+        socket.on('sendDiscordEmbed', async (embedInfo, callback) => {
+            if (!embedInfo) return callback({message: 'Error'});
+            if (!embedInfo.messageSendType || (embedInfo.messageSendType == 'User' && !embedInfo.userID) || (embedInfo.messageSendType == 'Channel' && (!embedInfo.serverID || !embedInfo.channelID))) {
+                callback({message: 'Error'});
+                return;
+            }
+            if (!embedInfo.title) return callback({message: 'Error'});
+
+            if (process.DiscordAutomationSocket) {
+                process.DiscordAutomationSocket.emit('sendDiscordEmbedAutomation', embedInfo, (response) => {
+                    callback(response);
+                });
+            } else {
+                callback({message: 'Error'});
+            }
+        });
+    }
+
     if (socket.User.permissions.Flags.CREATE_DISCORD_BANS) {
         socket.on('createDiscordBan', async (body, callback) => {
             const { discordID, moderator, evidence, reason, banType } = body;

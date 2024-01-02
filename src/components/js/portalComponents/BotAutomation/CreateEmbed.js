@@ -9,6 +9,7 @@ import TextBox from "../../TextBox";
 import Dropdown from "../../Dropdown";
 
 import { saveDiscordEmbed } from "../../modules/User";
+import { sendDiscordEmbed } from "../../modules/DiscordModerations";
 
 const adjustState = (setState, stateElement, next) => {
     return (newState) => {
@@ -33,7 +34,7 @@ function LoadEmbedPopup({setState, setEmbed}) {
 
     return <div onClick={(e) => {if (e.target != e.currentTarget) return; setState('closed')}} className='popup-background-center'>
         <div className='popup-container'>
-            <h2>Save Embed</h2>
+            <h2>Load Embed</h2>
             <div style={{'alignItems': 'center', 'marginTop': '-2px', 'gap': '12px', 'fontSize': '20px'}} className='content'>
                 <div className='embed-page-vertical-grouping'>
                     <span>Select a Saved Embed</span>
@@ -177,30 +178,30 @@ function Field({index, info, embedSetState}) {
 
     return <div className='field'>
         {!open &&
-            <div style={{'alignItems': 'center'}} className='embed-page-horizontal-grouping'>
-                <i style={{'cursor': 'pointer'}} onClick={() => setOpen(true)} class="fa-solid fa-angle-right"></i>
-                <span style={{'fontSize': '20px'}}>{fieldInfo.title || 'Field'}</span>
+            <div style={{'alignItems': 'start', 'marginBottom': '-2px'}} className='embed-page-horizontal-grouping'>
+                <i style={{'cursor': 'pointer', 'marginTop': '5px'}} onClick={() => setOpen(true)} class="fa-solid fa-angle-right"></i>
+                <span style={{'wordBreak': 'break-all', 'fontSize': '20px'}}>{fieldInfo.title || 'Field'}</span>
                 <Button animation='raise' onClick={deleteField} style={{'padding': '5px 10px', 'marginLeft': 'auto'}} scheme='btn-cancel'>Delete</Button>
             </div>
         }
         
         {open &&
             <div className='embed-page-vertical-grouping'>
-                <div style={{'alignItems': 'center'}} className='embed-page-horizontal-grouping'>
-                    <i style={{'cursor': 'pointer'}} onClick={() => setOpen(false)} class="fa-solid fa-angle-down"></i>
-                    <span style={{'fontSize': '20px'}}>{fieldInfo.title || 'Field'}</span>
+                <div style={{'alignItems': 'start', 'marginBottom': '10px'}} className='embed-page-horizontal-grouping'>
+                    <i style={{'cursor': 'pointer', 'marginTop': '5px'}} onClick={() => setOpen(false)} class="fa-solid fa-angle-down"></i>
+                    <span style={{'wordBreak': 'break-all', 'fontSize': '20px'}}>{fieldInfo.title || 'Field'}</span>
                     <Button animation='raise' onClick={deleteField} style={{'padding': '5px 10px', 'marginLeft': 'auto'}} scheme='btn-cancel'>Delete</Button>
                 </div>
 
                 <div className='field-editor size-up'>
                     <div className='embed-page-vertical-grouping'>
                         <span className='title'>Title <em>{(fieldInfo.title && ((fieldInfo.title.length || 0) > 256)) ? <span style={{'color': '#c93434'}}>{fieldInfo.title.length}</span> : fieldInfo.title && fieldInfo.title.length || 0}/256</em></span>
-                        <TextBox setState={adjustState(setFieldInfo, 'title')} placeholder='Input Text'/>
+                        <TextBox setState={adjustState(setFieldInfo, 'title')} placeholder='Input Text'>{info.title}</TextBox>
                     </div>
 
                     <div className='embed-page-vertical-grouping'>
                         <span className='title'>Value <em>{(fieldInfo.value && ((fieldInfo.value.length) > 1024)) ? <span style={{'color': '#c93434'}}>{fieldInfo.value.length}</span> : fieldInfo.value && fieldInfo.value.length || 0}/1024</em></span>
-                        <TextArea setState={adjustState(setFieldInfo, 'value')} placeholder='Input Text'/>
+                        <TextArea setState={adjustState(setFieldInfo, 'value')} placeholder='Input Text'>{info.value}</TextArea>
                     </div>
                 </div>
             </div>
@@ -214,7 +215,6 @@ function CreateEmbed() {
     var [loadEmbedPopup, setLoadEmbedPopup] = useState('closed');
 
     var lengthValidation = async (info) => {
-        console.log(info);
         var valid = true;
         for (const key in info) {
             var value = info[key];
@@ -238,7 +238,7 @@ function CreateEmbed() {
     }
 
     var sendEmbed = async () => {
-        var embedInfo = state;
+        var embedInfo = JSON.parse(JSON.stringify(state));
         if (!embedInfo.available) return;
 
         if (!embedInfo.messageSendType || (embedInfo.messageSendType == 'User' && !embedInfo.userID) || (embedInfo.messageSendType == 'Channel' && (!embedInfo.serverID || !embedInfo.channelID))) {
@@ -274,6 +274,21 @@ function CreateEmbed() {
         setState((orgState) => {
             return Object.assign({}, orgState, {available: false});
         });
+
+        sendDiscordEmbed(embedInfo)
+            .then(response => {
+                if (response.message == 'Success') {
+                    Swal.fire({title: 'Success', icon: 'success', text: 'Your Embed has been sent.', confirmButtonText: 'Ok'});
+                } else if (response.message == 'Error') {
+                    Swal.fire({title: 'Error', icon: 'error', text: 'Your Embed was not sent.', confirmButtonText: 'Ok'});
+                } else {
+                    Swal.fire({title: 'Unsuccessful', icon: 'error', text: `Roman Systems received your Embed but was not satisfied with one or more of your arguments: ${response.message}`, confirmButtonText: 'Ok'});
+                }
+
+                setState((orgState) => {
+                    return Object.assign({}, orgState, {available: true});
+                });
+            }).catch(console.log);
     }
 
     return (

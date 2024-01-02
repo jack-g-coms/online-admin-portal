@@ -79,3 +79,11 @@ export const deleteModeration = async (moderationID) => {
         });
     });
 };
+
+export const sendDiscordEmbed = async (embedInfo) => {
+    return new Promise((resolve, reject) => {
+        socket.emit('sendDiscordEmbed', embedInfo, (res) => {
+            resolve(res);
+        });
+    });
+};

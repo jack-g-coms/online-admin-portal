@@ -70,7 +70,7 @@ module.exports.newSocket = (socket) => {
                 payload.permissions.Level = permissionLevel;
             }
         
-            UsersService.updateUserAsync(id, payload.email, payload.rbxUser, payload.discordId, payload.permissions.Level, Boolean(payload.verified).valueOf())
+            UsersService.updateUserAsync(id, payload.email, payload.rbxUser, payload.discordId, payload.permissions.Level, Boolean(payload.verified).valueOf(), existingUser.savedEmbeds)
                 .then(() => {
                     const targetSocket = process.sockets[id];
                     if (targetSocket) {
@@ -80,6 +80,28 @@ module.exports.newSocket = (socket) => {
                 }).catch((err) => {
                     console.log(err);
                     callback({message: 'Error'})
+                });
+        });
+    }
+
+    if (socket.User.permissions.Flags.BOT_ACTIONS) {
+        socket.on('saveDiscordEmbed', async (embedInfo, embedName, callback) => {
+            if (!embedInfo || !embedName) return callback({message: 'Error'});
+            if (!embedInfo.messageSendType || (embedInfo.messageSendType == 'User' && !embedInfo.userID) || (embedInfo.messageSendType == 'Channel' && (!embedInfo.serverID || !embedInfo.channelID))) {
+                callback({message: 'Error'});
+                return;
+            }
+            if (!embedInfo.title) return callback({message: 'Error'});
+
+            var newEmbeds = socket.User.savedEmbeds;
+            newEmbeds[embedName] = embedInfo
+
+            UsersService.updateUserAsync(socket.User.id, socket.User.email, socket.User.rbxUser, socket.User.discordId, socket.User.permissions.Level, Boolean(socket.User.verified).valueOf(), newEmbeds)
+                .then(() => {
+                    callback({message: 'Success'});
+                }).catch((err) => {
+                    console.log(err);
+                    callback({message: 'Error'});
                 });
         });
     }

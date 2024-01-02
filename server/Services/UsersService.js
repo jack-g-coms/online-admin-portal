@@ -34,6 +34,7 @@ const User = class {
             this.permissions.Level = row.permissionLevel;
             this.permissions.Flags = await PermissionsService.getFlags(row.permissionLevel);
             this.verified = row.verified == 1
+            this.savedEmbeds = row.savedEmbeds && JSON.parse(row.savedEmbeds) || {}
         })();
     }
 
@@ -110,11 +111,11 @@ module.exports.createUserAsync = async (email, rbxUser, discordId, password) => 
     })
 };
 
-module.exports.updateUserAsync = async (id, email, rbxUser, discordId, permissionLevel, verified) => {
+module.exports.updateUserAsync = async (id, email, rbxUser, discordId, permissionLevel, verified, savedEmbeds) => {
     return new Promise((resolve, reject) => {
         Database.run(
-            'UPDATE Users SET email = ?, rbxUser = ?, discordId = ?, permissionLevel = ?, verified = ? WHERE id = ?',
-            [email, JSON.stringify(rbxUser), discordId, permissionLevel, verified, id],
+            'UPDATE Users SET email = ?, rbxUser = ?, discordId = ?, permissionLevel = ?, verified = ?, savedEmbeds = ? WHERE id = ?',
+            [email, JSON.stringify(rbxUser), discordId, permissionLevel, verified, JSON.stringify(savedEmbeds), id],
             (err) => {
                 if (!err) {
                     resolve();
