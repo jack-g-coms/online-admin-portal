@@ -49,3 +49,11 @@ export const deleteUser = async (id) => {
         });
     });  
 };
+
+export const saveDiscordEmbed = async (embedInfo, name) => {
+    return new Promise((resolve, reject) => {
+        socket.emit('saveDiscordEmbed', embedInfo, name, (res) => {
+            resolve(res);
+        });
+    });
+};

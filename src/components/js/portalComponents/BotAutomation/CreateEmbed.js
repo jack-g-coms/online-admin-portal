@@ -8,6 +8,8 @@ import TextArea from "../../TextArea";
 import TextBox from "../../TextBox";
 import Dropdown from "../../Dropdown";
 
+import { saveDiscordEmbed } from "../../modules/User";
+
 const adjustState = (setState, stateElement, next) => {
     return (newState) => {
         setState((orgState) => {
@@ -24,6 +26,95 @@ const maxLengths = {
     fields: 25,
     value: 1024
 };
+
+function LoadEmbedPopup({setState, setEmbed}) {
+    const authContext = useContext(AuthContext);
+    var [selected, setSelected] = useState();
+
+    return <div onClick={(e) => {if (e.target != e.currentTarget) return; setState('closed')}} className='popup-background-center'>
+        <div className='popup-container'>
+            <h2>Save Embed</h2>
+            <div style={{'alignItems': 'center', 'marginTop': '-2px', 'gap': '12px', 'fontSize': '20px'}} className='content'>
+                <div className='embed-page-vertical-grouping'>
+                    <span>Select a Saved Embed</span>
+                    <Dropdown setState={(newState) => {
+                        if (authContext.user.savedEmbeds[newState]) {
+                            setSelected(authContext.user.savedEmbeds[newState]);
+                        }
+                    }} options={[ <option value='' disabled selected>Select</option>, ...Object.keys(authContext.user.savedEmbeds).map((key, index) => {
+                        return <option value={key}>{key}</option>
+                    })]}/>
+                </div>
+
+                <div style={{'width': '100%'}} className='embed-page-horizontal-grouping'>
+                    <Button onClick={() => {
+                        if (selected) {
+                            setEmbed(selected);
+                            setState('closed');
+                        }
+                    }} animation='raise' scheme='btn-confirm' style={{'width': '100%'}}><i style={{'marginRight': '3px'}} class="fa-solid fa-download"></i> Load</Button>
+                    <Button onClick={() => setState('closed')} animation='raise' scheme='btn-cancel' style={{'width': '100%'}}>Close</Button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
+function SaveEmbedPopup({embedInfo, setState}) {
+    const authContext = useContext(AuthContext);
+
+    var [popupState, setPopupState] = useState('available');
+    var [name, setName] = useState();
+
+    var saveEmbed = async () => {
+        if (popupState == 'loading') return;
+        if (!embedInfo.available) return setState('closed');
+        if (!name) return;
+        if (!embedInfo.messageSendType || (embedInfo.messageSendType == 'User' && !embedInfo.userID) || (embedInfo.messageSendType == 'Channel' && (!embedInfo.serverID || !embedInfo.channelID))) {
+            Swal.fire({title: 'Unsuccessful', icon: 'error', text: `Your Embed does not have a destination.`, confirmButtonText: 'Ok'});
+            return;
+        }
+        if (!embedInfo.title) {
+            Swal.fire({title: 'Unsuccessful', icon: 'error', text: `Your Embed does not have a title.`, confirmButtonText: 'Ok'});
+            return;
+        }
+
+        if (authContext.user.savedEmbeds[name]) {
+            var resolution = await Swal.fire({title: 'Overwrite', icon: 'question', text: 'By saving, you will override one of your existing saved Embeds by the same name. Continue?', confirmButtonText: 'Continue', showCancelButton: true, cancelButtonText: 'Cancel'});
+            if (!resolution.isConfirmed) return;
+        }
+
+        setPopupState('loading')
+        saveDiscordEmbed(embedInfo, name)
+            .then(response => {
+                if (response.message == 'Error') {
+                    Swal.fire({title: 'Error', icon: 'error', text: `There was an issue while saving your Embed.`, confirmButtonText: 'Ok'});
+                } else {
+                    Swal.fire({title: 'Success', icon: 'success', text: `Successfully saved your Embed.`, confirmButtonText: 'Ok'})
+                        .then(() => {
+                            window.location.reload();
+                        });
+                }
+            }).catch(console.log);
+    }
+
+    return <div onClick={(e) => {if (e.target != e.currentTarget || popupState == 'loading') return; setState('closed')}} className='popup-background-center'>
+        <div className='popup-container'>
+            <h2>Save Embed</h2>
+            <div style={{'alignItems': 'center', 'marginTop': '-2px', 'gap': '12px', 'fontSize': '20px'}} className='content'>
+                <div className='embed-page-vertical-grouping'>
+                    <span>What should it be called?</span>
+                    <TextBox setState={setName} placeholder='Input a Name'/>
+                </div>
+
+                <div style={{'width': '100%'}} className='embed-page-horizontal-grouping'>
+                    <Button onClick={saveEmbed} animation='raise' scheme='btn-confirm' style={{'width': '100%'}}><i style={{'marginRight': '3px'}} class="fa-solid fa-upload"></i> Save</Button>
+                    <Button onClick={() => setState('closed')} animation='raise' scheme='btn-cancel' style={{'width': '100%'}}>Close</Button>
+                </div>
+            </div>
+        </div>
+    </div>
+}
 
 function Embed({embedInfo}) {
     return <div className='embed'>
@@ -119,6 +210,8 @@ function Field({index, info, embedSetState}) {
 
 function CreateEmbed() {
     var [state, setState] = useState({available: true, fields: []});
+    var [saveEmbedPopup, setSaveEmbedPopup] = useState('closed');
+    var [loadEmbedPopup, setLoadEmbedPopup] = useState('closed');
 
     var lengthValidation = async (info) => {
         console.log(info);
@@ -146,17 +239,17 @@ function CreateEmbed() {
 
     var sendEmbed = async () => {
         var embedInfo = state;
-        if (!state.available) return;
+        if (!embedInfo.available) return;
 
         if (!embedInfo.messageSendType || (embedInfo.messageSendType == 'User' && !embedInfo.userID) || (embedInfo.messageSendType == 'Channel' && (!embedInfo.serverID || !embedInfo.channelID))) {
-            Swal.fire({title: 'Error', icon: 'error', text: `Your Embed does not have a destination.`, confirmButtonText: 'Ok'});
+            Swal.fire({title: 'Unsuccessful', icon: 'error', text: `Your Embed does not have a destination.`, confirmButtonText: 'Ok'});
             return;
         }
         if (!embedInfo.color) {
             embedInfo.color = '#000000';
         }
         if (!embedInfo.title) {
-            Swal.fire({title: 'Error', icon: 'error', text: `Your Embed does not have a title.`, confirmButtonText: 'Ok'});
+            Swal.fire({title: 'Unsuccessful', icon: 'error', text: `Your Embed does not have a title.`, confirmButtonText: 'Ok'});
             return;
         }
         if (embedInfo.fields) {
@@ -169,12 +262,12 @@ function CreateEmbed() {
             }
 
             if (!validFields) {
-                Swal.fire({title: 'Error', icon: 'error', text: `One or more of your fields are missing arguments.`, confirmButtonText: 'Ok'});
+                Swal.fire({title: 'Unsuccessful', icon: 'error', text: `One or more of your fields are missing arguments.`, confirmButtonText: 'Ok'});
                 return;
             }
         }
         if (!(await lengthValidation(embedInfo))) {
-            Swal.fire({title: 'Error', icon: 'error', text: `One or more of your Embed arguments have failed length validation. Ensure you have not exceeded the allowed length in one of your Embed arguments.`, confirmButtonText: 'Ok'});
+            Swal.fire({title: 'Unsuccessful', icon: 'error', text: `One or more of your Embed arguments have failed length validation. Ensure you have not exceeded the allowed length in one of your Embed arguments.`, confirmButtonText: 'Ok'});
             return;
         }
 
@@ -185,12 +278,16 @@ function CreateEmbed() {
 
     return (
         <>
+            {loadEmbedPopup == 'open' && <LoadEmbedPopup setState={setLoadEmbedPopup} setEmbed={setState}/>}
+            {saveEmbedPopup == 'open' && <SaveEmbedPopup setState={setSaveEmbedPopup} embedInfo={state}/>}
             <div className='embed-page'>
                 <div className='editor'>
                     <h2>Editor</h2>
+                    <Button onClick={() => setLoadEmbedPopup('open')} style={{'width': 'fit-content', 'padding': '8px 15px'}} animation='raise' scheme='btn-info'><i style={{'marginRight': '5px'}} class="fa-solid fa-download"></i> Load Saved Embed</Button>
+
                     <div className='embed-page-vertical-grouping'>
                         <span className='requiredTitle'>Select the destination of your Embed</span>
-                        <Dropdown setState={(newState) => {setState({messageSendType: newState, available: true, fields: []})}} options={[
+                        <Dropdown selected={state.messageSendType} setState={(newState) => {setState({messageSendType: newState, available: true, fields: []})}} options={[
                             <option value='' disabled selected>Select</option>,
                             <option value='Channel'>Channel</option>,
                             <option value='User'>User</option>
@@ -207,7 +304,7 @@ function CreateEmbed() {
                                     } else {
                                         setState(Object.assign({}, state, {serverID: newState}));
                                     }
-                                }} placeholder='Input a Valid Discord Server ID'/>
+                                }} placeholder='Input a Valid Discord Server ID'>{state.serverID}</TextBox>
                             </div>
 
                             <div className='embed-page-vertical-grouping'>
@@ -218,7 +315,7 @@ function CreateEmbed() {
                                     } else {
                                         setState(Object.assign({}, state, {channelID: newState}));
                                     }
-                                }} placeholder='Input a Valid Discord Channel ID'/>
+                                }} placeholder='Input a Valid Discord Channel ID'>{state.channelID}</TextBox>
                             </div>
                         </div>
                     }
@@ -232,7 +329,7 @@ function CreateEmbed() {
                                 } else {
                                     setState(Object.assign({}, state, {userID: newState}));
                                 }
-                            }} placeholder='Input a Valid Discord ID'/>
+                            }} placeholder='Input a Valid Discord ID'>{state.userID}</TextBox>
                         </div>
                     }
 
@@ -240,27 +337,27 @@ function CreateEmbed() {
                         <>
                             <div className='embed-page-vertical-grouping'>
                                 <span className='title'>Title <em>{(state.title && ((state.title.length) > 256)) ? <span style={{'color': '#c93434'}}>{state.title.length}</span> : state.title && state.title.length || 0}/256</em></span>
-                                <TextBox setState={adjustState(setState, 'title')} placeholder='Input Text'/>
+                                <TextBox setState={adjustState(setState, 'title')} placeholder='Input Text'>{state.title}</TextBox>
                             </div>
 
                             <div className='embed-page-vertical-grouping'>
                                 <span className='title'>Color</span>
-                                <TextBox setState={adjustState(setState, 'color')} placeholder='Input Hex'/>
+                                <TextBox setState={adjustState(setState, 'color')} placeholder='Input Hex'>{state.color}</TextBox>
                             </div>
 
                             <div className='embed-page-vertical-grouping'>
                                 <span className='title'>Description <em>{(state.description && ((state.description.length) > 4096)) ? <span style={{'color': '#c93434'}}>{state.description.length}</span> : state.description && state.description.length || 0}/4096</em></span>
-                                <TextArea setState={adjustState(setState, 'description')} placeholder='Input Text'/>
+                                <TextArea setState={adjustState(setState, 'description')} placeholder='Input Text'>{state.description}</TextArea>
                             </div>
 
                             <div className='embed-page-horizontal-grouping'>
                                 <div className='embed-page-vertical-grouping'>
                                     <span className='title'>Emblem URL</span>
-                                    <TextBox setState={adjustState(setState, 'emblemURL')} placeholder='Input URL'/>
+                                    <TextBox setState={adjustState(setState, 'emblemURL')} placeholder='Input URL'>{state.emblemURL}</TextBox>
                                 </div>
                                 <div className='embed-page-vertical-grouping'>
                                     <span className='title'>Footer <em>{(state.footer && ((state.footer.length) > 2048)) ? <span style={{'color': '#c93434'}}>{state.footer.length}</span> : state.footer && state.footer.length || 0}/2048</em></span>
-                                    <TextBox setState={adjustState(setState, 'footer')} placeholder='Input Text'/>
+                                    <TextBox setState={adjustState(setState, 'footer')} placeholder='Input Text'>{state.footer}</TextBox>
                                 </div>
                             </div>
 
@@ -277,7 +374,10 @@ function CreateEmbed() {
                                 }
                             </div>
 
-                            <Button onClick={sendEmbed} style={{'marginTop': '25px', 'width': 'fit-content'}} animation='raise' scheme='btn-confirm'><i style={{'marginRight': '5px', 'fontSize': '15px'}} class="fa-brands fa-discord"/> Send Embed</Button>
+                            <div style={{'marginTop': '25px'}} className='embed-page-horizontal-grouping'>
+                                <Button onClick={sendEmbed} style={{'width': 'fit-content'}} animation='raise' scheme='btn-confirm'><i style={{'marginRight': '5px', 'fontSize': '15px'}} class="fa-brands fa-discord"/> Send Embed</Button>
+                                <Button onClick={() => setSaveEmbedPopup('open')} style={{'width': 'fit-content'}} animation='raise' scheme='btn-info'><i style={{'marginRight': '5px'}} class="fa-solid fa-upload"></i> Save Embed</Button>
+                            </div>
                         </>
                     }
                 </div>
