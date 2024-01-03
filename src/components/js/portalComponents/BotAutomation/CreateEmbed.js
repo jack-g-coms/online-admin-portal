@@ -28,6 +28,19 @@ const maxLengths = {
     value: 1024
 };
 
+function JSONPopup({setState, embedInfo}) {
+    return <div onClick={(e) => {if (e.target != e.currentTarget) return; setState('closed')}} className='popup-background-center'>
+        <div className='popup-container'>
+            <h2>Embed JSON Information</h2>
+            <div style={{'alignItems': 'center', 'marginTop': '-2px', 'gap': '12px', 'fontSize': '20px'}} className='content'>
+                <div className='embed-page-vertical-grouping'>
+                    <TextArea disabled={true} setState={() => {return}} >{JSON.stringify(embedInfo)}</TextArea>
+                </div>
+            </div>
+        </div>
+    </div>
+}
+
 function LoadEmbedPopup({setState, setEmbed}) {
     const authContext = useContext(AuthContext);
     var [selected, setSelected] = useState();
@@ -213,6 +226,7 @@ function CreateEmbed() {
     var [state, setState] = useState({available: true, fields: []});
     var [saveEmbedPopup, setSaveEmbedPopup] = useState('closed');
     var [loadEmbedPopup, setLoadEmbedPopup] = useState('closed');
+    var [JSONEmbedPopup, setJSONEmbedPopup] = useState('closed');
 
     var lengthValidation = async (info) => {
         var valid = true;
@@ -295,6 +309,7 @@ function CreateEmbed() {
         <>
             {loadEmbedPopup == 'open' && <LoadEmbedPopup setState={setLoadEmbedPopup} setEmbed={setState}/>}
             {saveEmbedPopup == 'open' && <SaveEmbedPopup setState={setSaveEmbedPopup} embedInfo={state}/>}
+            {JSONEmbedPopup == 'open' && <JSONPopup setState={setJSONEmbedPopup} embedInfo={state}/>}
             <div className='embed-page'>
                 <div className='editor'>
                     <h2>Editor</h2>
@@ -374,6 +389,7 @@ function CreateEmbed() {
                             <div style={{'marginTop': '25px'}} className='embed-page-horizontal-grouping'>
                                 <Button onClick={sendEmbed} style={{'width': 'fit-content'}} animation='raise' scheme='btn-confirm'>{state.available && <><i style={{'marginRight': '5px', 'fontSize': '15px'}} class="fa-brands fa-discord"/> Send Embed</> || <i className='fa-solid fa-spinner loader'/>}</Button>
                                 <Button onClick={() => setSaveEmbedPopup('open')} style={{'width': 'fit-content'}} animation='raise' scheme='btn-info'><i style={{'marginRight': '5px'}} class="fa-solid fa-upload"></i> Save Embed</Button>
+                                <Button onClick={() => setJSONEmbedPopup('open')} style={{'width': 'fit-content'}} animation='raise' scheme='btn-info'><i style={{'marginRight': '5px'}} class="fa-brands fa-connectdevelop"></i> Generate Embed JSON</Button>
                             </div>
                         </>
                     }
