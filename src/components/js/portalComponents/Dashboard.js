@@ -1,13 +1,15 @@
 import React, { useState, useEffect, useContext, useRef } from 'react';
+import Swal from 'sweetalert2';
 import { LineChart, CartesianGrid, XAxis, YAxis, Legend, Line, Tooltip, Label } from 'recharts';
 import '../../css/portalComponents/Dashboard.css';
 
 import AuthContext from '../modules/AuthContext';
-import { getModerationStatistics } from '../modules/Statistics';
+import { getModerationStatistics, getMonthReport } from '../modules/Statistics';
 import { getConfiguration } from '../modules/Configuration';
-import { getWeek } from '../../../shared';
+import { getWeek, getMonth } from '../../../shared';
 
 import Loader from '../Loader';
+import Button from '../Button';
 import moment from 'moment';
 
 function Dashboard () {
@@ -31,6 +33,17 @@ function Dashboard () {
             data[i] = {Week: newWeekNumber, [key1]: (array1Index != -1 && arr1[array1Index][key1]) || 0, [key2]: (array2Index != -1 && arr2[array2Index][key2]) || 0};
         }
         return data.reverse();
+    }
+
+    const generateMonthReport = () => {
+        getMonthReport(getMonth())
+            .then((res) => {
+                if (!res.success) {
+                    Swal.fire({title: 'Error', icon: 'error', text: `Your report was not generated: ${res.message}`, confirmButtonText: 'Ok'});
+                } else {
+                    window.open(res.message, '_blank');
+                }
+            }).catch(err => {return});
     }
 
     useEffect(() => {
@@ -97,6 +110,8 @@ function Dashboard () {
 
                         <div className='vertical-grouping-dashboard' style={{'marginTop': '45px'}}>
                             <h2><i class="fa-solid fa-chart-simple" style={{'marginRight': '5px', 'color': '#349fc9'}}/> Your Statistical Outlook</h2>
+                            <Button onClick={generateMonthReport} style={{'width': 'fit-content', 'marginTop': '10px', 'marginBottom': '10px'}} animation='raise' scheme='btn-info'><i style={{'marginRight': '5px'}} class="fa-solid fa-chart-simple"></i> Generate Month Report</Button>
+
                             <div className='weekly-stats'>
                                 <div className='grouping'>
                                     {statistics.current.Roblox.pastWeeksBans && <span style={{'backgroundColor': '#303030', 'padding': '10px 10px', 'borderRadius': '5px'}}>There have been <span style={{'color': '#c93434'}}>{statistics.current.Roblox.pastWeeksBans[0].Bans} Roblox Bans</span> this week.</span>}

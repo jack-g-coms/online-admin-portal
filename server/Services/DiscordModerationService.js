@@ -358,7 +358,47 @@ module.exports.getDiscordUserInfo = async (discordId) => {
     });
 };
 
-module.exports.getStatistics = async () => {
+module.exports.getMonthlyStatistics = async () => {
+    var month = moment().month() + 1;
+    var statistics = [
+        new Promise((resolve, reject) => {
+            Database.all(
+                "SELECT CAST(strftime('%m', DATETIME(bannedOn, 'unixepoch', 'localtime')) as decimal) as Month, COUNT(*) as Bans FROM DiscordBans WHERE strftime('%Y', DATETIME(bannedOn, 'unixepoch', 'localtime')) = strftime('%Y', DATE('now')) GROUP BY Month ORDER BY Month DESC LIMIT 12",
+                [],
+                (err, rows) => {
+                    if (err) {
+                        resolve(false);
+                    } else {
+                        if (!rows[0] || rows[0].Month != month) {
+                            rows.unshift({Month: month, Bans: 0});
+                        }
+                        resolve(rows);
+                    }
+                }
+            )
+        }),
+        new Promise((resolve, reject) => {
+            Database.all(
+                "SELECT CAST(strftime('%m', DATETIME(moderatedOn, 'unixepoch', 'localtime')) as decimal) as Month, COUNT(*) as Moderations FROM DiscordModerations WHERE strftime('%Y', DATETIME(moderatedOn, 'unixepoch', 'localtime')) = strftime('%Y', DATE('now')) GROUP BY Month ORDER BY Month DESC LIMIT 12",
+                [],
+                (err, rows) => {
+                    if (err) {
+                        resolve(false);
+                    } else {
+                        if (!rows[0] || rows[0].Month != month) {
+                            rows.unshift({Month: month, Moderations: 0});
+                        }
+                        resolve(rows);
+                    }
+                }
+            )
+        })
+    ];
+
+    return Promise.all(statistics);
+};
+
+module.exports.getWeeklyStatistics = async () => {
     const week = moment().isoWeek();
     var statistics = [
         new Promise((resolve, reject) => {

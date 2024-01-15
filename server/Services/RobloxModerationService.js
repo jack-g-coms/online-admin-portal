@@ -274,7 +274,47 @@ module.exports.deleteWarningAsync = async (rbxID, warnID) => {
     });
 };
 
-module.exports.getStatistics = async () => {
+module.exports.getMonthlyStatistics = async () => {
+    var month = moment().month() + 1;
+    var statistics = [
+        new Promise((resolve, reject) => {
+            Database.all(
+                "SELECT CAST(strftime('%m', DATETIME(bannedOn, 'unixepoch', 'localtime')) as decimal) as Month, COUNT(*) as Bans FROM Bans WHERE strftime('%Y', DATETIME(bannedOn, 'unixepoch', 'localtime')) = strftime('%Y', DATE('now')) GROUP BY Month ORDER BY Month DESC LIMIT 12",
+                [],
+                (err, rows) => {
+                    if (err) {
+                        resolve(false);
+                    } else {
+                        if (!rows[0] || rows[0].Month != month) {
+                            rows.unshift({Month: month, Bans: 0});
+                        }
+                        resolve(rows);
+                    }
+                }
+            )
+        }),
+        new Promise((resolve, reject) => {
+            Database.all(
+                "SELECT CAST(strftime('%m', DATETIME(warnedOn, 'unixepoch', 'localtime')) as decimal) as Month, COUNT(*) as Warnings FROM Warnings WHERE strftime('%Y', DATETIME(warnedOn, 'unixepoch', 'localtime')) = strftime('%Y', DATE('now')) GROUP BY Month ORDER BY Month DESC LIMIT 12",
+                [],
+                (err, rows) => {
+                    if (err) {
+                        resolve(false);
+                    } else {
+                        if (!rows[0] || rows[0].Month != month) {
+                            rows.unshift({Month: month, Warnings: 0});
+                        }
+                        resolve(rows);
+                    }
+                }
+            )
+        })
+    ];
+
+    return Promise.all(statistics);
+};
+
+module.exports.getWeeklyStatistics = async () => {
     const week = moment().isoWeek();
     var statistics = [
         new Promise((resolve, reject) => {

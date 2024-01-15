@@ -25,4 +25,8 @@ export const filterString = (string, filterArray, replaceWith)  => {
 
 export const getWeek = () => {
     return moment().isoWeek();
-}
+};
+
+export const getMonth = () => {
+    return moment().month() + 1;
+};

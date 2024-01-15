@@ -1,29 +1,29 @@
 // FLAGS
 module.exports.DEFAULT_LEVEL = 1;
 module.exports.PERMISSION_FLAGS = {
-    'MANAGE_USERS': 7,
-    'DELETE_USERS': 8,
-    'CREATE_PORTAL_NOTICE': 8,
+    'MANAGE_USERS': 6,
+    'DELETE_USERS': 7,
+    'CREATE_PORTAL_NOTICE': 7,
 
     'VIEW_ROBLOX_BANS': 1,
     'CREATE_ROBLOX_BANS': 2,
-    'UPDATE_ROBLOX_BANS': 6,
+    'UPDATE_ROBLOX_BANS': 5,
     'DELETE_ROBLOX_BANS': 2,
     'VIEW_ROBLOX_WARNINGS': 1,
     'CREATE_ROBLOX_WARNINGS': 2,
-    'UPDATE_ROBLOX_WARNINGS': 6,
+    'UPDATE_ROBLOX_WARNINGS': 5,
     'DELETE_ROBLOX_WARNINGS': 2,
 
     'VIEW_DISCORD_BANS': 1,
     'CREATE_DISCORD_BANS': 2,
-    'UPDATE_DISCORD_BANS': 6,
+    'UPDATE_DISCORD_BANS': 5,
     'DELETE_DISCORD_BANS': 2,
     'VIEW_DISCORD_MODERATIONS': 1,
     'CREATE_DISCORD_MODERATIONS': 2,
-    'UPDATE_DISCORD_MODERATIONS': 6,
+    'UPDATE_DISCORD_MODERATIONS': 5,
     'DELETE_DISCORD_MODERATIONS': 2,
 
-    'BOT_ACTIONS': 8
+    'BOT_ACTIONS': 7
 }
 
 // SETS
@@ -38,9 +38,12 @@ module.exports.PERMISSION_SETS = {
         Name: 'Portal Director'
     },
     [7]: {
-        Name: 'Portal Management'
+        Name: 'Portal Deputy Director'
     },
     [6]: {
+        Name: 'Portal Management'
+    },
+    [5]: {
         Name: 'Portal Supervisor'
     },
     [2]: {

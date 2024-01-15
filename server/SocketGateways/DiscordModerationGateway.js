@@ -115,6 +115,7 @@ module.exports.newSocket = (socket) => {
     // PRIVILEGED
     if (socket.User.permissions.Flags.BOT_ACTIONS) {
         socket.on('sendDiscordEmbed', async (embedInfo, callback) => {
+            console.log(embedInfo)
             if (!embedInfo) return callback({message: 'Error'});
             if (!embedInfo.messageSendType || (embedInfo.messageSendType == 'User' && !embedInfo.userID) || (embedInfo.messageSendType == 'Channel' && (!embedInfo.serverID || !embedInfo.channelID))) {
                 callback({message: 'Error'});
