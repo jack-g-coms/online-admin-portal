@@ -8,9 +8,9 @@ export const getModerationStatistics = async () => {
     });
 };
 
-export const getMonthReport = async (month) => {
+export const getMonthReport = async (year, month) => {
     return new Promise((resolve, reject) => {
-        socket.emit('generateMonthlyReport', month, (res) => {
+        socket.emit('generateMonthlyReport', year, month, (res) => {
             resolve(res);
         });
     });

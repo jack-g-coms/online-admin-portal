@@ -68,6 +68,12 @@ module.exports.newSocket = (socket) => {
 
         var monthlyReport = new jsPDF();
 
+        // Header
+        var headerImage = new Image();
+        headerImage.src = './public/media/images/staff-logo.png';
+
+        monthlyReport.addImage(headerImage, 'png', 10, 78, 12, 15);
+
         // Style
         monthlyReport.setFont("helvetica")
         monthlyReport.setFontSize(10)
