@@ -10,9 +10,11 @@ import AuthContext from '../js/modules/AuthContext';
 import { timeFormat } from '../../shared';
 
 import RobloxUserLookupPopup from '../js/popups/RobloxUserLookup';
+import DiscordUserLookupPopup from '../js/popups/DiscordUserLookup';
 import PortalNoticePopup from '../js/popups/PortalNotice';
 import DevNoticePopup from '../js/popups/DevelopmentNotice';
 import DisconnectedPopup from '../js/popups/Disconnected';
+import MonthlyOverviewReportPopup from '../js/popups/MonthlyOverviewReport';
 
 import Dashboard from '../js/portalComponents/Dashboard';
 
@@ -23,14 +25,18 @@ import ManageRobloxWarnings from '../js/portalComponents/RobloxSystem/manageRobl
 import ManageDiscordBans from '../js/portalComponents/DiscordSystem/manageDiscordBans';
 import ManageDiscordModerations from '../js/portalComponents/DiscordSystem/manageDiscordModerations';
 
+import ManageGlobalBans from '../js/portalComponents/DiscordSystem/manageGlobalBans';
+
 import CreateEmbed from '../js/portalComponents/BotAutomation/CreateEmbed';
 
 function Portal({view}) {
     const [viewProfileState, setProfileViewState] = useState('closed');
     const [robloxUserLookupPopupState, setRobloxUserLookupPopupState] = useState('closed');
+    const [discordUserLookupPopupState, setDiscordUserLookupPopupState] = useState('closed');
 
     const [noticePopupState, setNoticePopupState] = useState('closed');
     const [devNoticePopupState, setDevNoticePopupState] = useState('closed');
+    const [monthlyOverviewPopupState, setMonthlyOverviewPopupState] = useState('closed');
     const [disconnectPopupState, setDisconnectPopupState] = useState({open: false});
 
     const authContext = useContext(AuthContext);
@@ -38,7 +44,7 @@ function Portal({view}) {
 
     const params = new URLSearchParams(window.location.search);
     const [portalComponentState, setPortalComponentState] = useState(view || 'dashboard');
-    
+
     useEffect(() => {
         socket.emit('getConnectedGateways', (res) => {
             gateways.current = res;
@@ -64,9 +70,11 @@ function Portal({view}) {
         <>
             <div className='portal-container'>
                 {robloxUserLookupPopupState == 'open' && <RobloxUserLookupPopup setState={setRobloxUserLookupPopupState}/>}
+                {discordUserLookupPopupState == 'open' && <DiscordUserLookupPopup setState={setDiscordUserLookupPopupState}/>}
                 {noticePopupState == 'open' && <PortalNoticePopup setState={setNoticePopupState}/>}
                 {devNoticePopupState == 'open' && <DevNoticePopup setState={setDevNoticePopupState}/>}
                 {disconnectPopupState.open == true && <DisconnectedPopup reason={disconnectPopupState.reason}/>}
+                {monthlyOverviewPopupState == 'open' && <MonthlyOverviewReportPopup setState={setMonthlyOverviewPopupState}/>}
 
                 <div className='sidebar-options'>
                     {authContext.user &&
@@ -131,7 +139,9 @@ function Portal({view}) {
                             <h1>Discord System</h1>
                         </div>
                         <Button animation='pop-out color' style={{'width': '100%'}} onClick={(e) => {setPortalComponentState('discordBans');}} scheme='btn-outlinebottom'><i style={{'marginRight': '8px'}} className='fa-solid fa-gavel'/>Bans</Button>
+                        {authContext.user.permissions.Flags.VIEW_GLOBAL_BANS && <Button animation='pop-out color' style={{'width': '100%'}} onClick={(e) => {setPortalComponentState('globalBans');}} scheme='btn-outlinebottom'><i style={{'marginRight': '8px'}} className='fa-solid fa-gavel'/>Global Bans</Button>}
                         <Button animation='pop-out color' style={{'width': '100%'}} onClick={(e) => {setPortalComponentState('discordModerations');}} scheme='btn-outlinebottom'><i style={{'marginRight': '8px'}} className='fa-solid fa-clipboard-user'/>Moderations</Button>
+                        <Button animation='pop-out color' style={{'width': '100%'}} onClick={(e) => {setDiscordUserLookupPopupState('open');}} scheme='btn-outlinebottom'><i style={{'marginRight': '8px'}} className='fa-solid fa-user'/>User Lookup</Button>
                     </div>
 
                     <div className='sidebar-profile-view-grouping'>
@@ -155,6 +165,15 @@ function Portal({view}) {
                             {authContext.user.permissions.Flags.CREATE_PORTAL_NOTICE && <Button animation='pop-out color-yellow' style={{'width': '100%'}} onClick={(e) => {setDevNoticePopupState('open');}} scheme='btn-outlinebottom'><i style={{'marginRight': '8px'}} className='fa-solid fa-hammer'/>Development Notice</Button>}
                         </div>
                     }
+
+                    <div className='sidebar-profile-view-grouping'>
+                        <div className='sidebar-grouping-title'>
+                            <i style={{'marginRight': '10px', 'marginLeft': '5px', 'marginBottom': '.5px'}} id='stats-logo' class="fa-solid fa-square-poll-vertical"></i>
+                            <h1>Statistics</h1>
+                        </div>
+                        <Button animation='pop-out color-purple' style={{'width': '100%'}} onClick={(e) => {setMonthlyOverviewPopupState('open');}} scheme='btn-outlinebottom'><i style={{'marginRight': '8px'}} className='fa-solid fa-square-poll-horizontal'/>Monthly Overview Report</Button>
+                        
+                    </div>
 
                     {authContext.user.permissions.Flags.BOT_ACTIONS &&
                         <div className='sidebar-profile-view-grouping'>
@@ -198,6 +217,10 @@ function Portal({view}) {
 
                 {portalComponentState == 'createEmbed' &&
                     <CreateEmbed/>
+                }
+                
+                {portalComponentState == 'globalBans' &&
+                    <ManageGlobalBans/>
                 }
             </div>
         </>

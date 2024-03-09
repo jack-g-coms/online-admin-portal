@@ -1,0 +1,86 @@
+.popup-container {
+    display: flex;
+    flex-direction: column;
+    width: 550px;
+    background-color: #303030;
+    border: 1px solid #706f6f;
+    border-radius: 5px;
+    overflow: hidden;
+    animation: fadeIn 0.2s;
+} .popup-container h2 {
+    background-color: #222222;
+    text-align: center;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+    font-size: 20px;
+    border-bottom: 1px solid #706f6f;
+    padding: 5px 10px 5px 10px;
+} .content .textbox {
+    width: 100%;
+    margin: 0;
+} .popup-container img {
+    max-height: 50%;
+    max-width: 135px;
+    background-color: #222222;
+    border-radius: 500px;
+}
+
+.header {
+    color: #f0be48;
+    padding-top: 8px;
+    padding-bottom: 8px;
+    text-align: center;
+    background-color: #222222;
+    font-weight: 500;
+    border-bottom: 1px solid #706f6f;
+}
+
+.content {
+    display: flex;
+    flex-direction: column;
+    padding-top: 10px;
+    padding-bottom: 10px;
+    padding-left: 10px;
+    box-sizing: border-box;
+    padding-right: 10px;
+}
+
+.row {
+    gap: 15px;
+    display: flex;
+    flex-direction: row;
+}
+
+.vertical-grouping {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+} .vertical-grouping div {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.search-container {
+    width: 100%;
+    animation: fadeIn 0.2s;
+}
+
+.moderation-history h2 {
+    width: 97%;
+    border-radius: 5px;
+    border: none;
+} .moderation-history {
+    box-sizing: border-box;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+} .moderation-history span {
+    font-size: 20px;
+}
+
+.profile-main {
+    margin-top: 3px;
+    animation: fadeIn 0.2s;
+}

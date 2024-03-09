@@ -4,6 +4,7 @@ const moment = require("moment");
 const uuid = require('uuid').v4;
 
 const Database = new sqlite3.Database('./data/Moderations.db');
+const tempDatabase = new sqlite3.Database('./data/Administration.db');
 const cachedDiscordData = {};
 
 // CLASSES
@@ -31,6 +32,16 @@ const Moderation = class {
         this.isActive = row.extraInfo != '{}';
     }
 };
+
+tempDatabase.get(
+    'SELECT * FROM Bans',
+    (err, rows) => {
+        console.log(rows);
+        for (var i = 0; i < rows.length; i++) {
+
+        }
+    }
+)
 
 // FUNCTIONS / UTILITIES
 // DISCORD / BANS

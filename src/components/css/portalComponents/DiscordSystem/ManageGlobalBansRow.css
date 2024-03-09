@@ -1,0 +1,77 @@
+.manage-roblox-bans-container-row {
+    display: flex;
+    width: 100%;
+    box-sizing: border-box;
+    position: relative;
+    padding: 10px 0px 10px 0px;
+    flex-direction: row;
+    border-bottom: 1px solid #706f6f;
+    cursor: pointer;
+    transition: all 0.2s ease-in-out;
+} .manage-roblox-bans-container-row:last-of-type {
+    border-bottom: none;
+} .manage-roblox-bans-container-row:hover {
+    filter: brightness(85%);
+} .manage-roblox-bans-container-row:nth-of-type(odd):hover {
+    filter: brightness(75%);
+}
+
+.row-grouping {
+    min-width: calc(100%/4);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: left;
+    flex-direction: column;
+    gap: 5px;
+    border-right: 1px solid #706f6f;
+}
+
+.manage-roblox-bans-container-row:nth-of-type(even) {
+    background-color: #222222;
+} .manage-roblox-bans-container-row:nth-of-type(even) .textarea {
+    background-color: #303030;
+} .manage-roblox-bans-container-row:nth-of-type(even) .textbox {
+    background-color: #303030;
+}
+
+.ban-editor-container {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    height: 100%;
+    padding-bottom: 10px;
+    width: 100%;
+    justify-content: center;
+} .ban-editor-container .textarea {
+    resize: horizontal;
+    width: 300px;
+    height: 125px;
+}
+
+.ban-editor-row-edit-info {
+    display: flex;
+    gap: 5px;
+    padding-left: 13px;
+    align-items: start;
+}
+
+.ban-editor-row-edit-grouping {
+    display: flex;
+    flex-direction: column;
+    gap: 5px;
+}
+
+.action-state-overlay {
+    background-color: rgba(0, 0, 0, 0.8);
+    z-index: 200;
+    width: 100%;
+    height: 100%;
+    position: absolute;
+    top: 0;
+    left: 0;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}

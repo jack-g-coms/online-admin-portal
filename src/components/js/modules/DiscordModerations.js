@@ -72,6 +72,14 @@ export const updateModeration = async (moderationID, moderator, evidence, extraI
     });
 };
 
+export const getModerationProfile = async (discordID) => {
+    return new Promise((resolve, reject) => {
+        socket.emit('getDiscordModerationProfile', discordID, (res) => {
+            resolve(res);
+        });
+    });
+};
+
 export const deleteModeration = async (moderationID) => {
     return new Promise((resolve, reject) => {
         socket.emit('deleteDiscordModeration', {moderationID}, (res) => {
@@ -83,6 +91,38 @@ export const deleteModeration = async (moderationID) => {
 export const sendDiscordEmbed = async (embedInfo) => {
     return new Promise((resolve, reject) => {
         socket.emit('sendDiscordEmbed', embedInfo, (res) => {
+            resolve(res);
+        });
+    });
+};
+
+export const getGlobalBans = () => {
+    return new Promise((resolve, reject) => {
+        socket.emit('getAllGlobalBans', (res) => {
+            resolve(res);
+        });
+    });
+};
+
+export const updateGlobalBan = (identifier, moderator, reason) => {
+    return new Promise((resolve, reject) => {
+        socket.emit('updateGlobalBan', {identifier, moderator, reason}, (res) => {
+            resolve(res);
+        });
+    });
+};
+
+export const newGlobalBan = (discordID, robloxID, moderator, reason) => {
+    return new Promise((resolve, reject) => {
+        socket.emit('createGlobalBan', {discordID, robloxID, moderator, reason}, (res) => {
+            resolve(res);
+        });
+    });
+};
+
+export const deleteGlobalBan = (identifier) => {
+    return new Promise((resolve, reject) => {
+        socket.emit('deleteGlobalBan', identifier, (res) => {
             resolve(res);
         });
     });
