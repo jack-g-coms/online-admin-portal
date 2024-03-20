@@ -1,5 +1,12 @@
 import React, { useState, useContext, useRef, useEffect } from "react";
 import Swal from "sweetalert2";
+import Editor from "react-simple-code-editor";
+
+import {highlight, languages} from 'prismjs/components/prism-core';
+import 'prismjs/components/prism-clike';
+import 'prismjs/components/prism-javascript';
+import 'prism-themes/themes/prism-material-oceanic.css'
+
 import '../../../css/portalComponents/BotAutomation/CreateEmbed.css';
 import AuthContext from "../../modules/AuthContext";
 
@@ -20,12 +27,20 @@ const adjustState = (setState, stateElement, next) => {
     }
 }
 
+const placeholderCode = 'const context = ctx;\nconst bot = context.bot;\nconst interaction = context.interaction;\nconst embedBuilder = context.embedBuilder;\nconst actionRowBuilder = context.actionRowBuilder;\nconst buttonBuilder = context.buttonBuilder;\nconst automationGateway = context.automationGateway;\n\n';
 const maxLengths = {
     title: 256,
     description: 4096,
     footer: 2048,
     fields: 25,
+    btns: 5,
     value: 1024
+};
+const btnColors = {
+    Primary: '#5865F2',
+    Secondary: '#4E535B',
+    Success: '#3BA55C',
+    Danger: '#ED4245'
 };
 
 function JSONPopup({setState, embedInfo}) {
@@ -63,7 +78,7 @@ function LoadEmbedPopup({setState, setEmbed}) {
                 <div style={{'width': '100%'}} className='embed-page-horizontal-grouping'>
                     <Button onClick={() => {
                         if (selected) {
-                            setEmbed(JSON.parse(JSON.stringify(selected)));
+                            setEmbed(Object.assign({btns: []}, JSON.parse(JSON.stringify(selected))));
                             setState('closed');
                         }
                     }} animation='raise' scheme='btn-confirm' style={{'width': '100%'}}><i style={{'marginRight': '3px'}} class="fa-solid fa-download"></i> Load</Button>
@@ -131,37 +146,145 @@ function SaveEmbedPopup({embedInfo, setState}) {
 }
 
 function Embed({embedInfo}) {
-    return <div className='embed'>
-        <div style={{'backgroundColor': embedInfo.color || '#151515'}} className='embed-color'/>
-        <div style={{'gap': '15px'}} className='embed-content embed-page-horizontal-grouping'>
-            <div className='embed-page-vertical-grouping'>
-                {embedInfo.title &&
-                    <h2>{embedInfo.title}</h2>
-                }
-                {embedInfo.description &&
-                    <span style={{'whiteSpace': 'pre-wrap'}}>{embedInfo.description.replace(/\r?\n/g, '\n')}</span>
-                }
+    return <> 
+        <div className='embed'>
+            <div style={{'backgroundColor': embedInfo.color || '#151515'}} className='embed-color'/>
+            <div style={{'gap': '15px'}} className='embed-content embed-page-horizontal-grouping'>
+                <div className='embed-page-vertical-grouping'>
+                    {embedInfo.title &&
+                        <h2>{embedInfo.title}</h2>
+                    }
+                    {embedInfo.description &&
+                        <span style={{'whiteSpace': 'pre-wrap'}}>{embedInfo.description.replace(/\r?\n/g, '\n')}</span>
+                    }
 
-                {embedInfo.fields.map((info, _) => {
-                    return <div style={{'marginTop': '10px', 'gap': '2px'}} className='embed-page-vertical-grouping'>
-                        {info.title &&
-                            <span className='bodyTitle'>{info.title}</span>
-                        }
-                        {info.value &&
-                            <span className='bodyContent'>{info.value}</span>
-                        }
-                    </div>
-                })}
+                    {embedInfo.fields.map((info, _) => {
+                        return <div style={{'marginTop': '10px', 'gap': '2px'}} className='embed-page-vertical-grouping'>
+                            {info.title &&
+                                <span className='bodyTitle'>{info.title}</span>
+                            }
+                            {info.value &&
+                                <span className='bodyContent'>{info.value}</span>
+                            }
+                        </div>
+                    })}
 
-                {embedInfo.footer &&
-                    <span className='footer'>{embedInfo.footer}</span>
+                    {embedInfo.footer &&
+                        <span className='footer'>{embedInfo.footer}</span>
+                    }
+                </div>
+                
+                {embedInfo.emblemURL &&
+                    <img src={embedInfo.emblemURL}/>
                 }
             </div>
-            
-            {embedInfo.emblemURL &&
-                <img src={embedInfo.emblemURL}/>
-            }
         </div>
+
+        <div className='embed-action-row'>
+            {embedInfo.btns && embedInfo.btns.map((info, _) => {
+                return <span style={{'backgroundColor': btnColors[info.style]}} className='action-row-btn'>{info.title || 'Title'}</span>
+            })}
+        </div>
+    </>
+}
+
+function Btn({index, info, embedSetState}) {
+    var [open, setOpen] = useState(false);
+    var [btnInfo, setBtnInfo] = useState(info);
+    var [code, setCode] = useState(info.activate || placeholderCode);
+
+    var deleteBtn = () => {
+        embedSetState((orgState) => {
+            var newBtns = orgState.btns;
+            newBtns.splice(index, 1);
+            return Object.assign({}, orgState, {btns: newBtns});
+        });
+    }
+
+    var updateBtn = () => {
+        embedSetState((orgState) => {
+            var newBtns = orgState.btns;
+            newBtns[index] = btnInfo
+            return Object.assign({}, orgState, {btns: newBtns});
+        });
+    }
+
+    var testCode = () => {
+        if (!btnInfo.activate) return Swal.fire({title: 'Test Failed', icon: 'error', text: 'No Code to Test!'});
+        try {
+            const AsyncFunction = Object.getPrototypeOf(async function(){}).constructor;
+            new AsyncFunction(btnInfo.activate)()
+        } catch (err) {
+            if (err instanceof SyntaxError && err.message != 'await is only valid in async functions and the top level bodies of modules') return Swal.fire({title: 'Test Failed', icon: 'error', text: `Ran into an error while testing the action code: ${err.message}`});
+        }
+        if (!btnInfo.activate.toLowerCase().includes('interaction.reply(') && !btnInfo.activate.toLowerCase().includes('interaction.editreply(') && !btnInfo.activate.toLowerCase().includes('interaction.deferreply(')) return Swal.fire({title: 'Test Failed', icon: 'error', text: `Ran into an error while testing the action code: Doesn't reply to the interaction`});
+        Swal.fire({icon: 'success', title: 'Test Passed', text: 'Ran into no problems while testing the action code.'})
+    }
+
+    useEffect(() => {
+        updateBtn();
+    }, [btnInfo]);
+
+    useEffect(() => {
+        adjustState(setBtnInfo, 'activate')(code);
+    }, [code]);
+
+    return <div className='btn-embed'>
+        {!open &&
+            <div style={{'alignItems': 'start', 'marginBottom': '-2px'}} className='embed-page-horizontal-grouping'>
+                <i style={{'cursor': 'pointer', 'marginTop': '5px'}} onClick={() => setOpen(true)} class="fa-solid fa-angle-right"></i>
+                <span style={{'wordBreak': 'break-all', 'fontSize': '20px'}}>{btnInfo.title || 'Button'}</span>
+                <Button animation='raise' onClick={deleteBtn} style={{'padding': '5px 10px', 'marginLeft': 'auto'}} scheme='btn-cancel'>Delete</Button>
+            </div>
+        }
+        
+        {open &&
+            <div className='embed-page-vertical-grouping'>
+                <div style={{'alignItems': 'start', 'marginBottom': '10px'}} className='embed-page-horizontal-grouping'>
+                    <i style={{'cursor': 'pointer', 'marginTop': '5px'}} onClick={() => setOpen(false)} class="fa-solid fa-angle-down"></i>
+                    <span style={{'wordBreak': 'break-all', 'fontSize': '20px'}}>{info.title || 'Button'}</span>
+                    <Button animation='raise' onClick={testCode} style={{'padding': '5px 10px', 'marginLeft': 'auto'}}><i style={{'marginRight': '5px'}} class="fa-brands fa-js"></i>Test Action Code</Button>
+                    <Button animation='raise' onClick={deleteBtn} style={{'padding': '5px 10px'}} scheme='btn-cancel'>Delete</Button>
+                </div>
+
+                <div className='btn-editor-embed size-up'>
+                    <div className='embed-page-vertical-grouping'>
+                        <span className='title'>Title <em>{(btnInfo.title && ((btnInfo.title.length || 0) > 50)) ? <span style={{'color': '#c93434'}}>{btnInfo.title.length}</span> : btnInfo.title && btnInfo.title.length || 0}/50</em></span>
+                        <TextBox setState={adjustState(setBtnInfo, 'title')} placeholder='Input Text'>{info.title}</TextBox>
+                    </div>
+
+                    <div className='embed-page-vertical-grouping'>
+                        <span className='title'>Style</span>
+                        <Dropdown setState={adjustState(setBtnInfo, 'style')} options={[
+                            <option value='Primary' selected>Primary</option>,
+                            <option value='Secondary'>Secondary</option>,
+                            <option value='Success'>Success</option>,
+                            <option value='Danger'>Danger</option>
+                        ]}/>
+                    </div>
+
+                    <div className='embed-page-vertical-grouping'>
+                        <span className='title'>Emoji ID</span>
+                        <TextBox setState={adjustState(setBtnInfo, 'emoji')} placeholder='Input ID'>{info.emoji}</TextBox>
+                    </div>
+
+                    <div className='embed-page-vertical-grouping'>
+                        <span className='title'>Action Code</span>
+                        <Editor
+                            className='code-editor'
+                            value={code}
+                            onValueChange={code => setCode(code)}
+                            highlight={code => highlight(code, languages.js)}
+                            padding={10}
+                            style={{
+                                fontFamily: '"Fira code", "Fira Mono", monospace',
+                                fontSize: 14
+                            }}
+                        />
+                    </div>
+                </div>
+            </div>
+        }
     </div>
 }
 
@@ -223,7 +346,7 @@ function Field({index, info, embedSetState}) {
 }
 
 function CreateEmbed() {
-    var [state, setState] = useState({available: true, fields: []});
+    var [state, setState] = useState({available: true, fields: [], btns: []});
     var [saveEmbedPopup, setSaveEmbedPopup] = useState('closed');
     var [loadEmbedPopup, setLoadEmbedPopup] = useState('closed');
     var [JSONEmbedPopup, setJSONEmbedPopup] = useState('closed');
@@ -246,6 +369,25 @@ function CreateEmbed() {
                         break;
                     }
                 } 
+            }
+        }
+        return valid;
+    }
+
+    var codeValidation = async (info) => {
+        if (!info.btns) return true;
+        var valid = true;
+        for (var i = 0; i < info.btns.length; i++) {
+            var btn = info.btns[i];
+            if (btn.activate == placeholderCode || (!btn.activate.toLowerCase().includes('interaction.reply(') && !btn.activate.toLowerCase().includes('interaction.editreply(') && !btn.activate.toLowerCase().includes('interaction.deferreply('))) {valid = false; break;}
+            try {
+                const AsyncFunction = Object.getPrototypeOf(async function(){}).constructor;
+                new AsyncFunction(btn.activate)()
+            } catch (err) {
+                if (err instanceof SyntaxError && err.message != 'await is only valid in async functions and the top level bodies of modules') {
+                    valid = false;
+                    break;
+                }
             }
         }
         return valid;
@@ -284,6 +426,10 @@ function CreateEmbed() {
             Swal.fire({title: 'Unsuccessful', icon: 'error', text: `One or more of your Embed arguments have failed length validation. Ensure you have not exceeded the allowed length in one of your Embed arguments.`, confirmButtonText: 'Ok'});
             return;
         }
+        if (!(await codeValidation(embedInfo))) {
+            Swal.fire({title: 'Unsuccessful', icon: 'error', text: `One of your button action codes did not pass a test or is missing action code that differs from the placeholder.`, confirmButtonText: 'Ok'});
+            return;
+        }
 
         setState((orgState) => {
             return Object.assign({}, orgState, {available: false});
@@ -317,7 +463,7 @@ function CreateEmbed() {
 
                     <div className='embed-page-vertical-grouping'>
                         <span className='requiredTitle'>Select the destination of your Embed</span>
-                        <Dropdown selected={state.messageSendType} setState={(newState) => {setState({messageSendType: newState, available: true, fields: []})}} options={[
+                        <Dropdown selected={state.messageSendType} setState={(newState) => {setState({messageSendType: newState, available: true, fields: [], btns: []})}} options={[
                             <option value='' disabled selected>Select</option>,
                             <option value='Channel'>Channel</option>,
                             <option value='User'>User</option>
@@ -386,10 +532,23 @@ function CreateEmbed() {
                                 }
                             </div>
 
+                            <div className='embed-page-vertical-grouping'>
+                                <span className='title'>Buttons <em>{(state.btns && ((state.btns.length) > 5)) ? <span style={{'color': '#c93434'}}>{state.btns.length}</span> : state.btns && state.btns.length || 0}/5</em></span>
+                                <Button style={{'marginTop': '5px', 'padding': '8px 10px', 'width': 'fit-content'}} animation='raise' onClick={() => setState(Object.assign({}, state, {btns: [...state.btns, {style: 'Primary', activate: '', title: 'Title'}]}))} scheme='btn-info'><i style={{'marginRight': '5px'}} class="fa-solid fa-plus"></i> Add Button</Button>
+
+                                {state.btns &&
+                                    <div className='btns-embed'>
+                                        {state.btns.map((info, index) => {
+                                            return <Btn embedSetState={setState} index={index} info={info}/>
+                                        })}
+                                    </div>
+                                }
+                            </div>
+
                             <div style={{'marginTop': '25px'}} className='embed-page-horizontal-grouping'>
                                 <Button onClick={sendEmbed} style={{'width': 'fit-content'}} animation='raise' scheme='btn-confirm'>{state.available && <><i style={{'marginRight': '5px', 'fontSize': '15px'}} class="fa-brands fa-discord"/> Send Embed</> || <i className='fa-solid fa-spinner loader'/>}</Button>
                                 <Button onClick={() => setSaveEmbedPopup('open')} style={{'width': 'fit-content'}} animation='raise' scheme='btn-info'><i style={{'marginRight': '5px'}} class="fa-solid fa-upload"></i> Save Embed</Button>
-                                <Button onClick={() => setJSONEmbedPopup('open')} style={{'width': 'fit-content'}} animation='raise' scheme='btn-info'><i style={{'marginRight': '5px'}} class="fa-brands fa-connectdevelop"></i> Generate Embed JSON</Button>
+                                <Button onClick={() => setJSONEmbedPopup('open')} style={{'width': 'fit-content'}} animation='raise' scheme='btn-info'><i style={{'marginRight': '5px'}} class="fa-brands fa-js"></i> Generate Embed JSON</Button>
                             </div>
                         </>
                     }

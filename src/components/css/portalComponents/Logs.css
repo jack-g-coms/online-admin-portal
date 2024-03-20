@@ -1,0 +1,68 @@
+.logs-page {
+    display: flex;
+    margin-top: 10px;
+    margin-left: 10px;
+    margin-right: 10px;
+    align-items: center;
+    gap: 10px;
+    flex-direction: column;
+    transition: all 0.2s ease-in-out;
+    animation: fadeIn 0.2s;
+    width: 100%;
+    height: calc(100vh - 100px);
+}
+
+.logs-container {
+    display: flex;
+    flex-direction: column;
+    animation: fadeIn 0.2s;
+    width: 100%;
+}
+
+.logs-table {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    background-color: #303030;
+    border-left: 1px solid #706f6f;
+    border-right: 1px solid #706f6f;
+    width: 100%;
+    font-size: 20px;
+    border-top: none;
+    overflow: auto;
+    overflow-x: hidden;
+    height: fit-content;
+    max-height: 71vh;
+}
+
+.log-row {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 40px;
+    width: 100%;
+    padding: 10px 15px 10px 15px;
+    box-sizing: border-box;
+    font-size: 20px;
+    border-bottom: 1px solid #706f6f;
+} .log-row:last-child {
+    border: none;
+} .log-row img {
+    border-radius: 500px;
+    background-color: #807f7f;
+    width: 50px;
+    height: 50px;
+} .log-row:nth-of-type(even) {
+    background-color: #222222;
+}
+
+.log-row-user {
+    display: flex;
+    flex-direction: row;
+    gap: 10px;
+} .log-row-user-info {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    margin-top: 2.5px;
+}

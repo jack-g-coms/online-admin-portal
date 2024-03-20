@@ -84,6 +84,10 @@
     background-color: #7234c9;
 }
 
+.color-bright-green:hover {
+    background-color: #34c94a;
+}
+
 .pop-out:hover {
     font-size: larger;
 }

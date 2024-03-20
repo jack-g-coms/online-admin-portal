@@ -63,6 +63,10 @@ function RouterComponent() {
                     <Route path='/portal/globalBans' element={<Portal view='globalBans'/>}/>
                 </Route>
 
+                <Route element={<RequiresFlag flag='VIEW_LOGS'/>}>
+                    <Route path='/portal/logs' element={<Portal view='logs'/>}/>
+                </Route>
+
                 <Route element={<RequiresFlag flag='BOT_ACTIONS'/>}>
                     <Route path='/portal/createEmbed' element={<Portal view='createEmbed'/>}/>
                 </Route>

@@ -15,6 +15,7 @@ import PortalNoticePopup from '../js/popups/PortalNotice';
 import DevNoticePopup from '../js/popups/DevelopmentNotice';
 import DisconnectedPopup from '../js/popups/Disconnected';
 import MonthlyOverviewReportPopup from '../js/popups/MonthlyOverviewReport';
+import ModeratorReport from '../js/popups/ModeratorReport';
 
 import Dashboard from '../js/portalComponents/Dashboard';
 
@@ -25,6 +26,7 @@ import ManageRobloxWarnings from '../js/portalComponents/RobloxSystem/manageRobl
 import ManageDiscordBans from '../js/portalComponents/DiscordSystem/manageDiscordBans';
 import ManageDiscordModerations from '../js/portalComponents/DiscordSystem/manageDiscordModerations';
 
+import Logs from '../js/portalComponents/Logs';
 import ManageGlobalBans from '../js/portalComponents/DiscordSystem/manageGlobalBans';
 
 import CreateEmbed from '../js/portalComponents/BotAutomation/CreateEmbed';
@@ -37,6 +39,7 @@ function Portal({view}) {
     const [noticePopupState, setNoticePopupState] = useState('closed');
     const [devNoticePopupState, setDevNoticePopupState] = useState('closed');
     const [monthlyOverviewPopupState, setMonthlyOverviewPopupState] = useState('closed');
+    const [moderatorReportPopupState, setModeratorReportPopupState] = useState('closed');
     const [disconnectPopupState, setDisconnectPopupState] = useState({open: false});
 
     const authContext = useContext(AuthContext);
@@ -75,6 +78,7 @@ function Portal({view}) {
                 {devNoticePopupState == 'open' && <DevNoticePopup setState={setDevNoticePopupState}/>}
                 {disconnectPopupState.open == true && <DisconnectedPopup reason={disconnectPopupState.reason}/>}
                 {monthlyOverviewPopupState == 'open' && <MonthlyOverviewReportPopup setState={setMonthlyOverviewPopupState}/>}
+                {moderatorReportPopupState == 'open' && <ModeratorReport setState={setModeratorReportPopupState}/>}
 
                 <div className='sidebar-options'>
                     {authContext.user &&
@@ -135,11 +139,20 @@ function Portal({view}) {
 
                     <div className='sidebar-profile-view-grouping'>
                         <div className='sidebar-grouping-title'>
+                            <i style={{'marginRight': '10px', 'marginLeft': '5px', 'marginBottom': '.5px'}} id='stats-logo' class="fa-solid fa-square-poll-vertical"></i>
+                            <h1>Statistics</h1>
+                        </div>
+                        <Button animation='pop-out color-bright-green' style={{'width': '100%'}} onClick={(e) => {setMonthlyOverviewPopupState('open');}} scheme='btn-outlinebottom'><i style={{'marginRight': '8px'}} className='fa-solid fa-file'/>Infractions Report</Button>
+                        <Button animation='pop-out color-bright-green' style={{'width': '100%'}} onClick={(e) => {setModeratorReportPopupState('open');}} scheme='btn-outlinebottom'><i style={{'marginRight': '8px'}} className='fa-solid fa-folder'/>Moderator Report</Button>
+                    </div>
+
+                    <div className='sidebar-profile-view-grouping'>
+                        <div className='sidebar-grouping-title'>
                             <img style={{'marginRight': '3px', 'width': '30px', 'height': '30px'}} src='/media/images/discord-logo.png'/> 
                             <h1>Discord System</h1>
                         </div>
                         <Button animation='pop-out color' style={{'width': '100%'}} onClick={(e) => {setPortalComponentState('discordBans');}} scheme='btn-outlinebottom'><i style={{'marginRight': '8px'}} className='fa-solid fa-gavel'/>Bans</Button>
-                        {authContext.user.permissions.Flags.VIEW_GLOBAL_BANS && <Button animation='pop-out color' style={{'width': '100%'}} onClick={(e) => {setPortalComponentState('globalBans');}} scheme='btn-outlinebottom'><i style={{'marginRight': '8px'}} className='fa-solid fa-gavel'/>Global Bans</Button>}
+                        {authContext.user.permissions.Flags.VIEW_GLOBAL_BANS && <Button animation='pop-out color' style={{'width': '100%'}} onClick={(e) => {setPortalComponentState('globalBans');}} scheme='btn-outlinebottom'><i style={{'marginRight': '8px'}} className='fa-solid fa-ghost'/>Global Bans</Button>}
                         <Button animation='pop-out color' style={{'width': '100%'}} onClick={(e) => {setPortalComponentState('discordModerations');}} scheme='btn-outlinebottom'><i style={{'marginRight': '8px'}} className='fa-solid fa-clipboard-user'/>Moderations</Button>
                         <Button animation='pop-out color' style={{'width': '100%'}} onClick={(e) => {setDiscordUserLookupPopupState('open');}} scheme='btn-outlinebottom'><i style={{'marginRight': '8px'}} className='fa-solid fa-user'/>User Lookup</Button>
                     </div>
@@ -161,19 +174,11 @@ function Portal({view}) {
                                 <h1>Management System</h1>
                             </div>
                             <Button animation='pop-out color-yellow' style={{'width': '100%'}} onClick={(e) => {setPortalComponentState('users');}} scheme='btn-outlinebottom'><i style={{'marginRight': '8px'}} className='fa-solid fa-user'/>Users</Button>
+                            {authContext.user.permissions.Flags.VIEW_LOGS && <Button animation='pop-out color-yellow' style={{'width': '100%'}} onClick={(e) => {setPortalComponentState('logs');}} scheme='btn-outlinebottom'><i style={{'marginRight': '8px'}} className='fa-solid fa-eye'/>Logs</Button>}
                             {authContext.user.permissions.Flags.CREATE_PORTAL_NOTICE && <Button animation='pop-out color-yellow' style={{'width': '100%'}} onClick={(e) => {setNoticePopupState('open');}} scheme='btn-outlinebottom'><i style={{'marginRight': '8px'}} className='fa-solid fa-flag'/>Portal Notice</Button>}
                             {authContext.user.permissions.Flags.CREATE_PORTAL_NOTICE && <Button animation='pop-out color-yellow' style={{'width': '100%'}} onClick={(e) => {setDevNoticePopupState('open');}} scheme='btn-outlinebottom'><i style={{'marginRight': '8px'}} className='fa-solid fa-hammer'/>Development Notice</Button>}
                         </div>
                     }
-
-                    <div className='sidebar-profile-view-grouping'>
-                        <div className='sidebar-grouping-title'>
-                            <i style={{'marginRight': '10px', 'marginLeft': '5px', 'marginBottom': '.5px'}} id='stats-logo' class="fa-solid fa-square-poll-vertical"></i>
-                            <h1>Statistics</h1>
-                        </div>
-                        <Button animation='pop-out color-purple' style={{'width': '100%'}} onClick={(e) => {setMonthlyOverviewPopupState('open');}} scheme='btn-outlinebottom'><i style={{'marginRight': '8px'}} className='fa-solid fa-square-poll-horizontal'/>Monthly Overview Report</Button>
-                        
-                    </div>
 
                     {authContext.user.permissions.Flags.BOT_ACTIONS &&
                         <div className='sidebar-profile-view-grouping'>
@@ -221,6 +226,10 @@ function Portal({view}) {
                 
                 {portalComponentState == 'globalBans' &&
                     <ManageGlobalBans/>
+                }
+
+                {portalComponentState == 'logs' &&
+                    <Logs/>
                 }
             </div>
         </>

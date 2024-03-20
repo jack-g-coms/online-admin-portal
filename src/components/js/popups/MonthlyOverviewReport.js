@@ -35,7 +35,7 @@ function MonthlyOverviewReportPopup({setState}) {
             <div style={{'alignItems': 'center', 'marginTop': '-2px', 'gap': '12px', 'fontSize': '20px'}} className='content'>
                 <div className='embed-page-vertical-grouping'>
                     <span>Year</span>
-                    <TextBox setState={setYear}></TextBox>
+                    <TextBox placeholder='Enter a valid year' setState={setYear}></TextBox>
                 </div>
 
                 <div className='embed-page-vertical-grouping'>

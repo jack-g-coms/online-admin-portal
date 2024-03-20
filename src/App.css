@@ -22,6 +22,11 @@ p {
   animation: spin 1.2s linear infinite;
 }
 
+.hljs {
+  border-radius: 5px;
+  height: fit-content;
+}
+
 h2 {
   margin: 0;
 }

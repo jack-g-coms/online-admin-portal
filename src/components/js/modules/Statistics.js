@@ -14,4 +14,12 @@ export const getMonthReport = async (year, month) => {
             resolve(res);
         });
     });
-}
+};
+
+export const getModeratorReport = async (from, to, moderatorRbx, moderatorDiscord) => {
+    return new Promise((resolve, reject) => {
+        socket.emit('getModeratorReport', from, to, moderatorRbx, moderatorDiscord, (res) => {
+            resolve(res);
+        });
+    });
+};
