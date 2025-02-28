@@ -44,7 +44,7 @@
     "web-vitals": "^2.1.4"
   },
   "scripts": {
-    "predeploy": "npm run start",
+    "predeploy": "npm run build",
     "deploy": "gh-pages -d build",
     "start": "concurrently \"react-scripts start\" \"node server/init.js\"",
     "build": "react-scripts build",
