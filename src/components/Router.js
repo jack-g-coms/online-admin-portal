@@ -1,5 +1,5 @@
 import React, { useContext } from 'react';
-import {HashRouter as Router, Routes, Route, Navigate, Outlet} from 'react-router-dom';
+import {Routes, Route, Navigate, Outlet} from 'react-router-dom';
 
 import AuthContext from './js/modules/AuthContext';
 

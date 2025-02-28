@@ -6,13 +6,13 @@ import AuthProvider from './components/AuthProvider';
 import Navbar from './components/js/Navbar';
 import DevNotice from './components/js/portalComponents/DevNotice';
 
-import {BrowserRouter as Router, Routes, Route} from 'react-router-dom';
+import {HashRouter} from 'react-router-dom';
 import RouterComponent from './components/Router';
 
 function App() {
   return (
     <>
-      <Router>
+      <HashRouter>
         <AuthProvider>
           <DevNotice/>
           <Navbar/>
@@ -20,7 +20,7 @@ function App() {
             <RouterComponent/>
           </div>
         </AuthProvider>
-      </Router>
+      </HashRouter>
     </>
   );
 }
