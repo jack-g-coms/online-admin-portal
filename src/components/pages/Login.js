@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { login, search } from '../js/modules/User';
 import Swal from 'sweetalert2';
+import config from '../../config.json';
 
 import '../css/Login.css';
 
@@ -37,7 +38,7 @@ function Login() {
         login(identity, password)
             .then(response => {
                 if (response.message == 'Success') {
-                    Swal.fire({title: 'Success', text: `You have been logged into the Roman Admin Portal as ${user.rbxUser.username} (${user.permissions.Name}).`, icon: 'success', confirmButtonText: 'Ok'})
+                    Swal.fire({title: 'Success', text: `You have been logged into the ${config.communityName} Admin Portal as ${user.rbxUser.username} (${user.permissions.Name}).`, icon: 'success', confirmButtonText: 'Ok'})
                         .then((result) => {
                             if (result.isConfirmed) {
                                 localStorage.setItem('signOn', (Date.now() / 1000));
@@ -56,7 +57,7 @@ function Login() {
     return (
         <>
             <div className='login-container'>
-                <h2>Login to Rome Admin Portal</h2>
+                <h2>Login to {config.communityName} Admin Portal</h2>
 
                 <form onSubmit={(e) => {e.preventDefault(); setState('loading'); moveToPassword();}} className={viewState == 'username' ? 'login-fields-username' : 'login-fields-username-hidden'}>
                     <div id='login-identity-field'>

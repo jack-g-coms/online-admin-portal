@@ -53,7 +53,7 @@ function ManageRobloxWarnings() {
     useEffect(() => {
         getWarnings()
             .then(warningsReq => {
-                warnings.current = warningsReq.data || {};
+                warnings.current = warningsReq.data || [];
 
                 setPagination({
                     data: warnings.current,

@@ -6,9 +6,10 @@ const fs = require('fs');
 const bCrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const PermissionsService = require('./PermissionsService');
+const path = require('path');
 
-const databaseExists = fs.existsSync('./data/Database.db');
-const Database = new sqlite3.Database('./data/Database.db');
+const databaseExists = fs.existsSync(path.join(__dirname, '..', '..', 'data', 'Database.db'));
+const Database = new sqlite3.Database(path.join(__dirname, '..', '..', 'data', 'Database.db'));
 
 // INIT
 Database.serialize(() => {

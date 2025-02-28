@@ -1,8 +1,9 @@
 // CONSTANTS
 const sqlite3 = require('sqlite3').verbose();
 const uuid = require('uuid').v4;
+const path = require('path');
 
-const Database = new sqlite3.Database('./data/Database.db');
+const Database = new sqlite3.Database(path.join(__dirname, '..', '..', 'data', 'Database.db'));
 
 // FUNCTIONS / UTILITIES
 module.exports.getConfiguration = () => {

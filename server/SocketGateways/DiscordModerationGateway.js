@@ -1,6 +1,7 @@
 // CONSTANTS
 const PermissionsService = require('../Services/PermissionsService');
 const DiscordModerationService = require('../Services/DiscordModerationService');
+const LoggingService = require('../Services/LoggingService');
 
 // GATEWAY
 module.exports.gatewayInfo = {
@@ -38,13 +39,32 @@ module.exports.newSocket = (socket) => {
             });
     });
 
+    socket.on('getDiscordModerationProfile', async (discordID, callback) => {
+        if (!discordID) return callback({message: 'Error'});
+
+        DiscordModerationService.getDiscordUserInfo(discordID)
+            .then(async (discordUser) => {
+                const ban = await DiscordModerationService.searchBanAsync(discordID);
+                const moderations = await DiscordModerationService.getUserModerations(discordID);
+
+                callback({message: 'Success', data: {
+                    discordUser,
+                    avatarHeadshotUrl: discordUser.displayAvatarURL,
+                    ban,
+                    moderations
+                }});
+            }).catch(() => {
+                callback({message: 'Not Found'})
+            });
+        
+    });
+
     socket.on('getUserDiscordModerations', (body, callback) => {
         const {discordid, modType} = body;
         if (!discordid) return callback({message: 'Error'});
 
         DiscordModerationService.getUserModerations(discordid, modType)
             .then(moderations => {
-                console.log(moderations)
                 if (moderations.length > 0) {
                     callback({message: 'Success', data: moderations});
                 } else {
@@ -115,7 +135,6 @@ module.exports.newSocket = (socket) => {
     // PRIVILEGED
     if (socket.User.permissions.Flags.BOT_ACTIONS) {
         socket.on('sendDiscordEmbed', async (embedInfo, callback) => {
-            console.log(embedInfo)
             if (!embedInfo) return callback({message: 'Error'});
             if (!embedInfo.messageSendType || (embedInfo.messageSendType == 'User' && !embedInfo.userID) || (embedInfo.messageSendType == 'Channel' && (!embedInfo.serverID || !embedInfo.channelID))) {
                 callback({message: 'Error'});
@@ -126,10 +145,90 @@ module.exports.newSocket = (socket) => {
             if (process.DiscordAutomationSocket) {
                 process.DiscordAutomationSocket.emit('sendDiscordEmbedAutomation', embedInfo, (response) => {
                     callback(response);
+                    LoggingService.newLog(socket.User.id, `${socket.User.rbxUser.username} executed a bot action: Send Embed`);
                 });
             } else {
                 callback({message: 'Error'});
             }
+        });
+    }
+
+    if (socket.User.permissions.Flags.VIEW_GLOBAL_BANS) {
+        socket.on('getAllGlobalBans', (callback) => {
+            DiscordModerationService.getAllGlobalBans()
+                .then(bans => {
+                    if (bans.length > 0) {
+                        callback({message: 'Success', data: bans});
+                    } else {
+                        callback({message: 'Not Found'});
+                    }
+                }).catch(() => {
+                    callback({message: 'Error'});
+                });
+        });
+
+        socket.on('searchGlobalBan', (query, callback) => {
+            DiscordModerationService.searchGlobalBan(query)
+                .then(ban => {
+                    if (ban) {
+                        callback({message: 'Success', data: ban});
+                    } else {
+                        callback({message: 'Not Found'});
+                    }
+                }).catch(() => {
+                    callback({message: 'Error'});
+                });
+        });
+    }
+
+    if (socket.User.permissions.Flags.CREATE_GLOBAL_BANS) {
+        socket.on('createGlobalBan', async (body, callback) => {
+            const { discordID, robloxID, moderator, reason } = body;
+            if (!discordID || !moderator || !reason) return callback({message: 'Error'});
+
+            const outstanding_ban = await DiscordModerationService.searchGlobalBan(discordID) || await DiscordModerationService.searchGlobalBan(robloxID);
+            if (outstanding_ban) return callback({message: 'Ban Exists', data: outstanding_ban});
+
+            process.io.to('Automation').emit('createDiscordModeration', {discordID, robloxID, moderator, moderationType: 'Global Ban', reason});
+            callback({message: 'Success'});
+            
+            if (robloxID) {
+                LoggingService.newLog(socket.User.id, `${socket.User.rbxUser.username} created a Global Ban for ${discordID} including a Roblox Ban for ${robloxID}`);
+            } else {
+                LoggingService.newLog(socket.User.id, `${socket.User.rbxUser.username} created a Global Ban for ${discordID} not including a Roblox Ban`);
+            }
+        });
+    }
+
+    if (socket.User.permissions.Flags.UPDATE_GLOBAL_BANS) {
+        socket.on('updateGlobalBan', async (body, callback) => {
+            var { identifier, moderator, reason } = body;
+            if (!identifier) return callback({message: 'Error'});
+
+            const outstanding_ban = await DiscordModerationService.searchGlobalBan(identifier);
+            if (!moderator) moderator = outstanding_ban.moderator;
+            if (!reason) reason = outstanding_ban.reason;
+
+            DiscordModerationService.updateGlobalBan(identifier, moderator, reason)
+                .then(() => {
+                    callback({message: 'Success'});
+                    LoggingService.newLog(socket.User.id, `${socket.User.rbxUser.username} updated Global Ban ${identifier}`);
+                }).catch(() => {
+                    callback({message: 'Error'});
+                });
+        });
+    }
+
+    if (socket.User.permissions.Flags.DELETE_GLOBAL_BANS) {
+        socket.on('deleteGlobalBan', async (identifier, callback) => {
+            if (!identifier) return callback({message: 'Error'});
+
+            const outstanding_ban = await DiscordModerationService.searchGlobalBan(identifier);
+            if (!outstanding_ban) return callback({message: 'Not Found'});
+
+            process.io.to('Automation').emit('deleteGlobalBan', outstanding_ban);
+            callback({message: 'Success'});
+            LoggingService.newLog(socket.User.id, `${socket.User.rbxUser.username} deleted Global Ban ${identifier}`);
         });
     }
 
@@ -152,6 +251,7 @@ module.exports.newSocket = (socket) => {
 
             process.io.to('Automation').emit('createDiscordModeration', {discordID, moderator, moderationType: modType, evidence, reason, extraInfo, banType});
             callback({message: 'Success'});
+            LoggingService.newLog(socket.User.id, `${socket.User.rbxUser.username} created a Discord Ban for ${discordID}`);
         });
     }
 
@@ -185,6 +285,7 @@ module.exports.newSocket = (socket) => {
 
             process.io.to('Automation').emit('updateDiscordModeration', linked_moderation, {discordID, moderator, moderationType: modType, evidence, reason, extraInfo, banType, bannedOn});
             callback({message: 'Success'});
+            LoggingService.newLog(socket.User.id, `${socket.User.rbxUser.username} updated Discord Ban ${discordID}`);
         });
     }
 
@@ -200,6 +301,7 @@ module.exports.newSocket = (socket) => {
 
             process.io.to('Automation').emit('deactivateDiscordModeration', activeModeration);
             callback({message: 'Success'});
+            LoggingService.newLog(socket.User.id, `${socket.User.rbxUser.username} deleted Discord Ban ${discordID}`);
         });
     }
 
@@ -210,6 +312,7 @@ module.exports.newSocket = (socket) => {
 
             process.io.to('Automation').emit('createDiscordModeration', {discordID, moderator, moderationType, evidence, reason, extraInfo});
             callback({message: 'Success'});
+            LoggingService.newLog(socket.User.id, `${socket.User.rbxUser.username} created a Discord Moderation of type ${moderationType} for ${discordID}`);
         });
     }
 
@@ -239,6 +342,7 @@ module.exports.newSocket = (socket) => {
 
             process.io.to('Automation').emit('updateDiscordModeration', outstanding_moderation, new_moderation);
             callback({message: 'Success'});
+            LoggingService.newLog(socket.User.id, `${socket.User.rbxUser.username} updated a Discord Moderation ${moderationID} for ${outstanding_moderation.discordID}`);
         });
     }
 
@@ -256,6 +360,7 @@ module.exports.newSocket = (socket) => {
 
             process.io.to('Automation').emit('deleteDiscordModeration', outstanding_moderation);
             callback({message: 'Success'});
+            LoggingService.newLog(socket.User.id, `${socket.User.rbxUser.username} deleted a Discord Moderation ${moderationID} for ${outstanding_moderation.discordID}`);
         });
     }
 };

@@ -442,7 +442,7 @@ function CreateEmbed() {
                 } else if (response.message == 'Error') {
                     Swal.fire({title: 'Error', icon: 'error', text: 'Your Embed was not sent.', confirmButtonText: 'Ok'});
                 } else {
-                    Swal.fire({title: 'Unsuccessful', icon: 'error', text: `Roman Systems received your Embed but was not satisfied with one or more of your arguments: ${response.message}`, confirmButtonText: 'Ok'});
+                    Swal.fire({title: 'Unsuccessful', icon: 'error', text: `The bot received your Embed but was not satisfied with one or more of your arguments: ${response.message}`, confirmButtonText: 'Ok'});
                 }
 
                 setState((orgState) => {
@@ -556,7 +556,7 @@ function CreateEmbed() {
 
                 <div className='preview'>
                     <h2>Preview</h2>
-                    <span style={{'color': '#f0be48'}}>Your embed may look like this. Do keep in mind, this message is sent by Roman Systems, a symbol of the Staff Team, all messages should be mature and formal.</span>
+                    <span style={{'color': '#f0be48'}}>Your embed may look like this. Do keep in mind, this message is sent by the official bot, a symbol of the Staff Team, all messages should be mature and formal.</span>
                     <Embed embedInfo={state}/>
                 </div>
             </div>

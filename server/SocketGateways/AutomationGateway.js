@@ -1,6 +1,7 @@
 // CONSTANTS
 const PermissionsService = require('../Services/PermissionsService');
 const DiscordModerationService = require('../Services/DiscordModerationService');
+const RobloxModerationService = require('../Services/RobloxModerationService');
 
 // GATEWAY
 module.exports.gatewayInfo = {
@@ -68,6 +69,23 @@ module.exports.newSocket = (socket) => {
                 .catch(() => {
                     callback({message: 'Error'});
                 });
+        } else if (newModeration.moderationType == 'Global Ban') {
+            try {
+                const gBan = await DiscordModerationService.newGlobalBan(newModeration.discordID, newModeration.robloxID, newModeration.moderator, newModeration.reason);
+                if (newModeration.robloxID) {
+                    const rbxBan = await RobloxModerationService.searchBanAsync(newModeration.robloxID);
+                    if (rbxBan) {
+                        await RobloxModerationService.updateBanAsync(newModeration.robloxID, rbxBan.moderator, rbxBan.evidence, `${rbxBan.reason} -> Global Ban`, {Type: 'Permanent'}, rbxBan.bannedOn);
+                    } else {
+                        const newBan = await RobloxModerationService.newBanAsync(newModeration.robloxID, 4847290779, [], 'Global Ban', {Type: 'Permanent'});
+                        RobloxModerationService.sendMessage('applyModeration', Object.assign({}, {modType: 'Ban'}, newBan));
+                    }
+                }
+                callback({message: 'Success', data: gBan});
+            } catch {
+                callback({message: 'Error'});
+            }
+            return
         }
 
         DiscordModerationService.newModerationAsync(newModeration.discordID, newModeration.moderator, newModeration.moderationType, newModeration.evidence, newModeration.extraInfo || {}, newModeration.reason)
@@ -76,5 +94,23 @@ module.exports.newSocket = (socket) => {
             }).catch((err) => {
                 callback({message: 'Error'});
             });
+    });
+
+    socket.on('deletedGlobalBanAutomation', async (discordID, callback) => {
+        const outstanding_ban = await DiscordModerationService.searchGlobalBan(discordID);
+        if (!outstanding_ban) callback({message: 'Not Found'});
+
+        try {
+            await DiscordModerationService.deleteGlobalBan(discordID);
+            if (outstanding_ban.robloxID) {
+                const ban = await RobloxModerationService.searchBanAsync(outstanding_ban.robloxID);
+                if (ban && ban.reason.includes('Global Ban')) {
+                    await RobloxModerationService.deleteBanAsync(outstanding_ban.robloxID);
+                }
+            }
+            callback({message: 'Success'});
+        } catch {
+            callback({message: 'Error'});
+        }
     });
 }

@@ -62,7 +62,7 @@ function ModeratorReport({setState}) {
             
                             <div className='embed-page-vertical-grouping'>
                                 <span>From...</span>
-                                <DateSelect value={from && new Date(from * 1000).toISOString().substring(0, 16) || undefined} onChange={(e) => {
+                                <DateSelect value={from && (new Date((from * 1000) - (new Date()).getTimezoneOffset() * 60000)).toISOString().substring(0, 16) || undefined} onChange={(e) => {
                                     var date = new Date(e.target.value);
                                     setFrom(Math.round(date.getTime() / 1000));
                                 }}/>
@@ -70,7 +70,7 @@ function ModeratorReport({setState}) {
             
                             <div className='embed-page-vertical-grouping'>
                                 <span>To...</span>
-                                <DateSelect value={to && new Date(to * 1000).toISOString().substring(0, 16) || undefined} onChange={(e) => {
+                                <DateSelect value={to && (new Date((to * 1000) - (new Date()).getTimezoneOffset() * 60000)).toISOString().substring(0, 16) || undefined} onChange={(e) => {
                                     var date = new Date(e.target.value);
                                     setTo(Math.round(date.getTime() / 1000));
                                 }}/>

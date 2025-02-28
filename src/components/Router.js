@@ -53,6 +53,7 @@ function RouterComponent() {
                     <Route path='/portal/robloxWarnings' element={<Portal view='robloxWarnings'/>}/>
                     <Route path='/portal/discordModerations' element={<Portal view='discordModerations'/>}/>
                     <Route path='/portal/discordBans' element={<Portal view='discordBans'/>}/>
+                    <Route path='/portal/moderationReport' element={<Portal view='moderationReport'/>}/>
                 </Route>
 
                 <Route element={<RequiresFlag flag='MANAGE_USERS'/>}>

@@ -1,6 +1,5 @@
 import moment from "moment";
 
-export const baseUrl = 'https://portal.romestaff.com/api';
 export const timeFormat = (seconds) => {
     var hours = Math.floor(seconds/3600);
     var newSeconds = seconds - (hours * 3600)

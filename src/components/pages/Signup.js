@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import Swal from 'sweetalert2';
 import { signup } from '../js/modules/User';
+import config from '../../config.json';
 
 import '../css/Signup.css';
 
@@ -39,7 +40,7 @@ function Signup() {
     return (
         <>
             <div className='signup-form-container'>
-                <h2>Signup for Rome Admin Portal</h2>
+                <h2>Signup for {config.communityName} Admin Portal</h2>
                 <form onSubmit={(e) => {e.preventDefault(); setState('loading'); triggerAccountSignup();}} className='signup-container-fields'>
                     <div className='signup-container-field'>
                         <span><i style={{'marginRight': '3px'}} class='fa-solid fa-envelope'/> Enter Email</span>

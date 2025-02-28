@@ -34,13 +34,13 @@ io.on('connection', (socket) => {
     });
 
     // Join permitted rooms
-    if (socket.User && socket.User.permissions.Name == 'Portal Automated System') {
+    if (socket.User && socket.User.id == 'f57dd5d8-7a3b-4eb9-bf95-14b9aa5db99d') {
         socket.join('Automation');
         process.DiscordAutomationSocket = socket;
     }
 });
 
-fs.readdir('./server/SocketGateways', (err, files) => {
+fs.readdir(`${__dirname}/SocketGateways`, (err, files) => {
     const jsFile = files.filter(f => f.split('.').pop() === 'js');
     if (jsFile.length <= 0) { return };
 

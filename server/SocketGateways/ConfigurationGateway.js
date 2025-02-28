@@ -1,6 +1,7 @@
 // CONSTANTS
 const PermissionsService = require('../Services/PermissionsService');
 const ConfigurationService = require('../Services/ConfigurationService');
+const LoggingService = require('../Services/LoggingService');
 
 // GATEWAY
 module.exports.gatewayInfo = {
@@ -29,6 +30,7 @@ module.exports.newSocket = (socket) => {
             ConfigurationService.updateConfiguration(announcement, devNotice)
                 .then(() => {
                     callback(true);
+                    LoggingService.newLog(socket.User.id, `${socket.User.rbxUser.username} updated Configuration`);
                 }).catch(err => callback(false));
         });
     }

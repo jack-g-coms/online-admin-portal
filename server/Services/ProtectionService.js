@@ -3,7 +3,8 @@ const UsersService = require('./UsersService');
 const PermissionsService = require('./PermissionsService');
 const jwt = require('jsonwebtoken');
 
-const API_KEY = '8D110F73-F59C-4A3F-8FEE-ABCBC3FC2313';
+const API_KEY = '41812b38-ef54-4380-bea9-129e2359e4ce';
+const AUTHORIZED_PLACEIDS = ['18510698024'];
 const ENDPOINT_PERMISSION_FLAGS = {
     '/api/users': PermissionsService.PERMISSION_FLAGS.MANAGE_USERS,
     '/api/users/update': PermissionsService.PERMISSION_FLAGS.MANAGE_USERS,
@@ -36,6 +37,13 @@ const getCookie = (cookieString, cookieName) => {
 // FUNCTIONS
 module.exports.requiresAPIKey = async (req, res, next) => {
     if (req.headers['key'] != API_KEY) {
+        return res.json({message: 'Unauthorized'});
+    };
+    next();
+};
+
+module.exports.requiresRobloxPlaceId = async (req, res, next) => {
+    if (!req.headers['roblox-id'] || !(AUTHORIZED_PLACEIDS.includes(req.headers['roblox-id'])) || req.headers['key'] != API_KEY) {
         return res.json({message: 'Unauthorized'});
     };
     next();

@@ -1,6 +1,7 @@
 // CONSTANTS
 const PermissionsService = require('../Services/PermissionsService');
 const RobloxModerationService = require('../Services/RobloxModerationService');
+const LoggingService = require('../Services/LoggingService');
 const RobloxService = require('../Services/RobloxService');
 
 // GATEWAY
@@ -34,7 +35,7 @@ module.exports.newSocket = (socket) => {
         const avatarHeadshotUrl = await RobloxService.getAvatarHeadshot(rbxID);
 
         if (!rbxUser) return callback({message: 'Not Found'});
-        if (avatarHeadshotUrl.data.data.errors || avatarHeadshotUrl.data.data.length == 0) return res.json({message: 'Not Found'});
+        if (avatarHeadshotUrl.data.data.errors || avatarHeadshotUrl.data.data.length == 0) return callback({message: 'Not Found'});
 
         const ban = await RobloxModerationService.searchBanAsync(rbxID);
         const warnings = await RobloxModerationService.getUserWarnings(rbxID);
@@ -122,6 +123,9 @@ module.exports.newSocket = (socket) => {
                 .then(ban => {
                     ban.username = rbxInfo.name;
                     callback({message: 'Success', data: ban});
+
+                    RobloxModerationService.sendMessage('applyModeration', Object.assign({}, {modType: 'Ban'}, ban));
+                    LoggingService.newLog(socket.User.id, `${socket.User.rbxUser.username} created a Roblox Ban for ${rbxInfo.name} (${rbxID})`);
                 }).catch((err) => {
                     console.log(err);
                     callback({message: 'Error'});
@@ -145,6 +149,7 @@ module.exports.newSocket = (socket) => {
             RobloxModerationService.updateBanAsync(rbxID, moderator, evidence, reason, banType, outstanding_ban.bannedOn)
                 .then(() => {
                     callback({message: 'Success'});
+                    LoggingService.newLog(socket.User.id, `${socket.User.rbxUser.username} updated Roblox Ban ${rbxID}`);
                 }).catch((err) => {
                     console.log(err);
                     callback({message: 'Error'});
@@ -163,6 +168,7 @@ module.exports.newSocket = (socket) => {
             RobloxModerationService.deleteBanAsync(rbxID)
                 .then(() => {
                     callback({message: 'Success'});
+                    LoggingService.newLog(socket.User.id, `${socket.User.rbxUser.username} deleted Roblox Ban ${rbxID}`);
                 }).catch((err) => {
                     console.log(err);
                     callback({message: 'Error'});
@@ -182,6 +188,9 @@ module.exports.newSocket = (socket) => {
                 .then(warning => {
                     warning.username = rbxInfo.name;
                     callback({message: 'Success', data: warning});
+
+                    RobloxModerationService.sendMessage('applyModeration', Object.assign({}, {modType: 'Warning'}, warning));
+                    LoggingService.newLog(socket.User.id, `${socket.User.rbxUser.username} created a Roblox Warning ${warning.warnID} for ${rbxInfo.name} (${rbxID})`);
                 }).catch((err) => {
                     console.log(err);
                     callback({message: 'Error'});
@@ -205,6 +214,7 @@ module.exports.newSocket = (socket) => {
             RobloxModerationService.updateWarningAsync(rbxID, warnID, moderator, evidence, reason, acknowledged)
                 .then(() => {
                     callback({message: 'Success'});
+                    LoggingService.newLog(socket.User.id, `${socket.User.rbxUser.username} updated Roblox Warning ${warnID} for ${rbxID}`);
                 }).catch((err) => {
                     console.log(err);
                     callback({message: 'Error'});
@@ -223,6 +233,7 @@ module.exports.newSocket = (socket) => {
             RobloxModerationService.deleteWarningAsync(rbxID, warnID)
                 .then(() => {
                     callback({message: 'Success'});
+                    LoggingService.newLog(socket.User.id, `${socket.User.rbxUser.username} deleted Roblox Warning ${warnID} for ${rbxID}`);
                 }).catch((err) => {
                     console.log(err);
                     callback({message: 'Error'});

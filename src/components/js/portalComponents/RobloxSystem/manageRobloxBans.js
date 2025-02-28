@@ -53,7 +53,7 @@ function ManageRobloxBans() {
     useEffect(() => {
         getBans()
             .then(bansReq => {
-                bans.current = bansReq.data || {};
+                bans.current = bansReq.data || [];
 
                 setPagination({
                     data: bans.current,

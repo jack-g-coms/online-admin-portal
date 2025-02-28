@@ -1,4 +1,4 @@
 import { io } from 'socket.io-client';
-import { baseUrl } from "../../../shared";
+import config from "../../../config.json";
 
-export const socket = io('https://portal.romestaff.com', {withCredentials: true, transports: ['websocket'], path: '/api/gateway'});
+export const socket = io(config.baseUrl, {withCredentials: true, transports: ['websocket'], path: '/api/gateway'});

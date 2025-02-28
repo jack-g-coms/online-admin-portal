@@ -73,7 +73,7 @@ function Logs() {
     useEffect(() => {
         Logging.getLogs()
             .then(res => {
-                logs.current = res.data || {};
+                logs.current = res.data || [];
                 setPagination({
                     data: logs.current,
                     offset: 0,

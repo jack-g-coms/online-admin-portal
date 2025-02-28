@@ -53,7 +53,7 @@ function ManageDiscordModerations() {
     useEffect(() => {
         getModerations()
             .then(moderationsReq => {
-                moderations.current = moderationsReq.data || {};
+                moderations.current = moderationsReq.data || [];
 
                 setPagination({
                     data: moderations.current,

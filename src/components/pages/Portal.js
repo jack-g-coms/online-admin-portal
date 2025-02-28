@@ -29,6 +29,8 @@ import ManageDiscordModerations from '../js/portalComponents/DiscordSystem/manag
 import Logs from '../js/portalComponents/Logs';
 import ManageGlobalBans from '../js/portalComponents/DiscordSystem/manageGlobalBans';
 
+import ModerationReport from '../js/portalComponents/Statistics/moderationReport';
+
 import CreateEmbed from '../js/portalComponents/BotAutomation/CreateEmbed';
 
 function Portal({view}) {
@@ -144,6 +146,7 @@ function Portal({view}) {
                         </div>
                         <Button animation='pop-out color-bright-green' style={{'width': '100%'}} onClick={(e) => {setMonthlyOverviewPopupState('open');}} scheme='btn-outlinebottom'><i style={{'marginRight': '8px'}} className='fa-solid fa-file'/>Infractions Report</Button>
                         <Button animation='pop-out color-bright-green' style={{'width': '100%'}} onClick={(e) => {setModeratorReportPopupState('open');}} scheme='btn-outlinebottom'><i style={{'marginRight': '8px'}} className='fa-solid fa-folder'/>Moderator Report</Button>
+                        <Button animation='pop-out color-bright-green' style={{'width': '100%'}} onClick={(e) => {setPortalComponentState('moderationReport');}} scheme='btn-outlinebottom'><i style={{'marginRight': '8px'}} className='fa-solid fa-table'/>Moderation Report</Button>
                     </div>
 
                     <div className='sidebar-profile-view-grouping'>
@@ -192,7 +195,7 @@ function Portal({view}) {
 
                     <div className='sidebar-profile-view-bottom'>
                         <i class="fa-solid fa-circle-info"></i>
-                        <span>All actions are logged and processed by Portal Administrators apart of Technical Services.</span>
+                        <span>All actions are logged and processed by Portal Administrators.</span>
                     </div>
                 </div>
 
@@ -226,6 +229,10 @@ function Portal({view}) {
                 
                 {portalComponentState == 'globalBans' &&
                     <ManageGlobalBans/>
+                }
+
+                {portalComponentState == 'moderationReport' &&
+                    <ModerationReport/>
                 }
 
                 {portalComponentState == 'logs' &&

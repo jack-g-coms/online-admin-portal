@@ -5,7 +5,7 @@ const RobloxModerationService = require('../Services/RobloxModerationService');
 const Server = process.Server;
 
 // GET
-Server.get('/api/roblox/bans', ProtectionService.requiresAPIKey, (req, res) => {
+Server.get('/api/roblox/bans', ProtectionService.requiresRobloxPlaceId, ProtectionService.requiresAPIKey, (req, res) => {
     RobloxModerationService.getAllBans(50)
         .then(async bans => {
             if (bans.length > 0) {
@@ -23,7 +23,7 @@ Server.get('/api/roblox/bans', ProtectionService.requiresAPIKey, (req, res) => {
         });
 });
 
-Server.get('/api/roblox/bans/search', ProtectionService.requiresAPIKey, (req, res) => {
+Server.get('/api/roblox/bans/search', ProtectionService.requiresRobloxPlaceId, ProtectionService.requiresAPIKey, (req, res) => {
     const { query } = req.query;
     if (!query) return res.json({message: 'Error'});
 
@@ -43,7 +43,7 @@ Server.get('/api/roblox/bans/search', ProtectionService.requiresAPIKey, (req, re
         });
 });
 
-Server.get('/api/roblox/warnings', ProtectionService.requiresAPIKey, async (req, res) => {
+Server.get('/api/roblox/warnings', ProtectionService.requiresRobloxPlaceId, ProtectionService.requiresAPIKey, async (req, res) => {
     RobloxModerationService.getAllWarnings()
         .then(warnings => {
             if (warnings.length > 0) {
@@ -57,7 +57,7 @@ Server.get('/api/roblox/warnings', ProtectionService.requiresAPIKey, async (req,
         });
 });
 
-Server.get('/api/roblox/warnings/search', ProtectionService.requiresAPIKey, async (req, res) => {
+Server.get('/api/roblox/warnings/search', ProtectionService.requiresRobloxPlaceId, ProtectionService.requiresAPIKey, async (req, res) => {
     const { query, acknowledgement } = req.query;
     if (!query) return res.json({message: 'Error'});
 
@@ -75,7 +75,7 @@ Server.get('/api/roblox/warnings/search', ProtectionService.requiresAPIKey, asyn
 });
 
 // POST
-Server.post('/api/roblox/bans/create', ProtectionService.requiresAPIKey, async (req, res) => {
+Server.post('/api/roblox/bans/create', ProtectionService.requiresRobloxPlaceId, ProtectionService.requiresAPIKey, async (req, res) => {
     const { rbxID, moderator, evidence, reason, banType } = req.body;
     if (!rbxID || !moderator || !evidence || !reason || !banType) return res.json({message: 'Error'});
 
@@ -91,7 +91,7 @@ Server.post('/api/roblox/bans/create', ProtectionService.requiresAPIKey, async (
         });
 });
 
-Server.post('/api/roblox/bans/delete', ProtectionService.requiresAPIKey, async (req, res) => {
+Server.post('/api/roblox/bans/delete', ProtectionService.requiresRobloxPlaceId, ProtectionService.requiresAPIKey, async (req, res) => {
     const { rbxID, moderator } = req.body;
     if (!rbxID || !moderator) return res.json({message: 'Error'});
 
@@ -107,8 +107,7 @@ Server.post('/api/roblox/bans/delete', ProtectionService.requiresAPIKey, async (
         });
 });
 
-
-Server.post('/api/roblox/bans/update', ProtectionService.requiresAPIKey, async (req, res) => {
+Server.post('/api/roblox/bans/update', ProtectionService.requiresRobloxPlaceId, ProtectionService.requiresAPIKey, async (req, res) => {
     var { rbxID, moderator, evidence, reason } = req.body;
     if (!rbxID || (!moderator && !evidence && !reason)) return res.json({message: 'Error'});
 
@@ -128,7 +127,7 @@ Server.post('/api/roblox/bans/update', ProtectionService.requiresAPIKey, async (
         });
 });
 
-Server.post('/api/roblox/warnings/create', ProtectionService.requiresAPIKey, async (req, res) => {
+Server.post('/api/roblox/warnings/create', ProtectionService.requiresRobloxPlaceId, ProtectionService.requiresAPIKey, async (req, res) => {
     const { rbxID, moderator, evidence, reason } = req.body;
     if (!rbxID || !moderator || !evidence || !reason) return res.json({message: 'Error'});
 
@@ -141,7 +140,7 @@ Server.post('/api/roblox/warnings/create', ProtectionService.requiresAPIKey, asy
         });
 });
 
-Server.post('/api/roblox/warnings/delete', ProtectionService.requiresAPIKey, async (req, res) => {
+Server.post('/api/roblox/warnings/delete', ProtectionService.requiresRobloxPlaceId, ProtectionService.requiresAPIKey, async (req, res) => {
     const { rbxID, warnID, moderator } = req.body;
     if (!warnID || !rbxID || !moderator) return res.json({message: 'Error'});
 
@@ -157,7 +156,7 @@ Server.post('/api/roblox/warnings/delete', ProtectionService.requiresAPIKey, asy
         });
 });
 
-Server.post('/api/roblox/warnings/update', ProtectionService.requiresAPIKey, async (req, res) => {
+Server.post('/api/roblox/warnings/update', ProtectionService.requiresRobloxPlaceId, ProtectionService.requiresAPIKey, async (req, res) => {
     var { rbxID, warnID, moderator, evidence, reason, acknowledged } = req.body;
     if (!warnID || !rbxID || (!moderator && !evidence && !reason && !acknowledged)) return res.json({message: 'Error'});
 

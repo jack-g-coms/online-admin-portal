@@ -2,6 +2,7 @@
 const PermissionsService = require('../Services/PermissionsService');
 const UsersService = require('../Services/UsersService');
 const RobloxService = require('../Services/RobloxService');
+const LoggingService = require('../Services/LoggingService');
 
 // GATEWAY
 module.exports.gatewayInfo = {
@@ -77,6 +78,7 @@ module.exports.newSocket = (socket) => {
                         targetSocket.emit('forceDisconnect', {reason: "User Change"});
                     }
                     callback({message: 'Success'});
+                    LoggingService.newLog(socket.User.id, `${socket.User.rbxUser.username} updated Portal User ${existingUser.rbxUser.username}`);
                 }).catch((err) => {
                     console.log(err);
                     callback({message: 'Error'})
@@ -123,6 +125,7 @@ module.exports.newSocket = (socket) => {
                         });
                     }
                     callback({message: 'Success'});
+                    LoggingService.newLog(socket.User.id, `${socket.User.rbxUser.username} deleted Portal User ${existingUser.rbxUser.username}`);
                 }).catch((err) => {
                     console.log(err);
                     callback({message: 'Error'})

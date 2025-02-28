@@ -1,6 +1,8 @@
 const express = require('express');
 const app = express();
 const server = require('http').createServer(app);
+const dotenv = require('dotenv');
+const config = require('./config.json');
 
 const DiscordModerationService = require('./Services/DiscordModerationService');
 
@@ -13,17 +15,21 @@ const cookieParser = require('cookie-parser');
 
 const fs = require('fs');
 const cors = require('cors');
+const path = require('path');
 
+dotenv.config({
+    path: __dirname + "/.env"
+});
 app.use(express.static('public'));
 app.use(bodyParser.json());
 app.use(cors({
-    origin: ['https://portal.romestaff.com', 'http://localhost:3000', 'https://romestaff.com'],
+    origin: [`https://${config.communityName}portal.communityshield.app`, 'http://localhost:3000', 'https://communityshield.app'],
     credentials: true,
     exposedHeaders: ['set-cookie']
 }));
 app.use(cookieParser());
-server.listen(5050, () => {
-    console.log('Server Started Listening on Port 5050');
+server.listen(5051, () => {
+    console.log('Server Started Listening on Port 5051');
 });
 
 process.Server = app;
@@ -31,7 +37,7 @@ process.Server = app;
 process.io = io;
 require('./SocketRouter');
 
-fs.readdir('./server/API', (err, files) => {
+fs.readdir(`${__dirname}/API`, (err, files) => {
     const jsFile = files.filter(f => f.split('.').pop() === 'js');
     if (jsFile.length <= 0) { return };
 

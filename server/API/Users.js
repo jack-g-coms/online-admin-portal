@@ -1,4 +1,6 @@
 // CONSTANTS
+const axios = require('axios');
+
 const UsersService = require('../Services/UsersService');
 const ProtectionService = require('../Services/ProtectionService');
 const PermissionsService = require('../Services/PermissionsService');
@@ -8,6 +10,16 @@ const Server = process.Server;
 // GET
 Server.get('/api/users/me', ProtectionService.privilegedCall, async (req, res) => {
     return res.json({message: 'Success', data: req.User});
+});
+
+Server.get('/api/roblox/groupRoles/:rbx_id', ProtectionService.privilegedCall, (req, res) => {
+    axios.get(`https://groups.roblox.com/v2/users/${req.params.rbx_id}/groups/roles`)
+        .then((response) => {
+            res.json({message: 'Success', data: response.data.data});
+        })
+        .catch(() => {
+            res.json({message: 'Error'});
+        });
 });
 
 Server.get('/api/users/search', async (req, res) => {

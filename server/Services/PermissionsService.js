@@ -23,16 +23,23 @@ module.exports.PERMISSION_FLAGS = {
     'UPDATE_DISCORD_MODERATIONS': 5,
     'DELETE_DISCORD_MODERATIONS': 2,
 
+    'VIEW_GLOBAL_BANS': 2,
+    'CREATE_GLOBAL_BANS': 6,
+    'UPDATE_GLOBAL_BANS': 6,
+    'DELETE_GLOBAL_BANS': 6,
+
+    'VIEW_LOGS': 6,
+
     'BOT_ACTIONS': 7
 }
 
 // SETS
 module.exports.PERMISSION_SETS = {
     [10]: {
-        Name: 'Portal Developer'
+        Name: 'Community Shield Team'
     },
     [9]: {
-        Name: 'Portal Automated System'
+        Name: 'Comunity Shield System'
     },
     [8]: {
         Name: 'Portal Director'

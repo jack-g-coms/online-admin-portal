@@ -1,6 +1,8 @@
 // CONSTANTS
 const axios = require('axios');
 
+const cachedGroupInfo = {};
+
 // FUNCTIONS
 const getUser = async (id) => {
     return new Promise((resolve, reject) => {
@@ -30,6 +32,33 @@ const getUserByID = async (id) => {
     });
 };
 
+const getGroupRank = async (rbxId, groupId) => {
+    return new Promise((resolve, reject) => {
+        if (cachedGroupInfo[rbxId]) {
+            cachedGroupInfo[rbxId].map((groupInfo, _) => {
+                if (groupInfo.group.id == groupId) {
+                    return resolve(groupInfo.role);
+                }
+            }); 
+            resolve(false);
+        } else {
+            axios.get(`https://groups.roblox.com/v2/users/${rbxId}/groups/roles`)
+                .then((response) => {
+                    cachedGroupInfo[rbxId] = response.data.data;
+                    response.data.data.map((groupInfo, _) => {
+                        if (groupInfo.group.id == groupId) {
+                            return resolve(groupInfo.role);
+                        }
+                    }); 
+                    resolve(false);
+                })
+                .catch(() => {
+                    resolve(false);
+                });
+        }
+    });
+}
+
 const getAvatarHeadshot = (rbx_id) => {
     return axios.get(`https://thumbnails.roblox.com/v1/users/avatar-headshot?userIds=${rbx_id}&size=150x150&format=Png&isCircular=false`);
 };
@@ -37,3 +66,4 @@ const getAvatarHeadshot = (rbx_id) => {
 module.exports.getAvatarHeadshot = getAvatarHeadshot;
 module.exports.getUser = getUser;
 module.exports.getUserByID = getUserByID;
+module.exports.getGroupRank = getGroupRank;

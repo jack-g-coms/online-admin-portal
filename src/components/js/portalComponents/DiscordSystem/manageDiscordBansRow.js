@@ -128,7 +128,7 @@ function ManageBansRow({ban}) {
 
                 {actionState != 'none' &&
                     <div className='action-state-overlay'>
-                        <span style={{'color': '#349fc9', 'fontWeight': '600'}}><i style={{'marginRight': '2px'}} class="fa-solid fa-circle-info"></i> You have made modifications to this ban that require Roman Systems Automation to complete.</span>
+                        <span style={{'color': '#349fc9', 'fontWeight': '600'}}><i style={{'marginRight': '2px'}} class="fa-solid fa-circle-info"></i> You have made modifications to this ban that require Discord Bot Automation to complete.</span>
                         <span>If you refresh and the expected changes haven't been made, wait 5 minutes before retrying.</span>
                     </div>
                 }

@@ -1,6 +1,7 @@
 import React, { useContext } from 'react';
 import { logout } from './modules/User';
 import '../css/Navbar.css';
+import config from '../../config.json';
 
 import Button from './Button';
 import AuthContext from './modules/AuthContext';
@@ -12,10 +13,10 @@ function Navbar() {
         <>
             <div className='nav-container'>
                 <div className='nav-items'>
-                    <img src='/media/images/staff-logo.png'></img>
+                    <img src='/media/images/community-shield.png'></img>
                     <div className='text-column'>
-                        <h2 style={{'padding': 0}}>Rome Admin Portal</h2>
-                        <span>Rome Staff Technical Services</span>
+                        <h2 style={{'padding': 0}}>{config.communityName} Admin Portal</h2>
+                        <span>Powered by Community Shield</span>
                     </div>
                 </div>
 

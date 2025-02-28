@@ -23,3 +23,11 @@ export const getModeratorReport = async (from, to, moderatorRbx, moderatorDiscor
         });
     });
 };
+
+export const getModerationReport = async (from, to) => {
+    return new Promise((resolve, reject) => {
+        socket.emit('getModerationReport', from, to, (res) => {
+            resolve(res);
+        });
+    });
+}; 

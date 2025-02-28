@@ -53,7 +53,8 @@ function ManageDiscordBans() {
     useEffect(() => {
         getBans()
             .then(bansReq => {
-                bans.current = bansReq.data || {};
+                bans.current = bansReq.data || [];
+                console.log(bans.current)
 
                 setPagination({
                     data: bans.current,

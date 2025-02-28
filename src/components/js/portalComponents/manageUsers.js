@@ -41,7 +41,7 @@ function ManageUsers({hidden}) {
                     </div>
 
                     <div className='manage-users-container-header-notice'>
-                        <span><i style={{'marginRight': '4px'}} className='fa-solid fa-circle-exclamation'/> All Portal Users are at the final discretion of the Director of Technical Services</span>
+                        <span><i style={{'marginRight': '4px'}} className='fa-solid fa-circle-exclamation'/> All Portal Users are at the final discretion of Portal Administration</span>
                     </div>
 
                     {users.current && users.current.length > 0 &&
