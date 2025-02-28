@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/online-admin-portal/static/css/main.8f2764dc.css",
+    "main.js": "/online-admin-portal/static/js/main.ef29cbbf.js",
+    "index.html": "/online-admin-portal/index.html",
+    "main.8f2764dc.css.map": "/online-admin-portal/static/css/main.8f2764dc.css.map",
+    "main.ef29cbbf.js.map": "/online-admin-portal/static/js/main.ef29cbbf.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.8f2764dc.css",
+    "static/js/main.ef29cbbf.js"
+  ]
+}
