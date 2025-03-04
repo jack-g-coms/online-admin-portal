@@ -15,7 +15,7 @@ function Home() {
                 <span style={{'color':'#1e86cf'}}>Powered by Community Shield</span>
 
                 <p>
-                    <strong><span style={{'color': '#1e86cf'}}>The {config.communityName} Admin Portal</span></strong> is the primary interface for the moderation network of <a href={config.communityLink}>{config.communityName} on Roblox.</a> <strong><span style={{'color': '#f5cb42'}}>If you do not have a login for this portal, and believe you should, contact a System Administrator</span></strong>
+                    <strong><span style={{'color': '#1e86cf'}}>The {config.communityName} Admin Portal</span></strong> is the primary interface for the moderation network of <a href={config.communityLink}>{config.communityName} on many platforms.</a> <strong><span style={{'color': '#f5cb42'}}>If you do not have a login for this portal, and believe you should, contact a System Administrator</span></strong>
                 </p>
 
                 <div className='btn-container-welcome-container'>
