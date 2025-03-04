@@ -13,7 +13,7 @@ function Navbar() {
         <>
             <div className='nav-container'>
                 <div className='nav-items'>
-                    <img src='/media/images/community-shield.png'></img>
+                    <img src='/online-admin-portal/media/images/community-shield.png'></img>
                     <div className='text-column'>
                         <h2 style={{'padding': 0}}>{config.communityName} Admin Portal</h2>
                         <span>Powered by Community Shield</span>

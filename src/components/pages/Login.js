@@ -42,7 +42,7 @@ function Login() {
                         .then((result) => {
                             if (result.isConfirmed) {
                                 localStorage.setItem('signOn', (Date.now() / 1000));
-                                window.location = './portal';
+                                window.location = './#/portal';
                             }
                         });
                 } else if (response.message == 'Invalid Credentials') {
@@ -65,7 +65,7 @@ function Login() {
                         <TextBox style={{'width': '100%', 'text-align': 'center'}} placeholder='Input Username or Email' setState={setIdentity}>{identity}</TextBox>
                     </div>
                     <Button animation='raise' type='submit' style={{'width': '100%'}} scheme='btn-confirm'>{state == 'available' && <>Continue <i class='fa-solid fa-arrow-right'/></> || state == 'loading' && <i className='fa-solid fa-spinner loader'/>}</Button>
-                    <Button animation='color pop-out' style={{'width': '100%'}} onClick={(e) => {window.location = './signup'}} scheme='btn-clear'>Need a portal account? Signup <i class='fa-solid fa-arrow-right'/></Button>
+                    <Button animation='color pop-out' style={{'width': '100%'}} onClick={(e) => {window.location = './#/signup'}} scheme='btn-clear'>Need a portal account? Signup <i class='fa-solid fa-arrow-right'/></Button>
                 </form>
 
                 {user &&

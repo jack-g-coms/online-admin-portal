@@ -151,7 +151,7 @@ function Portal({view}) {
 
                     <div className='sidebar-profile-view-grouping'>
                         <div className='sidebar-grouping-title'>
-                            <img style={{'marginRight': '3px', 'width': '30px', 'height': '30px'}} src='/media/images/discord-logo.png'/> 
+                            <img style={{'marginRight': '3px', 'width': '30px', 'height': '30px'}} src='/online-admin-portal/media/images/discord-logo.png'/> 
                             <h1>Discord System</h1>
                         </div>
                         <Button animation='pop-out color' style={{'width': '100%'}} onClick={(e) => {setPortalComponentState('discordBans');}} scheme='btn-outlinebottom'><i style={{'marginRight': '8px'}} className='fa-solid fa-gavel'/>Bans</Button>
@@ -162,7 +162,7 @@ function Portal({view}) {
 
                     <div className='sidebar-profile-view-grouping'>
                         <div className='sidebar-grouping-title'>
-                            <img style={{'marginRight': '3px', 'width': '30px', 'height': '30px'}} src='/media/images/roblox-logo-red.png'/> 
+                            <img style={{'marginRight': '3px', 'width': '30px', 'height': '30px'}} src='/online-admin-portal/media/images/roblox-logo-red.png'/> 
                             <h1>Roblox System</h1>
                         </div>
                         <Button animation='pop-out color-red' style={{'width': '100%'}} onClick={(e) => {setPortalComponentState('robloxBans');}} scheme='btn-outlinebottom'><i style={{'marginRight': '8px'}} className='fa-solid fa-gavel'/>Bans</Button>
@@ -173,7 +173,7 @@ function Portal({view}) {
                     {authContext.user.permissions.Flags.MANAGE_USERS &&
                         <div className='sidebar-profile-view-grouping'>
                             <div className='sidebar-grouping-title'>
-                                <img style={{'marginRight': '3px', 'width': '30px', 'height': '30px'}} src='/media/images/management-logo.png'/> 
+                                <img style={{'marginRight': '3px', 'width': '30px', 'height': '30px'}} src='/online-admin-portal/media/images/management-logo.png'/> 
                                 <h1>Management System</h1>
                             </div>
                             <Button animation='pop-out color-yellow' style={{'width': '100%'}} onClick={(e) => {setPortalComponentState('users');}} scheme='btn-outlinebottom'><i style={{'marginRight': '8px'}} className='fa-solid fa-user'/>Users</Button>

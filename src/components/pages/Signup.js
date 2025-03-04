@@ -25,12 +25,12 @@ function Signup() {
                 } else if (response.message == 'Login') {
                     Swal.fire({title: 'Account Found', text: 'An account under that email or username already exists. Did you mean to login?', icon: 'question', showDenyButton: true, confirmButtonText: 'Login', denyButtonText: 'Cancel'})
                         .then((result) => {
-                            if (result.isConfirmed) window.location = './login';
+                            if (result.isConfirmed) window.location = './#/login';
                         });
                 } else if (response.message == 'Success') {
                     Swal.fire({title: 'Success', text: 'Account creation request sent for review. Once approved, you will be able to log into the portal using this account.', icon: 'success', confirmButtonText: 'Ok'})
                         .then(() => {
-                            window.location = './login';
+                            window.location = './#/login';
                         });
                 }
                 setState('available');
@@ -63,7 +63,7 @@ function Signup() {
                     </div>
 
                     <Button animation='raise' type='submit' style={{'width': '100%'}} scheme='btn-confirm'>{state == 'available' && <>Create Account <i class='fa-solid fa-arrow-right'/></> || state == 'loading' && <i className='fa-solid fa-spinner loader'/>}</Button>
-                    <Button animation='color pop-out' style={{'width': '100%'}} onClick={(e) => {window.location = './login'}} scheme='btn-clear'>Already have an account? Login <i class='fa-solid fa-arrow-right'/></Button>
+                    <Button animation='color pop-out' style={{'width': '100%'}} onClick={(e) => {window.location = './#/login'}} scheme='btn-clear'>Already have an account? Login <i class='fa-solid fa-arrow-right'/></Button>
                 </form>
             </div>
         </>
