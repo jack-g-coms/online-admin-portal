@@ -11,7 +11,7 @@ function Home() {
         <>
             <div className='welcome-container'>
                 <h2>Welcome to {config.communityName} Admin Portal</h2>
-                <img src='/media/images/community-shield-big.png'></img>
+                <img src='/online-admin-portal/media/images/community-shield-big.png'></img>
                 <span style={{'color':'#1e86cf'}}>Powered by Community Shield</span>
 
                 <p>
